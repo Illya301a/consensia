@@ -7,8 +7,15 @@ const WS_URL =
   'wss://consensia-api.faby.world/ws/orchestrator'
 
 function uid() {
-  return crypto.randomUUID()
-}
+    // Перевіряємо, чи доступний randomUUID (працює на localhost або HTTPS)
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      return crypto.randomUUID();
+    }
+    
+    // Запасний варіант (Fallback) для роботи через локальний IP (HTTP)
+    return Math.random().toString(36).substring(2, 15) + 
+           Math.random().toString(36).substring(2, 15);
+  }
 
 function parseMaybeJson(value) {
   if (value == null) return null
