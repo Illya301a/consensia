@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import {
   Float,
@@ -13,6 +13,31 @@ import * as THREE from 'three'
 const PINK = '#f472b6'
 const PINK_SOFT = '#fbcfe8'
 const PINK_MIST = '#fce7f3'
+
+const ORBIT_RADIUS = 9.5
+const ORBIT_LOAD_POLAR = Math.PI / 3.45
+const ORBIT_LOAD_AZIMUTH = 0
+
+function orbitCameraFromRadius(radius) {
+  const sinP = Math.sin(ORBIT_LOAD_POLAR)
+  return [
+    radius * sinP * Math.sin(ORBIT_LOAD_AZIMUTH),
+    radius * Math.cos(ORBIT_LOAD_POLAR),
+    radius * sinP * Math.cos(ORBIT_LOAD_AZIMUTH),
+  ]
+}
+
+function useNarrowViewport() {
+  const [narrow, setNarrow] = useState(false)
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767.98px)')
+    const sync = () => setNarrow(mq.matches)
+    sync()
+    mq.addEventListener('change', sync)
+    return () => mq.removeEventListener('change', sync)
+  }, [])
+  return narrow
+}
 
 function ParticleCloud({ count = 4500, animationsEnabled = true }) {
   const ref = useRef(null)
@@ -69,7 +94,7 @@ function ParticleCloud({ count = 4500, animationsEnabled = true }) {
   )
 }
 
-function ConsensusNetwork({ animationsEnabled = true }) {
+function ConsensiaNetwork({ animationsEnabled = true }) {
   const group = useRef(null)
 
   const { nodes, segments } = useMemo(() => {
@@ -171,10 +196,15 @@ function CoreOrb({ animationsEnabled = true }) {
   )
 }
 
-function SceneContent({ animationsEnabled = true }) {
+function SceneContent({ animationsEnabled = true, orbitRadius }) {
+  const cameraPosition = useMemo(
+    () => orbitCameraFromRadius(orbitRadius),
+    [orbitRadius]
+  )
+
   return (
     <>
-      <PerspectiveCamera makeDefault position={[0, 0.2, 9.5]} fov={42} />
+      <PerspectiveCamera makeDefault position={cameraPosition} fov={42} />
       <fog attach="fog" args={[PINK_MIST, 8, 22]} />
 
       <ambientLight intensity={0.55} />
@@ -183,7 +213,7 @@ function SceneContent({ animationsEnabled = true }) {
       <pointLight position={[0, 2, 2]} intensity={0.8} color={PINK} distance={14} />
 
       <ParticleCloud animationsEnabled={animationsEnabled} />
-      <ConsensusNetwork animationsEnabled={animationsEnabled} />
+      <ConsensiaNetwork animationsEnabled={animationsEnabled} />
       <CoreOrb animationsEnabled={animationsEnabled} />
 
       <Sparkles
@@ -201,27 +231,47 @@ function SceneContent({ animationsEnabled = true }) {
         autoRotate={animationsEnabled}
         autoRotateSpeed={0.35}
         maxPolarAngle={Math.PI / 1.85}
-        minPolarAngle={Math.PI / 3.2}
+        minPolarAngle={Math.PI / 4}
       />
     </>
   )
 }
 
-export function ConsensusScene({ animationsEnabled = true }) {
+export function ConsensiaScene({ animationsEnabled = true }) {
+  const [surfaceReady, setSurfaceReady] = useState(false)
+  const narrow = useNarrowViewport()
+  const orbitRadius = narrow ? ORBIT_RADIUS * 1.42 : ORBIT_RADIUS
+
+  const onCreated = useCallback(({ gl }) => {
+    gl.setClearColor(0x000000, 0)
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setSurfaceReady(true))
+    })
+  }, [])
+
   return (
-    <Canvas
-      className="consensus-canvas"
-      dpr={[1, 1.75]}
-      gl={{
-        alpha: true,
-        antialias: true,
-        powerPreference: 'high-performance',
-      }}
-      onCreated={({ gl }) => {
-        gl.setClearColor(0x000000, 0)
-      }}
+    <div
+      className={
+        surfaceReady
+          ? 'consensia-canvas-shell consensia-canvas-shell--ready'
+          : 'consensia-canvas-shell'
+      }
     >
-      <SceneContent animationsEnabled={animationsEnabled} />
-    </Canvas>
+      <Canvas
+        className="consensia-canvas"
+        dpr={[1, 1.75]}
+        gl={{
+          alpha: true,
+          antialias: true,
+          powerPreference: 'high-performance',
+        }}
+        onCreated={onCreated}
+      >
+        <SceneContent
+          animationsEnabled={animationsEnabled}
+          orbitRadius={orbitRadius}
+        />
+      </Canvas>
+    </div>
   )
 }

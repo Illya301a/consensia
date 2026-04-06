@@ -1,5 +1,5 @@
 {
-  "name": "consensus",
+  "name": "consensia",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -13,7 +13,10 @@
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
     "react": "^19.2.4",
+    "react-diff-viewer": "^3.1.1",
     "react-dom": "^19.2.4",
+    "react-router-dom": "^7.14.0",
+    "react-syntax-highlighter": "^16.1.1",
     "three": "^0.183.2"
   },
   "devDependencies": {

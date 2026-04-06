@@ -17,6 +17,7 @@ body {
   min-height: 100vh;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  font-family: 'Onest', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
 img,
@@ -47,4 +48,14 @@ h6 {
 
 #root {
   isolation: isolate;
+}
+
+.app-suspense-fallback {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #fff8fb 0%, #ffffff 50%, #fef5f9 100%);
+  color: #c94b8c;
+  font-size: 0.9rem;
 }
