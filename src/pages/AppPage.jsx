@@ -2,10 +2,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import '../App.scss'
 import './AppPage.scss'
+import { ChatComposer } from '../components/ChatComposer.jsx'
 import { ChatMessageItem } from '../components/ChatMessageItem.jsx'
 import { useAuth } from '../services/AuthContext.jsx'
+import { apiFetch } from '../services/http.js'
 import {
   buildResumeMessagesFromSessionData,
+  deriveSessionRounds,
+  deriveSessionTitle,
   deleteSession,
   fetchSessionDetails,
   fetchSessionsList,
@@ -103,7 +107,6 @@ export default function AppPage() {
   const [context, setContext] = useState('')
   const [rounds, setRounds] = useState(1)
   const [mode, setMode] = useState('ECONOMY')
-  const [draft, setDraft] = useState('')
   const [showSetup, setShowSetup] = useState(true)
   const [authGateError, setAuthGateError] = useState('')
 
@@ -118,6 +121,10 @@ export default function AppPage() {
 
   const [profileOpen, setProfileOpen] = useState(false)
   const profileRef = useRef(null)
+  const [promoInfo, setPromoInfo] = useState(null)
+  const [topUpAmount, setTopUpAmount] = useState('10')
+  const [topUpLoading, setTopUpLoading] = useState(false)
+  const [topUpError, setTopUpError] = useState('')
   const [dataCollection, setDataCollection] = useState(() => {
     try {
       const raw = localStorage.getItem(DATA_COLLECTION_KEY)
@@ -144,8 +151,15 @@ export default function AppPage() {
   }, [code, mode, context, rounds])
 
   const endRef = useRef(null)
-  const inputRef = useRef(null)
   const messagesRef = useRef(null)
+
+  const amountNum = Number(topUpAmount)
+  const promoMultiplier =
+    Number(promoInfo?.multiplier) > 0 ? Number(promoInfo.multiplier) : 200
+  const creditsPreview =
+    Number.isFinite(amountNum) && amountNum > 0
+      ? Math.floor(amountNum * promoMultiplier)
+      : 0
 
   useEffect(() => {
     const err = searchParams.get('error')
@@ -170,6 +184,47 @@ export default function AppPage() {
     if (!isAuthenticated || !token) return
     let cancelled = false
     ;(async () => {
+      const r = await apiFetch('/api/promo/status')
+      if (cancelled || !r.ok) return
+      const data = await r.json().catch(() => null)
+      if (!cancelled && data && typeof data === 'object') setPromoInfo(data)
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [isAuthenticated, token])
+
+  const hydrateSessionsFromDetails = useCallback(async (baseSessions) => {
+    const list = Array.isArray(baseSessions) ? baseSessions : []
+    const candidates = list
+      .filter((s) => s && (!s.title || s.rounds == null))
+      .slice(0, 40)
+    if (!candidates.length) return list
+
+    const details = await Promise.all(
+      candidates.map(async (s) => {
+        const res = await fetchSessionDetails(s.id)
+        if (!res.ok || !res.detail) return null
+        const d = res.detail
+        const sd = d.session_data || {}
+        return {
+          id: s.id,
+          title: deriveSessionTitle(d) || deriveSessionTitle(sd) || s.title || '',
+          rounds: deriveSessionRounds(d) ?? deriveSessionRounds(sd) ?? s.rounds ?? null,
+          mode: (typeof sd.mode === 'string' && sd.mode) || s.mode || '',
+        }
+      })
+    )
+
+    const patch = new Map(details.filter(Boolean).map((x) => [x.id, x]))
+    if (!patch.size) return list
+    return list.map((s) => (patch.has(s.id) ? { ...s, ...patch.get(s.id) } : s))
+  }, [])
+
+  useEffect(() => {
+    if (!isAuthenticated || !token) return
+    let cancelled = false
+    ;(async () => {
       setSessionsLoading(true)
       setSessionsError(null)
       const res = await fetchSessionsList()
@@ -180,12 +235,15 @@ export default function AppPage() {
         setSessions([])
         return
       }
-      setSessions(normalizeSessionsFromApi(res.sessions))
+      const normalized = normalizeSessionsFromApi(res.sessions)
+      setSessions(normalized)
+      const enriched = await hydrateSessionsFromDetails(normalized)
+      if (!cancelled) setSessions(enriched)
     })()
     return () => {
       cancelled = true
     }
-  }, [isAuthenticated, token])
+  }, [isAuthenticated, token, hydrateSessionsFromDetails])
 
   useEffect(() => {
     if (!sessionId || !isAuthenticated) return
@@ -193,24 +251,21 @@ export default function AppPage() {
     ;(async () => {
       const res = await fetchSessionsList()
       if (cancelled || !res.ok) return
-      setSessions(normalizeSessionsFromApi(res.sessions))
+      const normalized = normalizeSessionsFromApi(res.sessions)
+      setSessions(normalized)
+      const enriched = await hydrateSessionsFromDetails(normalized)
+      if (!cancelled) setSessions(enriched)
     })()
     return () => {
       cancelled = true
     }
-  }, [sessionId, isAuthenticated])
+  }, [sessionId, isAuthenticated, hydrateSessionsFromDetails])
 
   useEffect(() => {
     const el = messagesRef.current
     if (!el) return
     el.scrollTop = el.scrollHeight
   }, [messages])
-
-  useEffect(() => {
-    if (!inputLocked && status === 'open') {
-      inputRef.current?.focus()
-    }
-  }, [inputLocked, status])
 
   const fullCode = useMemo(() => {
     if (!attached.length) return code
@@ -261,9 +316,15 @@ export default function AppPage() {
         }
         const d = res.detail || {}
         const sd = d.session_data || {}
+        const detailTitle = deriveSessionTitle(d) || deriveSessionTitle(sd)
+        const detailRounds = deriveSessionRounds(d) ?? deriveSessionRounds(sd)
         const resumeBase = buildResumeMessagesFromSessionData(sd)
         const hasUserInHistory = resumeBase.some((m) => m?.kind === 'user' || m?.kind === 'task')
         const firstTask = resumeBase.find((m) => m?.kind === 'task')
+        const firstTaskTitle =
+          typeof firstTask?.context === 'string' && firstTask.context.trim()
+            ? firstTask.context.trim().slice(0, 90)
+            : ''
         const codeBody =
           (typeof d.final_code === 'string' && d.final_code.length ? d.final_code : '') ||
           (typeof d.original_code === 'string' && d.original_code.length ? d.original_code : '') ||
@@ -319,6 +380,18 @@ export default function AppPage() {
                 ...resumeBase,
               ]
             : resumeBase
+
+        setSessions((prev) =>
+          prev.map((s) =>
+            s.id === sessionFromUrl
+              ? {
+                  ...s,
+                  title: detailTitle || firstTaskTitle || s.title,
+                  rounds: detailRounds ?? s.rounds ?? null,
+                }
+              : s
+          )
+        )
 
         connect({
           token,
@@ -389,6 +462,35 @@ export default function AppPage() {
     logout()
     navigate('/', { replace: true })
   }, [disconnect, logout, navigate])
+
+  const handleTopUp = useCallback(async () => {
+    const amount = Number(topUpAmount)
+    if (!Number.isFinite(amount) || amount < 1) {
+      setTopUpError('Минимальная сумма пополнения — 1$')
+      return
+    }
+    setTopUpError('')
+    setTopUpLoading(true)
+    try {
+      const r = await apiFetch('/payments/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount_usd: Math.round(amount) }),
+      })
+      const data = await r.json().catch(() => null)
+      if (!r.ok) {
+        throw new Error(data?.detail || 'Ошибка создания платежа')
+      }
+      if (!data?.checkout_url) {
+        throw new Error('Stripe checkout URL не получен')
+      }
+      window.location.href = data.checkout_url
+    } catch (e) {
+      setTopUpError(e?.message || String(e))
+    } finally {
+      setTopUpLoading(false)
+    }
+  }, [topUpAmount])
 
   useEffect(() => {
     try {
@@ -478,30 +580,25 @@ export default function AppPage() {
     [disconnect, navigate, sessionFromUrl, sessionId]
   )
 
-  const handleSend = useCallback(
-    (e) => {
-      e.preventDefault()
-      const text = draft.trim()
-      if (!text) return
+  const handleSendMessage = useCallback(
+    (text) => {
+      const value = String(text ?? '').trim()
+      if (!value) return
       setProfileOpen(false)
-      sendFollowUp(text)
-      setDraft('')
+      sendFollowUp(value)
     },
-    [draft, sendFollowUp]
+    [sendFollowUp]
   )
-
-  const onKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSend(e)
-    }
-  }
 
   const busy = status === 'connecting'
   const statusText = statusLabel(status)
   const waitingForAi = status === 'open' && inputLocked
   const hasFinalVerdict = messages.some((m) => m.kind === 'final')
   const activeSid = sessionFromUrl || sessionId || ''
+  const renderedMessages = useMemo(
+    () => messages.map((msg) => <ChatMessageItem key={msg.id} msg={msg} />),
+    [messages]
+  )
 
   if (!authChecked) {
     return (
@@ -603,8 +700,32 @@ export default function AppPage() {
                   <div className="chat-app__profile-head">
                     <div className="chat-app__profile-title">{getUserLabel(user)}</div>
                     {getCredits(user) != null ? (
-                      <div className="chat-app__profile-sub">Кредиты: {getCredits(user)}</div>
+                      <div className="chat-app__profile-credits-line">
+                        <div className="chat-app__profile-sub">Кредиты: {getCredits(user)}</div>
+                        <div className="chat-app__topup-inline">
+                          <input
+                            className="chat-app__topup-input"
+                            type="number"
+                            min={1}
+                            step={1}
+                            value={topUpAmount}
+                            onChange={(e) => setTopUpAmount(e.target.value)}
+                            aria-label="Сумма пополнения в долларах"
+                          />
+                          <span className="chat-app__topup-preview">{creditsPreview} кр.</span>
+                          <button
+                            type="button"
+                            className="chat-app__topup-btn"
+                            onClick={handleTopUp}
+                            disabled={topUpLoading}
+                            title={`Курс: ${promoMultiplier} кредитов за $1`}
+                          >
+                            {topUpLoading ? '...' : 'Пополнить'}
+                          </button>
+                        </div>
+                      </div>
                     ) : null}
+                    {topUpError ? <div className="chat-app__profile-sub">{topUpError}</div> : null}
                   </div>
 
                   <div className="chat-app__profile-row">
@@ -666,9 +787,14 @@ export default function AppPage() {
                         onClick={() => openHistorySession(h.id)}
                       >
                         <div className="chat-app__sidebar-item-title">
-                          {modeLabel(h.mode)} · {h.id.slice(0, 8)}
+                          {h.title || `Сессия ${h.id.slice(0, 8)}`}
                         </div>
-                        <div className="chat-app__sidebar-item-meta">{formatWhen(h.createdAt)}</div>
+                        <div className="chat-app__sidebar-item-meta">
+                          <span>{formatWhen(h.createdAt)}</span>
+                          <span className="chat-app__sidebar-item-side">
+                            {modeLabel(h.mode)} · {h.rounds ? `Раунд ${h.rounds}` : 'Раунд —'}
+                          </span>
+                        </div>
                       </button>
                       <button
                         type="button"
@@ -794,9 +920,7 @@ export default function AppPage() {
                   </p>
                 ) : null}
                 <div ref={messagesRef} className="chat-app__messages" role="log" aria-live="polite">
-                  {messages.map((msg) => (
-                    <ChatMessageItem key={msg.id} msg={msg} />
-                  ))}
+                  {renderedMessages}
                   {hasFinalVerdict && usageEvents.length ? (
                     <div className="chat-app__usage-after-final" aria-label="Usage">
                       <ChatMessageItem
@@ -817,30 +941,13 @@ export default function AppPage() {
                       <span className="chat-app__typing-text">Генерируем ответ…</span>
                     </div>
                   ) : null}
-                  <form className="chat-app__composer-inner" onSubmit={handleSend}>
-                    <textarea
-                      ref={inputRef}
-                      className="chat-app__input"
-                      rows={1}
-                      value={draft}
-                      onChange={(e) => setDraft(e.target.value)}
-                      onKeyDown={onKeyDown}
-                      placeholder={
-                        inputLocked
-                          ? 'Ожидаем ответ оркестратора…'
-                          : 'Ваш ответ оркестратору…'
-                      }
-                      disabled={inputLocked || status !== 'open'}
-                    />
-                    <button
-                      type="submit"
-                      className="chat-app__send"
-                      disabled={inputLocked || status !== 'open' || !draft.trim()}
-                      aria-label="Отправить"
-                    >
-                      ↑
-                    </button>
-                  </form>
+                  <ChatComposer
+                    disabled={inputLocked || status !== 'open'}
+                    placeholder={
+                      inputLocked ? 'Ожидаем ответ оркестратора…' : 'Ваш ответ оркестратору…'
+                    }
+                    onSend={handleSendMessage}
+                  />
                 </div>
               </div>
             ) : null}

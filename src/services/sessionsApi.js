@@ -175,6 +175,105 @@ function getRoundNumber(key, fallback = 0) {
   return Number.isFinite(n) ? n : fallback
 }
 
+function pickTitleFromHistoryItem(item) {
+  if (!item || typeof item !== 'object') return ''
+  return String(
+    item?.context ??
+    item?.text ??
+      item?.prompt ??
+      item?.query ??
+      item?.request ??
+      item?.user_message ??
+      item?.content ??
+      ''
+  ).trim()
+}
+
+function extractInitPayloadFromHistory(history) {
+  if (!Array.isArray(history)) return null
+  for (const entry of history) {
+    if (!entry || typeof entry !== 'object') continue
+    // Native init object shape from backend: { token, mode, session_id, code, context, rounds }
+    if (typeof entry.context === 'string' || entry.rounds != null) return entry
+
+    // Sometimes init payload can be wrapped into content/message as JSON-like object
+    const parsed = parseHistoryPayload(entry)
+    if (parsed && typeof parsed === 'object') {
+      if (typeof parsed.context === 'string' || parsed.rounds != null) return parsed
+    }
+  }
+  return null
+}
+
+export function deriveSessionTitle(session) {
+  if (!session || typeof session !== 'object') return ''
+  const sd = session.session_data
+  if (sd && typeof sd === 'object') {
+    if (Array.isArray(sd.history)) {
+      const initPayload = extractInitPayloadFromHistory(sd.history)
+      if (initPayload && typeof initPayload.context === 'string' && initPayload.context.trim()) {
+        return initPayload.context.trim().slice(0, 90)
+      }
+
+      const initWithContext = sd.history.find(
+        (h) => h && typeof h === 'object' && typeof h.context === 'string' && h.context.trim()
+      )
+      const initial = sd.history.find((h) => String(h?.type ?? '').toLowerCase() === 'initial_request')
+      const user = sd.history.find(
+        (h) =>
+          String(h?.role ?? '').toLowerCase() === 'user' ||
+          (String(h?.type ?? '').toLowerCase() === 'chat' &&
+            String(h?.role ?? '').toLowerCase() === 'user')
+      )
+      const fromHistory =
+        pickTitleFromHistoryItem(initWithContext) ||
+        pickTitleFromHistoryItem(initial) ||
+        pickTitleFromHistoryItem(user)
+      if (fromHistory) return fromHistory.slice(0, 90)
+    }
+    const nestedRequestLike = [sd.prompt, sd.context, sd.user_message, sd.request, sd.query]
+    for (const v of nestedRequestLike) {
+      if (typeof v === 'string' && v.trim()) return v.trim().slice(0, 90)
+    }
+  }
+
+  const directRequestLike = [session.prompt, session.context, session.user_message, session.request, session.query]
+  for (const v of directRequestLike) {
+    if (typeof v === 'string' && v.trim()) return v.trim().slice(0, 90)
+  }
+
+  const fallback = [session.title, session.name, session.session_name, session.subject, session.description]
+  for (const v of fallback) {
+    if (typeof v === 'string' && v.trim()) return v.trim().slice(0, 90)
+  }
+  return ''
+}
+
+export function deriveSessionRounds(session) {
+  if (!session || typeof session !== 'object') return null
+  const sd = session.session_data && typeof session.session_data === 'object' ? session.session_data : null
+  const fromInit =
+    extractInitPayloadFromHistory(sd?.history)?.rounds ??
+    extractInitPayloadFromHistory(session?.history)?.rounds
+  const direct = Number(
+    fromInit ??
+      session.rounds ??
+      session.max_rounds ??
+      session.current_round ??
+      sd?.max_rounds ??
+      sd?.current_round
+  )
+  if (Number.isFinite(direct) && direct > 0) return direct
+
+  const history = sd?.history
+  if (Array.isArray(history)) {
+    const init = history.find((h) => h && typeof h === 'object' && h.rounds != null)
+    const fromInit = Number(init?.rounds)
+    if (Number.isFinite(fromInit) && fromInit > 0) return fromInit
+  }
+  return null
+}
+
 export function mapRoundDataToAgentMessages(roundData) {
   if (!roundData || typeof roundData !== 'object') return []
   const rounds = Object.entries(roundData).sort(
@@ -258,8 +357,10 @@ export function normalizeSessionsFromApi(list) {
     out.push({
       id: String(id),
       session_id: String(id),
+      title: deriveSessionTitle(s),
       status: s.status,
       mode: s.mode,
+      rounds: deriveSessionRounds(s),
       type: s.type,
       createdAt: Number.isFinite(created) ? created : Date.now(),
       tokens_used: s.tokens_used,

@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import ReactMarkdown from 'react-markdown'
@@ -181,7 +182,7 @@ function usageTitle(agent, usage) {
   return `${String(agent || 'Agent')}${total != null ? ` · ${total}` : ''}`
 }
 
-export function ChatMessageItem({ msg }) {
+export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
   switch (msg.kind) {
     case 'system':
       return null
@@ -451,4 +452,4 @@ export function ChatMessageItem({ msg }) {
     default:
       return null
   }
-}
+})

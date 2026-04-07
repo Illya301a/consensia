@@ -4,6 +4,7 @@ import '../App.scss'
 import { Reveal } from '../components/Reveal.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import { useAuth } from '../services/AuthContext.jsx'
+import { apiFetch } from '../services/http.js'
 
 const ConsensiaScene = lazy(() =>
   import('../components/ConsensiaScene').then((m) => ({ default: m.ConsensiaScene }))
@@ -40,6 +41,10 @@ export default function HomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const profileRef = useRef(null)
+  const [promoInfo, setPromoInfo] = useState(null)
+  const [topUpAmount, setTopUpAmount] = useState('10')
+  const [topUpLoading, setTopUpLoading] = useState(false)
+  const [topUpError, setTopUpError] = useState('')
   const [dataCollection, setDataCollection] = useState(() => {
     try {
       const raw = localStorage.getItem(DATA_COLLECTION_KEY)
@@ -91,6 +96,53 @@ export default function HomePage() {
     }
   }, [dataCollection])
 
+  useEffect(() => {
+    if (!isAuthenticated) return
+    let cancelled = false
+    ;(async () => {
+      const r = await apiFetch('/api/promo/status')
+      if (cancelled || !r.ok) return
+      const data = await r.json().catch(() => null)
+      if (!cancelled && data && typeof data === 'object') setPromoInfo(data)
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [isAuthenticated])
+
+  const amountNum = Number(topUpAmount)
+  const promoMultiplier =
+    Number(promoInfo?.multiplier) > 0 ? Number(promoInfo.multiplier) : 200
+  const creditsPreview =
+    Number.isFinite(amountNum) && amountNum > 0
+      ? Math.floor(amountNum * promoMultiplier)
+      : 0
+
+  const handleTopUp = async () => {
+    const amount = Number(topUpAmount)
+    if (!Number.isFinite(amount) || amount < 1) {
+      setTopUpError('Минимальная сумма пополнения — 1$')
+      return
+    }
+    setTopUpError('')
+    setTopUpLoading(true)
+    try {
+      const r = await apiFetch('/payments/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount_usd: Math.round(amount) }),
+      })
+      const data = await r.json().catch(() => null)
+      if (!r.ok) throw new Error(data?.detail || 'Ошибка создания платежа')
+      if (!data?.checkout_url) throw new Error('Stripe checkout URL не получен')
+      window.location.href = data.checkout_url
+    } catch (e) {
+      setTopUpError(e?.message || String(e))
+    } finally {
+      setTopUpLoading(false)
+    }
+  }
+
   const closeMobileMenu = () => setMobileMenuOpen(false)
 
   return (
@@ -131,8 +183,32 @@ export default function HomePage() {
                       <div className="chat-app__profile-head">
                         <div className="chat-app__profile-title">{getUserLabel(user)}</div>
                         {getCredits(user) != null ? (
-                          <div className="chat-app__profile-sub">Кредиты: {getCredits(user)}</div>
+                          <div className="chat-app__profile-credits-line">
+                            <div className="chat-app__profile-sub">Кредиты: {getCredits(user)}</div>
+                            <div className="chat-app__topup-inline">
+                              <input
+                                className="chat-app__topup-input"
+                                type="number"
+                                min={1}
+                                step={1}
+                                value={topUpAmount}
+                                onChange={(e) => setTopUpAmount(e.target.value)}
+                                aria-label="Сумма пополнения в долларах"
+                              />
+                              <span className="chat-app__topup-preview">{creditsPreview} кр.</span>
+                              <button
+                                type="button"
+                                className="chat-app__topup-btn"
+                                onClick={handleTopUp}
+                                disabled={topUpLoading}
+                                title={`Курс: ${promoMultiplier} кредитов за $1`}
+                              >
+                                {topUpLoading ? '...' : 'Пополнить'}
+                              </button>
+                            </div>
+                          </div>
                         ) : null}
+                        {topUpError ? <div className="chat-app__profile-sub">{topUpError}</div> : null}
                       </div>
                       <div className="chat-app__profile-row">
                         <label className="chat-app__toggle">
