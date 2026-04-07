@@ -15,8 +15,10 @@
     "react": "^19.2.4",
     "react-diff-viewer": "^3.1.1",
     "react-dom": "^19.2.4",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^7.14.0",
     "react-syntax-highlighter": "^16.1.1",
+    "remark-gfm": "^4.0.1",
     "three": "^0.183.2"
   },
   "devDependencies": {

@@ -1,38 +1,255 @@
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+
+function shouldFold(text, threshold = 420) {
+  if (!text) return false
+  return String(text).length > threshold
+}
+
+function Fold({ title, defaultOpen, children }) {
+  return (
+    <details className="chat-msg__fold" open={defaultOpen}>
+      <summary className="chat-msg__fold-summary">{title}</summary>
+      <div className="chat-msg__fold-body">{children}</div>
+    </details>
+  )
+}
+
+function Markdown({ children }) {
+  let text = children == null ? '' : String(children)
+  // If backend double-escaped newlines, make Markdown readable.
+  if (text.includes('\\n') && !text.includes('\n')) {
+    text = text.replaceAll('\\n', '\n')
+  }
+  return (
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
+      components={{
+        p({ children: pChildren }) {
+          return <div className="md-p">{pChildren}</div>
+        },
+        h1({ children: hChildren }) {
+          return <div className="md-h md-h1">{hChildren}</div>
+        },
+        h2({ children: hChildren }) {
+          return <div className="md-h md-h2">{hChildren}</div>
+        },
+        h3({ children: hChildren }) {
+          return <div className="md-h md-h3">{hChildren}</div>
+        },
+        h4({ children: hChildren }) {
+          return <div className="md-h md-h4">{hChildren}</div>
+        },
+        ul({ children: listChildren }) {
+          return <div className="md-list md-ul">{listChildren}</div>
+        },
+        ol({ children: listChildren }) {
+          return <div className="md-list md-ol">{listChildren}</div>
+        },
+        li({ children: liChildren }) {
+          return <div className="md-li">{liChildren}</div>
+        },
+        blockquote({ children: bqChildren }) {
+          return <div className="md-quote">{bqChildren}</div>
+        },
+        img({ src, alt }) {
+          const href = src ? String(src) : ''
+          if (!href) return null
+          const label = alt ? String(alt) : 'image'
+          // Avoid broken inline images rendering as plain "image.png" text.
+          return (
+            <a className="md-img" href={href} target="_blank" rel="noreferrer">
+              {label}
+            </a>
+          )
+        },
+        code({ inline, className, children: codeChildren, ...props }) {
+          const match = /language-(\w+)/.exec(className || '')
+          const lang = match?.[1]
+          const code = String(codeChildren ?? '').replace(/\n$/, '')
+          if (inline) {
+            return (
+              <code className={className} {...props}>
+                {code}
+              </code>
+            )
+          }
+          return (
+            <SyntaxHighlighter
+              language={lang || 'text'}
+              style={oneLight}
+              showLineNumbers={false}
+              wrapLongLines
+              PreTag="div"
+              customStyle={{
+                background: 'rgba(255, 255, 255, 0.92)',
+                border: '1px solid rgba(244, 114, 182, 0.22)',
+                borderRadius: '10px',
+                fontSize: '0.78rem',
+                marginTop: '0.5rem',
+                overflowX: 'hidden',
+              }}
+            >
+              {code}
+            </SyntaxHighlighter>
+          )
+        },
+      }}
+    >
+      {text}
+    </ReactMarkdown>
+  )
+}
+
+function extractFencedCode(value) {
+  const raw = value == null ? '' : String(value)
+  const m = raw.match(/```(\w+)?\s*([\s\S]*?)\s*```/m)
+  if (!m) return { lang: null, code: raw }
+  const lang = m[1] ? String(m[1]).toLowerCase() : null
+  return { lang, code: m[2] ?? '' }
+}
+
+function CodeBlock({ value, defaultLanguage = 'text' }) {
+  const { lang, code } = extractFencedCode(value)
+  return (
+    <SyntaxHighlighter
+      language={lang || defaultLanguage}
+      style={oneLight}
+      showLineNumbers={false}
+      wrapLongLines
+      PreTag="div"
+      customStyle={{
+        background: 'rgba(255, 255, 255, 0.92)',
+        border: '1px solid rgba(244, 114, 182, 0.22)',
+        borderRadius: '10px',
+        fontSize: '0.78rem',
+        marginTop: '0.5rem',
+        overflowX: 'hidden',
+      }}
+    >
+      {String(code ?? '')}
+    </SyntaxHighlighter>
+  )
+}
+
+function UsageGrid({ usage }) {
+  const u = usage || {}
+  const prompt = u.prompt ?? u.prompt_tokens
+  const completion = u.completion ?? u.completion_tokens
+  const cached = u.cached ?? u.cached_tokens
+  return (
+    <div className="chat-msg__usage-grid" role="table" aria-label="usage">
+      <div className="chat-msg__usage-row" role="row">
+        <div className="chat-msg__usage-k" role="cell">
+          prompt
+        </div>
+        <div className="chat-msg__usage-v" role="cell">
+          {prompt ?? '—'}
+        </div>
+      </div>
+      <div className="chat-msg__usage-row" role="row">
+        <div className="chat-msg__usage-k" role="cell">
+          completion
+        </div>
+        <div className="chat-msg__usage-v" role="cell">
+          {completion ?? '—'}
+        </div>
+      </div>
+      <div className="chat-msg__usage-row" role="row">
+        <div className="chat-msg__usage-k" role="cell">
+          cached
+        </div>
+        <div className="chat-msg__usage-v" role="cell">
+          {cached ?? '—'}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function usageTitle(agent, usage) {
+  const u = usage || {}
+  const prompt = u.prompt ?? u.prompt_tokens
+  const completion = u.completion ?? u.completion_tokens
+  const cached = u.cached ?? u.cached_tokens
+  const total =
+    [prompt, completion, cached].every((x) => typeof x === 'number' && Number.isFinite(x))
+      ? prompt + completion + cached
+      : null
+  return `${String(agent || 'Agent')}${total != null ? ` · ${total}` : ''}`
+}
 
 export function ChatMessageItem({ msg }) {
   switch (msg.kind) {
     case 'system':
-      return (
-        <div className="chat-msg chat-msg--system">
-          <p>{msg.text}</p>
-        </div>
-      )
+      return null
     case 'user':
       return (
         <div className="chat-msg chat-msg--user">
-          <p>{msg.text}</p>
+          <div className="chat-msg__md">
+            <Markdown>{msg.text}</Markdown>
+          </div>
         </div>
       )
+    case 'task': {
+      const context = msg.context || ''
+      const code = msg.code || ''
+      const meta = `Режим: **${msg.mode || '—'}** · Раунды: **${msg.rounds ?? '—'}**`
+      return (
+        <div className="chat-msg chat-msg--user chat-msg--task">
+          <div className="chat-msg__md">
+            <div className="chat-msg__task-meta">
+              <Markdown>{meta}</Markdown>
+            </div>
+            {context ? (
+              <div className="chat-msg__task-context">
+                <Markdown>{context}</Markdown>
+              </div>
+            ) : null}
+            {code ? (
+              <Fold title="Код (свернуть/развернуть)" defaultOpen={false}>
+                <Markdown>{`\`\`\`\n${code}\n\`\`\``}</Markdown>
+              </Fold>
+            ) : null}
+          </div>
+        </div>
+      )
+    }
     case 'agent': {
       const c = msg.content || {}
+      const agentName = String(msg.agent || 'Agent')
+      const isJudge = /judge|arbiter|суд/i.test(agentName)
       const issues = Array.isArray(c.issues_found) ? c.issues_found : []
-      return (
-        <div className="chat-msg chat-msg--agent">
-          <div className="chat-msg__agent-head">
-            <span className="chat-msg__avatar" aria-hidden="true">
-              {String(msg.agent || 'A').slice(0, 1).toUpperCase()}
-            </span>
-            <div>
-              <strong className="chat-msg__agent-name">{msg.agent}</strong>
-              <span className="chat-msg__round">Round {msg.round}</span>
-            </div>
-          </div>
+      const thoughtsFold = shouldFold(c.thoughts, 280)
+      const summaryFold = shouldFold(c.summary, 320)
+      const hasMain =
+        Boolean(c.thoughts) || Boolean(c.summary) || (issues && issues.length > 0)
+      const body = (
+        <>
           {c.thoughts ? (
-            <p className="chat-msg__thoughts">{c.thoughts}</p>
+            <div className="chat-msg__thoughts chat-msg__md">
+              {thoughtsFold ? (
+                <Fold title="Thoughts" defaultOpen={false}>
+                  <Markdown>{c.thoughts}</Markdown>
+                </Fold>
+              ) : (
+                <Markdown>{c.thoughts}</Markdown>
+              )}
+            </div>
           ) : null}
-          {c.summary ? <p className="chat-msg__summary">{c.summary}</p> : null}
+          {c.summary ? (
+            <div className="chat-msg__summary chat-msg__md">
+              {summaryFold ? (
+                <Fold title="Summary" defaultOpen={false}>
+                  <Markdown>{c.summary}</Markdown>
+                </Fold>
+              ) : (
+                <Markdown>{c.summary}</Markdown>
+              )}
+            </div>
+          ) : null}
           {issues.length > 0 ? (
             <ul className="chat-msg__issues">
               {issues.map((issue, i) => (
@@ -40,28 +257,63 @@ export function ChatMessageItem({ msg }) {
                   <span className={`chat-msg__badge chat-msg__badge--${issue.type || 'note'}`}>
                     {issue.type || 'issue'}
                   </span>
-                  {issue.description ? <p>{issue.description}</p> : null}
+                  {issue.description ? (
+                    <div className="chat-msg__md">
+                      {shouldFold(issue.description) ? (
+                        <Fold title="Описание" defaultOpen={false}>
+                          <Markdown>{issue.description}</Markdown>
+                        </Fold>
+                      ) : (
+                        <Markdown>{issue.description}</Markdown>
+                      )}
+                    </div>
+                  ) : null}
                   {issue.snippet ? (
-                    <SyntaxHighlighter
-                      language="javascript"
-                      style={oneLight}
-                      showLineNumbers={false}
-                      PreTag="div"
-                      customStyle={{
-                        background: 'rgba(255, 255, 255, 0.92)',
-                        border: '1px solid rgba(244, 114, 182, 0.22)',
-                        borderRadius: '10px',
-                        fontSize: '0.78rem',
-                        marginTop: '0.5rem',
-                      }}
-                    >
-                      {String(issue.snippet)}
-                    </SyntaxHighlighter>
+                    <Fold title="Snippet" defaultOpen={!shouldFold(issue.snippet, 240)}>
+                      <SyntaxHighlighter
+                        language="javascript"
+                        style={oneLight}
+                        showLineNumbers={false}
+                        wrapLongLines
+                        PreTag="div"
+                        customStyle={{
+                          background: 'rgba(255, 255, 255, 0.92)',
+                          border: '1px solid rgba(244, 114, 182, 0.22)',
+                          borderRadius: '10px',
+                          fontSize: '0.78rem',
+                          marginTop: '0.5rem',
+                          overflowX: 'hidden',
+                        }}
+                      >
+                        {String(issue.snippet)}
+                      </SyntaxHighlighter>
+                    </Fold>
                   ) : null}
                 </li>
               ))}
             </ul>
           ) : null}
+          {!hasMain && c.raw ? (
+            <div className="chat-msg__md">
+              <Fold title="Raw" defaultOpen={false}>
+                <Markdown>{c.raw}</Markdown>
+              </Fold>
+            </div>
+          ) : null}
+        </>
+      )
+      return (
+        <div className="chat-msg chat-msg--agent">
+          <div className="chat-msg__agent-head">
+            <span className="chat-msg__avatar" aria-hidden="true">
+              {String(agentName || 'A').slice(0, 1).toUpperCase()}
+            </span>
+            <div>
+              <strong className="chat-msg__agent-name">{agentName}</strong>
+              <span className="chat-msg__round">Round {msg.round}</span>
+            </div>
+          </div>
+          {isJudge ? body : <Fold title="Показать ответ" defaultOpen={false}>{body}</Fold>}
         </div>
       )
     }
@@ -70,15 +322,28 @@ export function ChatMessageItem({ msg }) {
       const fixes = Array.isArray(c.critical_fixes) ? c.critical_fixes : []
       const improvements = Array.isArray(c.improvements) ? c.improvements : []
       const diff = c.unified_diff ?? c.diff ?? ''
+      const finalCode = c.final_code ?? ''
+      const summary = c.summary ?? ''
+      const hasMain =
+        fixes.length > 0 || improvements.length > 0 || Boolean(diff) || Boolean(finalCode) || Boolean(summary)
       return (
         <div className="chat-msg chat-msg--final">
           <h3 className="chat-msg__final-title">Final verdict</h3>
+          {summary ? (
+            <div className="chat-msg__summary chat-msg__md">
+              <Markdown>{summary}</Markdown>
+            </div>
+          ) : null}
           {fixes.length > 0 ? (
             <div className="chat-msg__list-block">
               <h4>Critical fixes</h4>
               <ul>
                 {fixes.map((x, i) => (
-                  <li key={i}>{typeof x === 'string' ? x : JSON.stringify(x)}</li>
+                  <li key={i}>
+                    <div className="chat-msg__md">
+                      <Markdown>{typeof x === 'string' ? x : JSON.stringify(x)}</Markdown>
+                    </div>
+                  </li>
                 ))}
               </ul>
             </div>
@@ -88,27 +353,99 @@ export function ChatMessageItem({ msg }) {
               <h4>Improvements</h4>
               <ul>
                 {improvements.map((x, i) => (
-                  <li key={i}>{typeof x === 'string' ? x : JSON.stringify(x)}</li>
+                  <li key={i}>
+                    <div className="chat-msg__md">
+                      <Markdown>{typeof x === 'string' ? x : JSON.stringify(x)}</Markdown>
+                    </div>
+                  </li>
                 ))}
               </ul>
             </div>
           ) : null}
+          <div className="chat-msg__list-block">
+            <h4>Final code</h4>
+            <div className="chat-msg__code">
+              <CodeBlock value={finalCode} defaultLanguage="python" />
+            </div>
+          </div>
           {diff ? (
-            <pre className="chat-msg__diff">{String(diff)}</pre>
+            <div className="chat-msg__list-block">
+              <h4>Diff</h4>
+              <Fold title="Показать diff" defaultOpen={false}>
+                <pre className="chat-msg__diff">{String(diff)}</pre>
+              </Fold>
+            </div>
           ) : null}
+          {!hasMain && c.raw ? (
+            <div className="chat-msg__md">
+              <Fold title="Raw" defaultOpen={false}>
+                <Markdown>{c.raw}</Markdown>
+              </Fold>
+            </div>
+          ) : null}
+        </div>
+      )
+    }
+    case 'chat': {
+      const role = String(msg.role || 'judge')
+      return (
+        <div className={`chat-msg chat-msg--chat chat-msg--chat-${role.toLowerCase()}`}>
+          <div className="chat-msg__md">
+            {shouldFold(msg.text, 900) ? (
+              <Fold title="Показать сообщение" defaultOpen={false}>
+                <Markdown>{msg.text}</Markdown>
+              </Fold>
+            ) : (
+              <Markdown>{msg.text}</Markdown>
+            )}
+          </div>
+        </div>
+      )
+    }
+    case 'usage': {
+      const title = `${usageTitle(msg.agent, msg.usage)} usage`
+      return (
+        <div className="chat-msg chat-msg--usage">
+          <Fold title={title} defaultOpen={false}>
+            <UsageGrid usage={msg.usage} />
+          </Fold>
+        </div>
+      )
+    }
+    case 'usage_group': {
+      const events = Array.isArray(msg.events) ? msg.events : []
+      const sorted = events
+        .slice()
+        .sort((a, b) => String(a.agent || '').localeCompare(String(b.agent || ''), undefined, { sensitivity: 'base' }))
+      const title = `Usage · ${sorted.length}`
+      return (
+        <div className="chat-msg chat-msg--usage">
+          <Fold title={title} defaultOpen={false}>
+            <div className="chat-msg__usage-group">
+              {sorted.map((e) => (
+                <Fold key={e.id || `${e.agent}`} title={usageTitle(e.agent, e.usage)} defaultOpen={false}>
+                  <UsageGrid usage={e.usage} />
+                </Fold>
+              ))}
+            </div>
+          </Fold>
         </div>
       )
     }
     case 'stream':
       return (
         <div className="chat-msg chat-msg--stream">
-          <p>{msg.text}</p>
+          <div className="chat-msg__md">
+            <Markdown>{msg.text}</Markdown>
+          </div>
         </div>
       )
     case 'error':
       return (
         <div className="chat-msg chat-msg--error" role="alert">
-          <p>{msg.text}</p>
+          <div className="chat-msg__md">
+            <Markdown>{msg.text}</Markdown>
+          </div>
         </div>
       )
     default:

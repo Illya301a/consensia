@@ -1,16 +1,68 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import '../App.scss'
 import './AppPage.scss'
 import { ChatMessageItem } from '../components/ChatMessageItem.jsx'
 import { useAuth } from '../services/AuthContext.jsx'
+import {
+  buildResumeMessagesFromSessionData,
+  deleteSession,
+  fetchSessionDetails,
+  fetchSessionsList,
+  normalizeSessionsFromApi,
+} from '../services/sessionsApi.js'
 import { useOrchestratorWs } from '../services/useOrchestratorWs.js'
+
+const DATA_COLLECTION_KEY = 'consensia_data_collection_v1'
 
 const MODES = [
   { value: 'ECONOMY', label: 'Экономия' },
   { value: 'BALANCED', label: 'Баланс' },
   { value: 'MAX_POWER', label: 'Максимум' },
 ]
+
+function modeLabel(value) {
+  const m = MODES.find((x) => x.value === value)
+  return m ? m.label : value || '—'
+}
+
+function formatWhen(ts) {
+  const d = new Date(ts)
+  if (Number.isNaN(d.getTime())) return ''
+  return d.toLocaleDateString(undefined, { month: 'short', day: '2-digit' })
+}
+
+function getUserLabel(user) {
+  if (!user || typeof user !== 'object') return 'Профиль'
+  return (
+    user.email ||
+    user.name ||
+    user.full_name ||
+    user.display_name ||
+    user.given_name ||
+    'Профиль'
+  )
+}
+
+function getCredits(user) {
+  if (!user || typeof user !== 'object') return null
+  const candidates = [
+    user.credits,
+    user.credit_balance,
+    user.balance,
+    user.remaining_credits,
+  ]
+  for (const v of candidates) {
+    if (typeof v === 'number' && Number.isFinite(v)) return v
+    if (typeof v === 'string' && v.trim() && Number.isFinite(Number(v))) return Number(v)
+  }
+  return null
+}
+
+async function readTextFile(file, maxBytes = 400_000) {
+  if (file.size > maxBytes) throw new Error('file too large')
+  return await file.text()
+}
 
 function statusLabel(status) {
   switch (status) {
@@ -29,16 +81,18 @@ export default function AppPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const sessionFromUrl = searchParams.get('session') || ''
-  const { token, isAuthenticated, authChecked, loginWithGoogle, logout } = useAuth()
+  const { token, user, isAuthenticated, authChecked, loginWithGoogle, logout } = useAuth()
 
   const {
     status,
     messages,
+    usageEvents,
     inputLocked,
     lastError,
     connect,
     disconnect,
     sendFollowUp,
+    sessionId,
   } = useOrchestratorWs({
     onSessionId: (sid) => {
       navigate(`/app?session=${encodeURIComponent(sid)}`, { replace: true })
@@ -47,20 +101,58 @@ export default function AppPage() {
 
   const [code, setCode] = useState('const example = () => {\n  return 1;\n};')
   const [context, setContext] = useState('')
-  const [rounds, setRounds] = useState(3)
-  const [mode, setMode] = useState('BALANCED')
+  const [rounds, setRounds] = useState(1)
+  const [mode, setMode] = useState('ECONOMY')
   const [draft, setDraft] = useState('')
   const [showSetup, setShowSetup] = useState(true)
   const [authGateError, setAuthGateError] = useState('')
 
+  const [attached, setAttached] = useState([])
+  const [attachError, setAttachError] = useState('')
+
+  const [sessions, setSessions] = useState([])
+  const [sessionsLoading, setSessionsLoading] = useState(false)
+  const [sessionsError, setSessionsError] = useState(null)
+  const [sessionLoading, setSessionLoading] = useState(false)
+  const [sessionLoadError, setSessionLoadError] = useState(null)
+
+  const [profileOpen, setProfileOpen] = useState(false)
+  const profileRef = useRef(null)
+  const [dataCollection, setDataCollection] = useState(() => {
+    try {
+      const raw = localStorage.getItem(DATA_COLLECTION_KEY)
+      if (raw == null) return true
+      return raw === 'true'
+    } catch {
+      return true
+    }
+  })
+
+  const codeRef = useRef(code)
+  const modeRef = useRef(mode)
+  const contextRef = useRef(context)
+  const roundsRef = useRef(rounds)
+  /** Avoid re-running session load while WS is already connecting/open for the same ?session= */
+  const urlSessionConnectRef = useRef('')
+  /** Prevent stale `?session=` effect right after pressing "Новый чат". */
+  const suppressUrlSessionLoadRef = useRef(false)
+  useEffect(() => {
+    codeRef.current = code
+    modeRef.current = mode
+    contextRef.current = context
+    roundsRef.current = rounds
+  }, [code, mode, context, rounds])
+
   const endRef = useRef(null)
   const inputRef = useRef(null)
+  const messagesRef = useRef(null)
 
   useEffect(() => {
     const err = searchParams.get('error')
     if (!err) return
     try {
       const decoded = decodeURIComponent(err)
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- this is a one-off URL-to-UI sync
       setAuthGateError(
         decoded === 'auth' ? 'Не удалось войти. Попробуйте ещё раз.' : decoded
       )
@@ -75,7 +167,43 @@ export default function AppPage() {
   }, [isAuthenticated, disconnect])
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (!isAuthenticated || !token) return
+    let cancelled = false
+    ;(async () => {
+      setSessionsLoading(true)
+      setSessionsError(null)
+      const res = await fetchSessionsList()
+      if (cancelled) return
+      setSessionsLoading(false)
+      if (!res.ok) {
+        setSessionsError(res.error || 'Не удалось загрузить список сессий')
+        setSessions([])
+        return
+      }
+      setSessions(normalizeSessionsFromApi(res.sessions))
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [isAuthenticated, token])
+
+  useEffect(() => {
+    if (!sessionId || !isAuthenticated) return
+    let cancelled = false
+    ;(async () => {
+      const res = await fetchSessionsList()
+      if (cancelled || !res.ok) return
+      setSessions(normalizeSessionsFromApi(res.sessions))
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [sessionId, isAuthenticated])
+
+  useEffect(() => {
+    const el = messagesRef.current
+    if (!el) return
+    el.scrollTop = el.scrollHeight
   }, [messages])
 
   useEffect(() => {
@@ -84,27 +212,176 @@ export default function AppPage() {
     }
   }, [inputLocked, status])
 
+  const fullCode = useMemo(() => {
+    if (!attached.length) return code
+    const parts = [code.trimEnd()]
+    for (const f of attached) {
+      parts.push(
+        '',
+        `/* FILE: ${f.name} */`,
+        String(f.text ?? '').trimEnd(),
+        `/* END FILE: ${f.name} */`
+      )
+    }
+    return parts.join('\n')
+  }, [code, attached])
+
+  useEffect(() => {
+    if (!sessionFromUrl) {
+      suppressUrlSessionLoadRef.current = false
+      urlSessionConnectRef.current = ''
+      return
+    }
+    if (suppressUrlSessionLoadRef.current) return
+    if (!token || !isAuthenticated) {
+      urlSessionConnectRef.current = ''
+      return
+    }
+    if (sessionId === sessionFromUrl && status === 'open') return
+    if (
+      (status === 'connecting' || status === 'open') &&
+      urlSessionConnectRef.current === sessionFromUrl
+    ) {
+      return
+    }
+
+    urlSessionConnectRef.current = sessionFromUrl
+
+    let cancelled = false
+    ;(async () => {
+      setSessionLoadError(null)
+      setSessionLoading(true)
+      setShowSetup(false)
+      try {
+        const res = await fetchSessionDetails(sessionFromUrl)
+        if (cancelled) return
+        if (!res.ok) {
+          setSessionLoadError(res.error || 'Не удалось загрузить сессию')
+          return
+        }
+        const d = res.detail || {}
+        const sd = d.session_data || {}
+        const resumeBase = buildResumeMessagesFromSessionData(sd)
+        const hasUserInHistory = resumeBase.some((m) => m?.kind === 'user' || m?.kind === 'task')
+        const firstTask = resumeBase.find((m) => m?.kind === 'task')
+        const codeBody =
+          (typeof d.final_code === 'string' && d.final_code.length ? d.final_code : '') ||
+          (typeof d.original_code === 'string' && d.original_code.length ? d.original_code : '') ||
+          (typeof sd.last_code_version === 'string' && sd.last_code_version.length
+            ? sd.last_code_version
+            : '') ||
+          ''
+        if (codeBody) setCode(codeBody)
+        setAttached([])
+        const sdMode = sd.mode
+        if (typeof sdMode === 'string' && MODES.some((m) => m.value === sdMode)) {
+          setMode(sdMode)
+        }
+        const cr = sd.current_round
+        if (typeof cr === 'number' && cr >= 1 && cr <= 3) setRounds(cr)
+
+        const codeForWs = codeBody || codeRef.current
+        const modeForWs = (typeof sdMode === 'string' && sdMode ? sdMode : null) || modeRef.current
+        const roundsForWs =
+          typeof cr === 'number' && cr >= 1 && cr <= 3 ? cr : roundsRef.current
+        const initialContext =
+          (typeof sd.context === 'string' && sd.context.trim() ? sd.context.trim() : '') ||
+          (typeof d.context === 'string' && d.context.trim() ? d.context.trim() : '') ||
+          (typeof sd.prompt === 'string' && sd.prompt.trim() ? sd.prompt.trim() : '') ||
+          (typeof d.prompt === 'string' && d.prompt.trim() ? d.prompt.trim() : '') ||
+          (typeof sd.user_message === 'string' && sd.user_message.trim()
+            ? sd.user_message.trim()
+            : '') ||
+          (typeof d.user_message === 'string' && d.user_message.trim()
+            ? d.user_message.trim()
+            : '') ||
+          (typeof firstTask?.context === 'string' && firstTask.context.trim()
+            ? firstTask.context.trim()
+            : '') ||
+          contextRef.current
+        const originalCode =
+          (typeof d.original_code === 'string' && d.original_code.length ? d.original_code : '') ||
+          (typeof sd.original_code === 'string' && sd.original_code.length ? sd.original_code : '') ||
+          (typeof firstTask?.code === 'string' && firstTask.code.length ? firstTask.code : '') ||
+          codeForWs
+        const ctx = initialContext
+        const resumeMessages =
+          !hasUserInHistory && (initialContext || originalCode)
+            ? [
+                {
+                  id: `task-${Date.now()}`,
+                  kind: 'task',
+                  context: initialContext,
+                  code: originalCode,
+                  mode: modeForWs,
+                  rounds: roundsForWs,
+                },
+                ...resumeBase,
+              ]
+            : resumeBase
+
+        connect({
+          token,
+          sessionId: sessionFromUrl,
+          mode: modeForWs,
+          code: codeForWs,
+          context: ctx,
+          rounds: roundsForWs,
+          ui: {
+            context: ctx,
+            code: codeForWs,
+            mode: modeForWs,
+            rounds: roundsForWs,
+          },
+          resumeMessages: resumeMessages.length ? resumeMessages : undefined,
+        })
+      } catch (e) {
+        if (!cancelled) setSessionLoadError(e?.message || String(e))
+      } finally {
+        if (!cancelled) setSessionLoading(false)
+      }
+    })()
+
+    return () => {
+      cancelled = true
+    }
+  }, [sessionFromUrl, token, isAuthenticated, sessionId, status, connect])
+
   const handleStart = useCallback(
     (e) => {
       e.preventDefault()
       if (!token) return
+      setProfileOpen(false)
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
       connect({
         token,
         sessionId: sessionFromUrl || null,
         mode,
-        code,
+        code: fullCode,
         context,
         rounds,
+        ui: {
+          context,
+          code: fullCode,
+          mode,
+          rounds,
+        },
       })
       setShowSetup(false)
     },
-    [connect, token, sessionFromUrl, mode, code, context, rounds]
+    [connect, token, sessionFromUrl, mode, fullCode, context, rounds]
   )
 
   const handleNewSession = useCallback(() => {
+    suppressUrlSessionLoadRef.current = true
+    urlSessionConnectRef.current = ''
     disconnect()
+    setSessionLoading(false)
     navigate('/app', { replace: true })
     setShowSetup(true)
+    setProfileOpen(false)
+    setSessionLoadError(null)
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
   }, [disconnect, navigate])
 
   const handleLogout = useCallback(() => {
@@ -113,11 +390,100 @@ export default function AppPage() {
     navigate('/', { replace: true })
   }, [disconnect, logout, navigate])
 
+  useEffect(() => {
+    try {
+      localStorage.setItem(DATA_COLLECTION_KEY, dataCollection ? 'true' : 'false')
+    } catch {
+      /* ignore */
+    }
+  }, [dataCollection])
+
+  useEffect(() => {
+    const onDown = (ev) => {
+      const el = profileRef.current
+      if (!el) return
+      if (ev.target instanceof Node && !el.contains(ev.target)) setProfileOpen(false)
+    }
+    const onKey = (ev) => {
+      if (ev.key === 'Escape') setProfileOpen(false)
+    }
+    if (profileOpen) {
+      window.addEventListener('mousedown', onDown)
+      window.addEventListener('keydown', onKey)
+    }
+    return () => {
+      window.removeEventListener('mousedown', onDown)
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [profileOpen])
+
+  const handlePickFiles = useCallback(async (e) => {
+    const files = Array.from(e.target.files || [])
+    e.target.value = ''
+    if (!files.length) return
+    setAttachError('')
+    try {
+      const texts = await Promise.all(
+        files.map(async (file) => ({
+          name: file.name,
+          size: file.size,
+          text: await readTextFile(file),
+        }))
+      )
+      setAttached((prev) => {
+        const merged = [...prev]
+        for (const t of texts) {
+          if (merged.some((p) => p.name === t.name && p.size === t.size)) continue
+          merged.push(t)
+        }
+        return merged.slice(0, 10)
+      })
+    } catch {
+      setAttachError('Не удалось прочитать файл (слишком большой или недоступен).')
+    }
+  }, [])
+
+  const removeAttachment = useCallback((name, size) => {
+    setAttached((prev) => prev.filter((f) => !(f.name === name && f.size === size)))
+  }, [])
+
+  const openHistorySession = useCallback(
+    (sid) => {
+      setProfileOpen(false)
+      disconnect()
+      setShowSetup(false)
+      setSessionLoadError(null)
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+      navigate(`/app?session=${encodeURIComponent(sid)}`, { replace: true })
+    },
+    [disconnect, navigate]
+  )
+
+  const deleteHistorySession = useCallback(
+    async (sid) => {
+      try {
+        const res = await deleteSession(sid)
+        if (!res.ok) throw new Error(res.error || 'Не удалось удалить сессию')
+        setSessions((prev) => prev.filter((x) => x.id !== sid))
+        const activeSid = sessionFromUrl || sessionId || ''
+        if (activeSid && sid === activeSid) {
+          disconnect()
+          navigate('/app', { replace: true })
+          setShowSetup(true)
+        }
+      } catch (e) {
+        window.alert(e?.message || String(e))
+      }
+    },
+    [disconnect, navigate, sessionFromUrl, sessionId]
+  )
+
   const handleSend = useCallback(
     (e) => {
       e.preventDefault()
       const text = draft.trim()
       if (!text) return
+      setProfileOpen(false)
       sendFollowUp(text)
       setDraft('')
     },
@@ -133,6 +499,9 @@ export default function AppPage() {
 
   const busy = status === 'connecting'
   const statusText = statusLabel(status)
+  const waitingForAi = status === 'open' && inputLocked
+  const hasFinalVerdict = messages.some((m) => m.kind === 'final')
+  const activeSid = sessionFromUrl || sessionId || ''
 
   if (!authChecked) {
     return (
@@ -161,7 +530,7 @@ export default function AppPage() {
           <section className="chat-app__auth">
             <h1 className="chat-app__auth-title">Вход в Consensia</h1>
             <p className="chat-app__auth-lede">
-              Чтобы пользоваться анализом, войдите через Google — так мы связываем сессии с вашим
+              Чтобы пользоваться чатом, войдите через Google — так мы связываем сессии с вашим
               аккаунтом.
             </p>
             {authGateError ? (
@@ -204,124 +573,279 @@ export default function AppPage() {
 
   return (
     <div className="chat-app">
-      <div className="chat-app__shell">
+      <div className="chat-app__shell chat-app__shell--wide">
         <header className="chat-app__header">
           <div className="chat-app__brand">
             <Link to="/" className="chat-app__logo">
               Consensia
             </Link>
-            <span className="chat-app__badge">Анализ</span>
+            <span className="chat-app__badge">Beta</span>
           </div>
           <div className="chat-app__header-actions">
             {statusText ? <span className="chat-app__meta">{statusText}</span> : null}
             <button type="button" className="chat-app__btn" onClick={handleNewSession}>
-              Новый анализ
+              Новый чат
             </button>
-            <button type="button" className="chat-app__btn chat-app__btn--ghost" onClick={handleLogout}>
-              Выйти
-            </button>
-            <Link to="/" className="chat-app__link">
-              Главная
-            </Link>
+            <div className="chat-app__profile" ref={profileRef}>
+              <button
+                type="button"
+                className="chat-app__profile-btn"
+                onClick={() => setProfileOpen((v) => !v)}
+                aria-haspopup="menu"
+                aria-expanded={profileOpen ? 'true' : 'false'}
+              >
+                <span className="chat-app__profile-avatar" aria-hidden="true">
+                  {String(getUserLabel(user)).slice(0, 1).toUpperCase()}
+                </span>
+              </button>
+              {profileOpen ? (
+                <div className="chat-app__profile-pop" role="menu">
+                  <div className="chat-app__profile-head">
+                    <div className="chat-app__profile-title">{getUserLabel(user)}</div>
+                    {getCredits(user) != null ? (
+                      <div className="chat-app__profile-sub">Кредиты: {getCredits(user)}</div>
+                    ) : null}
+                  </div>
+
+                  <div className="chat-app__profile-row">
+                    <label className="chat-app__toggle">
+                      <input
+                        type="checkbox"
+                        checked={dataCollection}
+                        onChange={(e) => setDataCollection(e.target.checked)}
+                      />
+                      <span className="chat-app__toggle-ui" aria-hidden="true" />
+                      <span>Сбор данных</span>
+                    </label>
+                  </div>
+
+                  <div className="chat-app__profile-actions">
+                    <button type="button" className="chat-app__profile-logout" onClick={handleLogout}>
+                      Выйти
+                    </button>
+                    <Link to="/" className="chat-app__profile-link" onClick={() => setProfileOpen(false)}>
+                      Главная
+                    </Link>
+                  </div>
+                </div>
+              ) : null}
+            </div>
           </div>
         </header>
 
-        {showSetup ? (
-          <section className="chat-app__setup">
-            <form className="chat-app__setup-card" onSubmit={handleStart}>
-              <h2 className="chat-app__setup-title">Новый анализ</h2>
-              <p className="chat-app__setup-lede">
-                Вставьте код и при необходимости опишите задачу — модели проведут раунды разбора.
-              </p>
-              <div className="chat-app__field">
-                <label htmlFor="code">Код</label>
-                <textarea
-                  id="code"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  spellCheck={false}
-                />
-              </div>
-              <div className="chat-app__field">
-                <label htmlFor="ctx">Задача (по желанию)</label>
-                <input
-                  id="ctx"
-                  value={context}
-                  onChange={(e) => setContext(e.target.value)}
-                  placeholder="Например: найди уязвимости и предложи правки"
-                />
-              </div>
-              <div className="chat-app__row">
-                <div className="chat-app__field">
-                  <label htmlFor="mode">Режим</label>
-                  <select id="mode" value={mode} onChange={(e) => setMode(e.target.value)}>
-                    {MODES.map((m) => (
-                      <option key={m.value} value={m.value}>
-                        {m.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="chat-app__field">
-                  <label htmlFor="rounds">Раунды</label>
-                  <select
-                    id="rounds"
-                    value={rounds}
-                    onChange={(e) => setRounds(Number(e.target.value))}
-                  >
-                    <option value={1}>1</option>
-                    <option value={2}>2</option>
-                    <option value={3}>3</option>
-                  </select>
-                </div>
-              </div>
-              {sessionFromUrl ? (
-                <p className="chat-app__hint">Продолжаем сохранённую сессию.</p>
-              ) : null}
-              <button type="submit" className="chat-app__submit" disabled={busy}>
-                {busy ? 'Подключение…' : 'Запустить анализ'}
+        <div className="chat-app__layout">
+          <aside className="chat-app__sidebar" aria-label="История чатов">
+            <div className="chat-app__sidebar-head">
+              <div className="chat-app__sidebar-title">История</div>
+              <button type="button" className="chat-app__sidebar-new" onClick={handleNewSession} title="Новый чат">
+                +
               </button>
-            </form>
-          </section>
-        ) : null}
-
-        {!showSetup || messages.length > 0 ? (
-          <div className="chat-app__messages-wrap">
-            <div className="chat-app__messages" role="log" aria-live="polite">
-              {messages.map((msg) => (
-                <ChatMessageItem key={msg.id} msg={msg} />
-              ))}
-              <div ref={endRef} />
             </div>
-
-            <div className="chat-app__composer">
-              <form className="chat-app__composer-inner" onSubmit={handleSend}>
-                <textarea
-                  ref={inputRef}
-                  className="chat-app__input"
-                  rows={1}
-                  value={draft}
-                  onChange={(e) => setDraft(e.target.value)}
-                  onKeyDown={onKeyDown}
-                  placeholder={
-                    inputLocked
-                      ? 'Ожидаем ответ оркестратора…'
-                      : 'Ваш ответ оркестратору…'
-                  }
-                  disabled={inputLocked || status !== 'open'}
-                />
-                <button
-                  type="submit"
-                  className="chat-app__send"
-                  disabled={inputLocked || status !== 'open' || !draft.trim()}
-                  aria-label="Отправить"
-                >
-                  ↑
-                </button>
-              </form>
+            <div className="chat-app__sidebar-list" role="list">
+              {sessionsLoading && !sessions.length ? (
+                <div className="chat-app__sidebar-empty">Загрузка…</div>
+              ) : sessionsError ? (
+                <div className="chat-app__sidebar-empty" role="alert">
+                  {sessionsError}
+                </div>
+              ) : sessions.length ? (
+                sessions.map((h) => {
+                  const isActive = activeSid && h.id === activeSid
+                  return (
+                    <div
+                      key={h.id}
+                      className={
+                        'chat-app__sidebar-item' + (isActive ? ' chat-app__sidebar-item--active' : '')
+                      }
+                      role="listitem"
+                      title={h.id}
+                    >
+                      <button
+                        type="button"
+                        className="chat-app__sidebar-open"
+                        onClick={() => openHistorySession(h.id)}
+                      >
+                        <div className="chat-app__sidebar-item-title">
+                          {modeLabel(h.mode)} · {h.id.slice(0, 8)}
+                        </div>
+                        <div className="chat-app__sidebar-item-meta">{formatWhen(h.createdAt)}</div>
+                      </button>
+                      <button
+                        type="button"
+                        className="chat-app__sidebar-delete"
+                        onClick={() => deleteHistorySession(h.id)}
+                        aria-label="Удалить сессию"
+                        title="Удалить"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  )
+                })
+              ) : (
+                <div className="chat-app__sidebar-empty">Тут появятся ваши чаты после первого запуска.</div>
+              )}
             </div>
-          </div>
-        ) : null}
+          </aside>
+
+          <main className="chat-app__main">
+            {showSetup ? (
+              <section className="chat-app__setup">
+                <form className="chat-app__setup-card" onSubmit={handleStart}>
+                  <h2 className="chat-app__setup-title">Новый чат</h2>
+                  <p className="chat-app__setup-lede">
+                    Вставьте код или приложите файлы — и опишите задачу.
+                  </p>
+                  <div className="chat-app__field">
+                    <label htmlFor="code">Код</label>
+                    <textarea
+                      id="code"
+                      value={code}
+                      onChange={(e) => setCode(e.target.value)}
+                      spellCheck={false}
+                    />
+                    <div className="chat-app__attach">
+                      <label className="chat-app__attach-btn">
+                        <input
+                          type="file"
+                          multiple
+                          onChange={handlePickFiles}
+                          accept=".js,.jsx,.ts,.tsx,.py,.go,.rs,.java,.kt,.cs,.cpp,.c,.h,.hpp,.json,.yml,.yaml,.toml,.md,.txt,.html,.css,.scss,.sql"
+                        />
+                        Прикрепить файлы к коду
+                      </label>
+                      {attachError ? (
+                        <div className="chat-app__attach-error" role="alert">
+                          {attachError}
+                        </div>
+                      ) : null}
+                      {attached.length ? (
+                        <div className="chat-app__attach-list" role="list">
+                          {attached.map((f) => (
+                            <div key={`${f.name}:${f.size}`} className="chat-app__attach-item" role="listitem">
+                              <span className="chat-app__attach-name">{f.name}</span>
+                              <button
+                                type="button"
+                                className="chat-app__attach-remove"
+                                onClick={() => removeAttachment(f.name, f.size)}
+                                aria-label={`Удалить ${f.name}`}
+                              >
+                                ×
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="chat-app__field">
+                    <label htmlFor="ctx">Задача (по желанию)</label>
+                    <input
+                      id="ctx"
+                      value={context}
+                      onChange={(e) => setContext(e.target.value)}
+                      placeholder="Например: найди уязвимости и предложи правки"
+                    />
+                  </div>
+                  <div className="chat-app__row">
+                    <div className="chat-app__field">
+                      <label htmlFor="mode">Режим</label>
+                      <select id="mode" value={mode} onChange={(e) => setMode(e.target.value)}>
+                        {MODES.map((m) => (
+                          <option key={m.value} value={m.value}>
+                            {m.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="chat-app__field">
+                      <label htmlFor="rounds">Раунды</label>
+                      <select
+                        id="rounds"
+                        value={rounds}
+                        onChange={(e) => setRounds(Number(e.target.value))}
+                      >
+                        <option value={1}>1</option>
+                        <option value={2}>2</option>
+                        <option value={3}>3</option>
+                      </select>
+                    </div>
+                  </div>
+                  {sessionFromUrl ? (
+                    <p className="chat-app__hint">Продолжаем сохранённую сессию.</p>
+                  ) : null}
+                  <button type="submit" className="chat-app__submit" disabled={busy}>
+                    {busy ? 'Подключение…' : 'Запустить'}
+                  </button>
+                </form>
+              </section>
+            ) : null}
+
+            {!showSetup || messages.length > 0 ? (
+              <div className="chat-app__messages-wrap">
+                {sessionLoading ? (
+                  <p className="chat-app__hint" aria-live="polite">
+                    Загрузка сессии…
+                  </p>
+                ) : null}
+                {sessionLoadError ? (
+                  <p className="chat-app__hint" role="alert">
+                    {sessionLoadError}
+                  </p>
+                ) : null}
+                <div ref={messagesRef} className="chat-app__messages" role="log" aria-live="polite">
+                  {messages.map((msg) => (
+                    <ChatMessageItem key={msg.id} msg={msg} />
+                  ))}
+                  {hasFinalVerdict && usageEvents.length ? (
+                    <div className="chat-app__usage-after-final" aria-label="Usage">
+                      <ChatMessageItem
+                        key="usage-group"
+                        msg={{ id: 'usage-group', kind: 'usage_group', events: usageEvents }}
+                      />
+                    </div>
+                  ) : null}
+                  <div ref={endRef} />
+                </div>
+
+                <div className="chat-app__composer">
+                  {waitingForAi ? (
+                    <div className="chat-app__typing" aria-live="polite" aria-label="Генерация ответа">
+                      <span className="chat-app__typing-dot" />
+                      <span className="chat-app__typing-dot" />
+                      <span className="chat-app__typing-dot" />
+                      <span className="chat-app__typing-text">Генерируем ответ…</span>
+                    </div>
+                  ) : null}
+                  <form className="chat-app__composer-inner" onSubmit={handleSend}>
+                    <textarea
+                      ref={inputRef}
+                      className="chat-app__input"
+                      rows={1}
+                      value={draft}
+                      onChange={(e) => setDraft(e.target.value)}
+                      onKeyDown={onKeyDown}
+                      placeholder={
+                        inputLocked
+                          ? 'Ожидаем ответ оркестратора…'
+                          : 'Ваш ответ оркестратору…'
+                      }
+                      disabled={inputLocked || status !== 'open'}
+                    />
+                    <button
+                      type="submit"
+                      className="chat-app__send"
+                      disabled={inputLocked || status !== 'open' || !draft.trim()}
+                      aria-label="Отправить"
+                    >
+                      ↑
+                    </button>
+                  </form>
+                </div>
+              </div>
+            ) : null}
+          </main>
+        </div>
 
         {lastError ? (
           <p className="chat-app__hint" role="alert">

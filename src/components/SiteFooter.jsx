@@ -13,14 +13,15 @@ export default function SiteFooter() {
               <p className="footer__tagline">
                 Коллективный разум моделей — в одном интерфейсе.
               </p>
-              <span className="footer__badge">В разработке</span>
+              <span className="footer__badge">Beta версия</span>
             </div>
             <nav className="footer__col" aria-label="Разделы продукта">
               <span className="footer__col-title">Продукт</span>
-              <Link to="/#how">Как это работает</Link>
               <Link to="/#features">Возможности</Link>
               <Link to="/#cases">Сценарии</Link>
-              <Link to="/privacy">Terms &amp; Privacy</Link>
+              <Link to="/faq">FAQ</Link>
+              <Link to="/terms">Terms of Service</Link>
+              <Link to="/privacy">Privacy Policy</Link>
             </nav>
             <div className="footer__col footer__col--panel" id="docs">
               <span className="footer__col-title">Сессии</span>
@@ -34,7 +35,7 @@ export default function SiteFooter() {
       </Reveal>
       <div className="footer__bar">
         <p className="footer__copy">
-          © {new Date().getFullYear()} Consensia · <Link to="/privacy">Terms &amp; Privacy</Link>
+          © {new Date().getFullYear()} Consensia · Made with 💗 by Ukrainians
         </p>
       </div>
     </footer>

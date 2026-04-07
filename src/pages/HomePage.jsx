@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import '../App.scss'
 import { Reveal } from '../components/Reveal.jsx'
@@ -10,11 +10,45 @@ const ConsensiaScene = lazy(() =>
 )
 
 const NAV_MOBILE_MAX_PX = 768
+const DATA_COLLECTION_KEY = 'consensia_data_collection_v1'
+
+function getUserLabel(user) {
+  if (!user || typeof user !== 'object') return 'Профиль'
+  return (
+    user.email ||
+    user.name ||
+    user.full_name ||
+    user.display_name ||
+    user.given_name ||
+    'Профиль'
+  )
+}
+
+function getCredits(user) {
+  if (!user || typeof user !== 'object') return null
+  const candidates = [user.credits, user.credit_balance, user.balance, user.remaining_credits]
+  for (const v of candidates) {
+    if (typeof v === 'number' && Number.isFinite(v)) return v
+    if (typeof v === 'string' && v.trim() && Number.isFinite(Number(v))) return Number(v)
+  }
+  return null
+}
 
 export default function HomePage() {
-  const { isAuthenticated, loginWithGoogle } = useAuth()
+  const { isAuthenticated, user, loginWithGoogle, logout } = useAuth()
   const [animationsEnabled, setAnimationsEnabled] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [profileOpen, setProfileOpen] = useState(false)
+  const profileRef = useRef(null)
+  const [dataCollection, setDataCollection] = useState(() => {
+    try {
+      const raw = localStorage.getItem(DATA_COLLECTION_KEY)
+      if (raw == null) return true
+      return raw === 'true'
+    } catch {
+      return true
+    }
+  })
 
   useEffect(() => {
     if (!mobileMenuOpen) return
@@ -30,6 +64,32 @@ export default function HomePage() {
       mq.removeEventListener('change', closeIfDesktop)
     }
   }, [mobileMenuOpen])
+
+  useEffect(() => {
+    if (!profileOpen) return
+    const onDown = (ev) => {
+      const el = profileRef.current
+      if (!el) return
+      if (ev.target instanceof Node && !el.contains(ev.target)) setProfileOpen(false)
+    }
+    const onKey = (ev) => {
+      if (ev.key === 'Escape') setProfileOpen(false)
+    }
+    window.addEventListener('mousedown', onDown)
+    window.addEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('mousedown', onDown)
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [profileOpen])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(DATA_COLLECTION_KEY, dataCollection ? 'true' : 'false')
+    } catch {
+      /* ignore */
+    }
+  }, [dataCollection])
 
   const closeMobileMenu = () => setMobileMenuOpen(false)
 
@@ -50,11 +110,56 @@ export default function HomePage() {
                 <a href="#how">Как это работает</a>
                 <a href="#features">Возможности</a>
                 <a href="#cases">Сценарии</a>
+                <Link to="/developers">Developers</Link>
               </nav>
               {isAuthenticated ? (
-                <Link className="top__cta top__cta--solid" to="/app">
-                  Открыть
-                </Link>
+                <div className="chat-app__profile" ref={profileRef}>
+                  <button
+                    type="button"
+                    className="chat-app__profile-btn"
+                    onClick={() => setProfileOpen((v) => !v)}
+                    aria-haspopup="menu"
+                    aria-expanded={profileOpen ? 'true' : 'false'}
+                    aria-label="Открыть профиль"
+                  >
+                    <span className="chat-app__profile-avatar" aria-hidden="true">
+                      {String(getUserLabel(user)).slice(0, 1).toUpperCase()}
+                    </span>
+                  </button>
+                  {profileOpen ? (
+                    <div className="chat-app__profile-pop" role="menu">
+                      <div className="chat-app__profile-head">
+                        <div className="chat-app__profile-title">{getUserLabel(user)}</div>
+                        {getCredits(user) != null ? (
+                          <div className="chat-app__profile-sub">Кредиты: {getCredits(user)}</div>
+                        ) : null}
+                      </div>
+                      <div className="chat-app__profile-row">
+                        <label className="chat-app__toggle">
+                          <input
+                            type="checkbox"
+                            checked={dataCollection}
+                            onChange={(e) => setDataCollection(e.target.checked)}
+                          />
+                          <span className="chat-app__toggle-ui" aria-hidden="true" />
+                          <span>Сбор данных</span>
+                        </label>
+                      </div>
+                      <div className="chat-app__profile-actions">
+                        <button
+                          type="button"
+                          className="chat-app__profile-logout"
+                          onClick={() => {
+                            setProfileOpen(false)
+                            logout()
+                          }}
+                        >
+                          Выйти
+                        </button>
+                      </div> 
+                    </div>
+                  ) : null}
+                </div>
               ) : (
                 <button type="button" className="top__cta" onClick={loginWithGoogle}>
                   Войти
@@ -107,12 +212,11 @@ export default function HomePage() {
               <a href="#cases" onClick={closeMobileMenu}>
                 Сценарии
               </a>
-            </nav>
-            {isAuthenticated ? (
-              <Link className="top__cta top__cta--solid top__cta--menu" to="/app" onClick={closeMobileMenu}>
-                Открыть
+              <Link to="/developers" onClick={closeMobileMenu}>
+                Developers
               </Link>
-            ) : (
+            </nav>
+            {!isAuthenticated ? (
               <button
                 type="button"
                 className="top__cta top__cta--menu"
@@ -122,6 +226,17 @@ export default function HomePage() {
                 }}
               >
                 Войти
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="top__cta top__cta--menu"
+                onClick={() => {
+                  logout()
+                  closeMobileMenu()
+                }}
+              >
+                Выйти
               </button>
             )}
             <button

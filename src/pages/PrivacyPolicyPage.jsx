@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import '../App.scss'
 import SiteFooter from '../components/SiteFooter.jsx'
 
-const TITLE = 'Terms of Service & Privacy Policy · Consensia'
+const TITLE = 'Privacy Policy · Consensia'
 
 export default function PrivacyPolicyPage() {
   useEffect(() => {
@@ -32,7 +32,7 @@ export default function PrivacyPolicyPage() {
 
       <main id="legal-main" className="legal-page__main" tabIndex={-1}>
         <article className="legal-page__article">
-          <h1 className="legal-page__title">Terms of Service &amp; Privacy Policy</h1>
+          <h1 className="legal-page__title">Privacy Policy</h1>
           <p className="legal-page__meta">Last updated: April 5, 2026</p>
 
           <aside className="legal-page__notice" role="note">
@@ -43,132 +43,12 @@ export default function PrivacyPolicyPage() {
           </aside>
 
           <p className="legal-page__lead">
-            Welcome to Consensia (&quot;Service&quot;, &quot;we&quot;, &quot;us&quot;, or
-            &quot;our&quot;). By accessing or using our website (
-            <a href="https://consensia.faby.world" rel="noopener noreferrer">
-              https://consensia.faby.world
-            </a>
-            ) and services, you agree to be bound by these Terms of Service and our Privacy
-            Policy. If you do not agree with any part of these terms, please do not use the Service.
+            This Privacy Policy explains what data we collect, how we use it, and what rights you
+            have regarding your data when using Consensia.
           </p>
 
           <section className="legal-page__part">
-            <h2 className="legal-page__part-title">Part 1: Terms of Service</h2>
-
-            <section className="legal-page__section">
-              <h3>1. Registration and Account</h3>
-              <p>
-                <strong>Mandatory Registration:</strong> To use the Service (including the free
-                tier), you must create an account.
-              </p>
-              <p>
-                <strong>Authentication:</strong> We use secure third-party authentication (Google
-                OAuth). You agree to provide accurate information and are solely responsible for
-                maintaining the security of your account.
-              </p>
-            </section>
-
-            <section className="legal-page__section">
-              <h3>2. Pricing, Credits, and Payments</h3>
-              <p>
-                <strong>Free Tier:</strong> New registered users may receive a limited amount of
-                complimentary credits or a fixed number of free requests to experience the
-                Service. These limits are subject to change and are specified on our dashboard.
-              </p>
-              <p>
-                <strong>Credit-Based System:</strong> Our Service operates on a Credit System.
-                Instead of a flat monthly fee for unlimited use, users purchase credit packages
-                (e.g., $10 for 1,000 credits).
-              </p>
-              <p>
-                <strong>Consumption:</strong> Credits are consumed based on the actual usage of
-                underlying AI models, which is measured in tokens (the volume of input code and
-                generated output).
-              </p>
-              <p>
-                There is no fixed &quot;price per request.&quot; The cost of a single session
-                depends on the length of the code provided, the number of AI agents involved, and
-                the complexity of their responses.
-              </p>
-              <p>You can monitor your remaining credit balance in your account dashboard.</p>
-              <p>
-                <strong>Non-Refundable:</strong> Purchased credits are generally non-refundable once
-                they have been partially used, except where required by law. Credits do not have an
-                expiration date unless specified at the time of purchase.
-              </p>
-              <p>
-                <strong>Payment Processing:</strong> All financial transactions are securely
-                handled via Stripe. We do not store your full credit card details or sensitive
-                billing information on our servers.
-              </p>
-            </section>
-
-            <section className="legal-page__section">
-              <h3>3. Acceptable Use</h3>
-              <p>You agree not to use the Service to:</p>
-              <ul>
-                <li>Violate any applicable laws, copyrights, or licenses.</li>
-                <li>Attempt to hack, DDoS, or reverse-engineer our systems, platform, or API.</li>
-                <li>
-                  Generate malicious software (malware), exploits, or conduct illegal cyberattacks.
-                </li>
-              </ul>
-            </section>
-
-            <section className="legal-page__section">
-              <h3>4. Disclaimer and Limitation of Liability</h3>
-              <p>
-                Our Service acts as an orchestrator and relies on third-party Artificial
-                Intelligence APIs (such as OpenRouter, Google, OpenAI, Meta, etc.) to process your
-                requests and generate code analysis.
-              </p>
-              <p>
-                The Service does not guarantee the uninterrupted availability or accuracy of these
-                third-party APIs.
-              </p>
-              <p>
-                AI models can make mistakes, generate unoptimized code, or produce
-                &quot;hallucinations&quot; (false positives).
-              </p>
-              <p>
-                You are solely responsible for testing, reviewing, and securing any code generated
-                by the Service before implementing it into your projects.
-              </p>
-              <p>
-                The Service is provided on an &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; basis
-                without warranties of any kind. We shall not be liable for any direct, indirect,
-                incidental, or consequential damages (including loss of profits, data, or business
-                interruption) arising from your use of the Service.
-              </p>
-            </section>
-
-            <section className="legal-page__section">
-              <h3>5. Intellectual Property</h3>
-              <p>
-                <strong>Your Code:</strong> You retain all ownership rights to the source code you
-                submit to the Service. We do not claim any copyright over the code generated by
-                third-party AI models in response to your prompts. You are free to use it in your
-                commercial and non-commercial projects.
-              </p>
-              <p>
-                <strong>Our Platform:</strong> The interface, orchestration logic (Consensia), logos,
-                and infrastructure belong to us. You may not copy, resell, or duplicate any part of
-                our Service without written permission.
-              </p>
-            </section>
-
-            <section className="legal-page__section">
-              <h3>6. Account Termination</h3>
-              <p>
-                We reserve the right to suspend or terminate your account at any time, without prior
-                notice or refund, if you violate these Terms (e.g., attempting to bypass API limits,
-                spamming, or fraudulent payment chargebacks).
-              </p>
-            </section>
-          </section>
-
-          <section className="legal-page__part">
-            <h2 className="legal-page__part-title">Part 2: Privacy Policy</h2>
+            <h2 className="legal-page__part-title">Privacy Policy</h2>
             <p className="legal-page__section-intro">
               We take your privacy seriously. This section explains what data we collect, how we use
               it, and your rights.
@@ -302,8 +182,7 @@ export default function PrivacyPolicyPage() {
             <section className="legal-page__section">
               <h3>10. Contact Us</h3>
               <p>
-                If you have any questions about these Terms of Service or Privacy Policy, please
-                contact us at:
+                If you have any questions about this Privacy Policy, please contact us at:
               </p>
               <p>
                 <strong>Email:</strong>{' '}
