@@ -300,15 +300,31 @@ export function mapRoundDataToAgentMessages(roundData) {
 export function buildResumeMessagesFromSessionData(sessionData) {
   const sd = sessionData && typeof sessionData === 'object' ? sessionData : {}
   const fromHistory = mapSessionHistoryToMessages(sd.history)
+
+  function normalizeConversationOrder(list) {
+    if (!Array.isArray(list) || !list.length) return []
+    const hasAgent = list.some((m) => m?.kind === 'agent')
+    const hasFinal = list.some((m) => m?.kind === 'final')
+    if (!hasAgent || !hasFinal) return list
+
+    // Keep task/init first, then debate block (agents + finals), then post-verdict chat.
+    const task = list.filter((m) => m?.kind === 'task')
+    const debate = list.filter((m) => m?.kind === 'agent' || m?.kind === 'final')
+    const tail = list.filter(
+      (m) => m && m.kind !== 'task' && m.kind !== 'agent' && m.kind !== 'final'
+    )
+    return [...task, ...debate, ...tail]
+  }
+
   const hasAgentInHistory = fromHistory.some((m) => m?.kind === 'agent')
-  if (hasAgentInHistory) return fromHistory
+  if (hasAgentInHistory) return normalizeConversationOrder(fromHistory)
 
   const fromRounds = mapRoundDataToAgentMessages(sd.round_data)
   if (!fromRounds.length) return fromHistory
 
   const finals = fromHistory.filter((m) => m?.kind === 'final')
   const nonFinals = fromHistory.filter((m) => m?.kind !== 'final')
-  return [...nonFinals, ...fromRounds, ...finals]
+  return normalizeConversationOrder([...nonFinals, ...fromRounds, ...finals])
 }
 
 export async function fetchSessionsList() {

@@ -37,6 +37,7 @@ function getCredits(user) {
 
 export default function HomePage() {
   const { isAuthenticated, user, loginWithGoogle, logout } = useAuth()
+  const avatarLetter = String(getUserLabel(user)).slice(0, 1).toUpperCase()
   const [animationsEnabled, setAnimationsEnabled] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
@@ -144,6 +145,72 @@ export default function HomePage() {
   }
 
   const closeMobileMenu = () => setMobileMenuOpen(false)
+  const mobileProfile = isAuthenticated ? (
+    <div className="chat-app__profile-pop chat-app__profile-pop--menu" role="menu">
+      <div className="chat-app__profile-head">
+        <div className="top__menu-profile-user">
+          <span className="chat-app__profile-avatar" aria-hidden="true">
+            {avatarLetter}
+          </span>
+          <div>
+            <div className="chat-app__profile-title">{getUserLabel(user)}</div>
+            {getCredits(user) != null ? (
+              <div className="chat-app__profile-sub">Кредиты: {getCredits(user)}</div>
+            ) : null}
+          </div>
+        </div>
+        {getCredits(user) != null ? (
+          <div className="chat-app__profile-credits-line">
+            <div className="chat-app__topup-inline">
+              <input
+                className="chat-app__topup-input"
+                type="number"
+                min={1}
+                step={1}
+                value={topUpAmount}
+                onChange={(e) => setTopUpAmount(e.target.value)}
+                aria-label="Сумма пополнения в долларах"
+              />
+              <span className="chat-app__topup-preview">{creditsPreview} кр.</span>
+              <button
+                type="button"
+                className="chat-app__topup-btn"
+                onClick={handleTopUp}
+                disabled={topUpLoading}
+                title={`Курс: ${promoMultiplier} кредитов за $1`}
+              >
+                {topUpLoading ? '...' : 'Пополнить'}
+              </button>
+            </div>
+          </div>
+        ) : null}
+        {topUpError ? <div className="chat-app__profile-sub">{topUpError}</div> : null}
+      </div>
+      <div className="chat-app__profile-row">
+        <label className="chat-app__toggle">
+          <input
+            type="checkbox"
+            checked={dataCollection}
+            onChange={(e) => setDataCollection(e.target.checked)}
+          />
+          <span className="chat-app__toggle-ui" aria-hidden="true" />
+          <span>Сбор данных</span>
+        </label>
+      </div>
+      <div className="chat-app__profile-actions">
+        <button
+          type="button"
+          className="chat-app__profile-logout"
+          onClick={() => {
+            logout()
+            closeMobileMenu()
+          }}
+        >
+          Выйти
+        </button>
+      </div>
+    </div>
+  ) : null
 
   return (
     <div className="app">
@@ -175,7 +242,7 @@ export default function HomePage() {
                     aria-label="Открыть профиль"
                   >
                     <span className="chat-app__profile-avatar" aria-hidden="true">
-                      {String(getUserLabel(user)).slice(0, 1).toUpperCase()}
+                      {avatarLetter}
                     </span>
                   </button>
                   {profileOpen ? (
@@ -304,16 +371,7 @@ export default function HomePage() {
                 Войти
               </button>
             ) : (
-              <button
-                type="button"
-                className="top__cta top__cta--menu"
-                onClick={() => {
-                  logout()
-                  closeMobileMenu()
-                }}
-              >
-                Выйти
-              </button>
+              <div className="top__menu-profile">{mobileProfile}</div>
             )}
             <button
               type="button"

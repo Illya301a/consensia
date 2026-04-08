@@ -30,6 +30,12 @@ function modeLabel(value) {
   return m ? m.label : value || '—'
 }
 
+function capitalizeFirst(value) {
+  const text = String(value ?? '').trim()
+  if (!text) return ''
+  return text[0].toUpperCase() + text.slice(1)
+}
+
 function formatWhen(ts) {
   const d = new Date(ts)
   if (Number.isNaN(d.getTime())) return ''
@@ -118,6 +124,7 @@ export default function AppPage() {
   const [sessionsError, setSessionsError] = useState(null)
   const [sessionLoading, setSessionLoading] = useState(false)
   const [sessionLoadError, setSessionLoadError] = useState(null)
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
 
   const [profileOpen, setProfileOpen] = useState(false)
   const profileRef = useRef(null)
@@ -175,6 +182,17 @@ export default function AppPage() {
     }
     navigate('/app', { replace: true })
   }, [searchParams, navigate])
+
+  useEffect(() => {
+    const prevBodyOverflow = document.body.style.overflow
+    const prevHtmlOverflow = document.documentElement.style.overflow
+    document.body.style.overflow = 'hidden'
+    document.documentElement.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = prevBodyOverflow
+      document.documentElement.style.overflow = prevHtmlOverflow
+    }
+  }, [])
 
   useEffect(() => {
     if (!isAuthenticated) disconnect()
@@ -448,6 +466,7 @@ export default function AppPage() {
   const handleNewSession = useCallback(() => {
     suppressUrlSessionLoadRef.current = true
     urlSessionConnectRef.current = ''
+    setMobileSidebarOpen(false)
     disconnect()
     setSessionLoading(false)
     navigate('/app', { replace: true })
@@ -519,6 +538,20 @@ export default function AppPage() {
     }
   }, [profileOpen])
 
+  useEffect(() => {
+    if (!mobileSidebarOpen) return
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const onKey = (ev) => {
+      if (ev.key === 'Escape') setMobileSidebarOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = prevOverflow
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [mobileSidebarOpen])
+
   const handlePickFiles = useCallback(async (e) => {
     const files = Array.from(e.target.files || [])
     e.target.value = ''
@@ -552,6 +585,7 @@ export default function AppPage() {
   const openHistorySession = useCallback(
     (sid) => {
       setProfileOpen(false)
+      setMobileSidebarOpen(false)
       disconnect()
       setShowSetup(false)
       setSessionLoadError(null)
@@ -680,7 +714,19 @@ export default function AppPage() {
           </div>
           <div className="chat-app__header-actions">
             {statusText ? <span className="chat-app__meta">{statusText}</span> : null}
-            <button type="button" className="chat-app__btn" onClick={handleNewSession}>
+            <button
+              type="button"
+              className={`chat-app__burger${mobileSidebarOpen ? ' chat-app__burger--open' : ''}`}
+              aria-label={mobileSidebarOpen ? 'Закрыть историю' : 'Открыть историю'}
+              aria-expanded={mobileSidebarOpen ? 'true' : 'false'}
+              aria-controls="chat-app-mobile-sidebar"
+              onClick={() => setMobileSidebarOpen((v) => !v)}
+            >
+              <span className="chat-app__burger-line" aria-hidden="true" />
+              <span className="chat-app__burger-line" aria-hidden="true" />
+              <span className="chat-app__burger-line" aria-hidden="true" />
+            </button>
+            <button type="button" className="chat-app__btn chat-app__btn--new-chat" onClick={handleNewSession}>
               Новый чат
             </button>
             <div className="chat-app__profile" ref={profileRef}>
@@ -754,14 +800,39 @@ export default function AppPage() {
           </div>
         </header>
 
+        <div
+          className={`chat-app__sidebar-backdrop${mobileSidebarOpen ? ' chat-app__sidebar-backdrop--visible' : ''}`}
+          aria-hidden="true"
+          onClick={() => setMobileSidebarOpen(false)}
+        />
+
         <div className="chat-app__layout">
-          <aside className="chat-app__sidebar" aria-label="История чатов">
+          <aside
+            id="chat-app-mobile-sidebar"
+            className={`chat-app__sidebar${mobileSidebarOpen ? ' chat-app__sidebar--open' : ''}`}
+            aria-label="История чатов"
+          >
             <div className="chat-app__sidebar-head">
               <div className="chat-app__sidebar-title">История</div>
               <button type="button" className="chat-app__sidebar-new" onClick={handleNewSession} title="Новый чат">
                 +
               </button>
+              <button
+                type="button"
+                className="chat-app__sidebar-close"
+                onClick={() => setMobileSidebarOpen(false)}
+                aria-label="Закрыть меню"
+              >
+                ×
+              </button>
             </div>
+            <button
+              type="button"
+              className="chat-app__sidebar-mobile-new chat-app__sidebar-mobile-new--top"
+              onClick={handleNewSession}
+            >
+              Новый чат
+            </button>
             <div className="chat-app__sidebar-list" role="list">
               {sessionsLoading && !sessions.length ? (
                 <div className="chat-app__sidebar-empty">Загрузка…</div>
@@ -787,7 +858,7 @@ export default function AppPage() {
                         onClick={() => openHistorySession(h.id)}
                       >
                         <div className="chat-app__sidebar-item-title">
-                          {h.title || `Сессия ${h.id.slice(0, 8)}`}
+                          {capitalizeFirst(h.title) || `Сессия ${h.id.slice(0, 8)}`}
                         </div>
                         <div className="chat-app__sidebar-item-meta">
                           <span>{formatWhen(h.createdAt)}</span>
@@ -811,6 +882,67 @@ export default function AppPage() {
               ) : (
                 <div className="chat-app__sidebar-empty">Тут появятся ваши чаты после первого запуска.</div>
               )}
+            </div>
+            <div className="chat-app__sidebar-mobile-footer">
+              <div className="chat-app__profile chat-app__profile--mobile-drawer">
+                <div className="chat-app__profile-pop chat-app__profile-pop--mobile-inline" role="menu">
+                    <div className="chat-app__profile-head">
+                      <div className="chat-app__profile-title">{getUserLabel(user)}</div>
+                      {getCredits(user) != null ? (
+                        <div className="chat-app__profile-credits-line">
+                          <div className="chat-app__profile-sub">Кредиты: {getCredits(user)}</div>
+                          <div className="chat-app__topup-inline">
+                            <input
+                              className="chat-app__topup-input"
+                              type="number"
+                              min={1}
+                              step={1}
+                              value={topUpAmount}
+                              onChange={(e) => setTopUpAmount(e.target.value)}
+                              aria-label="Сумма пополнения в долларах"
+                            />
+                            <span className="chat-app__topup-preview">{creditsPreview} кр.</span>
+                            <button
+                              type="button"
+                              className="chat-app__topup-btn"
+                              onClick={handleTopUp}
+                              disabled={topUpLoading}
+                              title={`Курс: ${promoMultiplier} кредитов за $1`}
+                            >
+                              {topUpLoading ? '...' : 'Пополнить'}
+                            </button>
+                          </div>
+                        </div>
+                      ) : null}
+                      {topUpError ? <div className="chat-app__profile-sub">{topUpError}</div> : null}
+                    </div>
+
+                    <div className="chat-app__profile-row">
+                      <label className="chat-app__toggle">
+                        <input
+                          type="checkbox"
+                          checked={dataCollection}
+                          onChange={(e) => setDataCollection(e.target.checked)}
+                        />
+                        <span className="chat-app__toggle-ui" aria-hidden="true" />
+                        <span>Сбор данных</span>
+                      </label>
+                    </div>
+
+                    <div className="chat-app__profile-actions">
+                      <button type="button" className="chat-app__profile-logout" onClick={handleLogout}>
+                        Выйти
+                      </button>
+                      <Link
+                        to="/"
+                        className="chat-app__profile-link"
+                        onClick={() => setMobileSidebarOpen(false)}
+                      >
+                        Главная
+                      </Link>
+                    </div>
+                </div>
+              </div>
             </div>
           </aside>
 

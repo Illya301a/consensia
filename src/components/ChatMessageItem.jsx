@@ -9,10 +9,20 @@ function shouldFold(text, threshold = 420) {
   return String(text).length > threshold
 }
 
-function Fold({ title, defaultOpen, children }) {
+function Fold({ title, defaultOpen, children, closedTitle, openTitle }) {
+  const hasStatefulTitle = Boolean(closedTitle || openTitle)
   return (
     <details className="chat-msg__fold" open={defaultOpen}>
-      <summary className="chat-msg__fold-summary">{title}</summary>
+      <summary className="chat-msg__fold-summary">
+        {hasStatefulTitle ? (
+          <>
+            <span className="chat-msg__fold-when-closed">{closedTitle || title}</span>
+            <span className="chat-msg__fold-when-open">{openTitle || title}</span>
+          </>
+        ) : (
+          title
+        )}
+      </summary>
       <div className="chat-msg__fold-body">{children}</div>
     </details>
   )
@@ -197,13 +207,9 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
     case 'task': {
       const context = msg.context || ''
       const code = msg.code || ''
-      const meta = `Режим: **${msg.mode || '—'}** · Раунды: **${msg.rounds ?? '—'}**`
       return (
         <div className="chat-msg chat-msg--user chat-msg--task">
           <div className="chat-msg__md">
-            <div className="chat-msg__task-meta">
-              <Markdown>{meta}</Markdown>
-            </div>
             {context ? (
               <div className="chat-msg__task-context">
                 <Markdown>{context}</Markdown>
@@ -324,12 +330,12 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
       const improvements = Array.isArray(c.improvements) ? c.improvements : []
       const diff = c.unified_diff ?? c.diff ?? ''
       const finalCode = c.final_code ?? ''
+      const hasFinalCode = String(finalCode).trim().length > 0
       const summary = c.summary ?? ''
       const hasMain =
-        fixes.length > 0 || improvements.length > 0 || Boolean(diff) || Boolean(finalCode) || Boolean(summary)
-      return (
-        <div className="chat-msg chat-msg--final">
-          <h3 className="chat-msg__final-title">Final verdict</h3>
+        fixes.length > 0 || improvements.length > 0 || Boolean(diff) || hasFinalCode || Boolean(summary)
+      const verdictBody = (
+        <>
           {summary ? (
             <div className="chat-msg__summary chat-msg__md">
               <Markdown>{summary}</Markdown>
@@ -363,12 +369,30 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
               </ul>
             </div>
           ) : null}
-          <div className="chat-msg__list-block">
-            <h4>Final code</h4>
-            <div className="chat-msg__code">
-              <CodeBlock value={finalCode} defaultLanguage="python" />
+        </>
+      )
+      return (
+        <div className={`chat-msg chat-msg--final${hasFinalCode ? '' : ' chat-msg--final-compact'}`}>
+          {hasFinalCode ? (
+            <>
+              <h3 className="chat-msg__final-title">Final verdict</h3>
+              <Fold title="Показать/скрыть" closedTitle="Показать" openTitle="Скрыть" defaultOpen>
+                {verdictBody}
+              </Fold>
+            </>
+          ) : (
+            verdictBody
+          )}
+          {hasFinalCode ? (
+            <div className="chat-msg__list-block">
+              <h3 className="chat-msg__final-title">Final code</h3>
+              <Fold title="Показать/скрыть" closedTitle="Показать" openTitle="Скрыть" defaultOpen>
+                <div className="chat-msg__code">
+                  <CodeBlock value={finalCode} defaultLanguage="python" />
+                </div>
+              </Fold>
             </div>
-          </div>
+          ) : null}
           {diff ? (
             <div className="chat-msg__list-block">
               <h4>Diff</h4>
@@ -393,7 +417,7 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
         <div className={`chat-msg chat-msg--chat chat-msg--chat-${role.toLowerCase()}`}>
           <div className="chat-msg__md">
             {shouldFold(msg.text, 900) ? (
-              <Fold title="Показать сообщение" defaultOpen={false}>
+              <Fold title="Показать сообщение" defaultOpen={true}>
                 <Markdown>{msg.text}</Markdown>
               </Fold>
             ) : (
