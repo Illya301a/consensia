@@ -5,7 +5,7 @@ import { mapSessionHistoryToMessages } from './sessionsApi.js'
 // Входящие сообщения — JSON с полем type (session_id, system, agent_report, input_required, final_verdict, chunk, error)
 const WS_URL =
   import.meta.env.VITE_ORCHESTRATOR_WS_URL ??
-  'wss://consensia-api.faby.world/ws/orchestrator'
+  'wss://api.consensia.world/ws/orchestrator'
 
 function uid() {
     // Перевіряємо, чи доступний randomUUID (працює на localhost або HTTPS)

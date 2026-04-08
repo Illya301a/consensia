@@ -22,3 +22,34 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Test / coverage / reports
+coverage
+.nyc_output
+*.lcov
+
+# Build caches
+.cache
+.parcel-cache
+.vite
+.turbo
+.eslintcache
+*.tsbuildinfo
+
+# Package manager caches
+.npm
+.pnpm-store
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# Runtime temp files
+tmp
+temp
+*.tmp
