@@ -33,7 +33,7 @@ export default function SiteFooter() {
       </Reveal>
       <div className="footer__bar">
         <p className="footer__copy">
-          © {new Date().getFullYear()} Consensia · Made with 💗 by Ukrainians
+          © {new Date().getFullYear()} Consensia · All rights reserved
         </p>
       </div>
     </footer>
