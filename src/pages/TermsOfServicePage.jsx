@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import '../App.scss'
 import SiteFooter from '../components/SiteFooter.jsx'
+import SiteHeader from '../components/SiteHeader.jsx'
 
 const TITLE = 'Terms of Service · Consensia'
 
@@ -19,16 +19,7 @@ export default function TermsOfServicePage() {
       <a href="#legal-main" className="legal-page__skip">
         Skip to content
       </a>
-      <header className="legal-page__header">
-        <Link to="/" className="logo legal-page__logo">
-          Consensia
-        </Link>
-        <nav className="legal-page__header-nav" aria-label="Navigation">
-          <Link to="/" className="legal-page__back">
-            Back to home
-          </Link>
-        </nav>
-      </header>
+      <SiteHeader />
 
       <main id="legal-main" className="legal-page__main" tabIndex={-1}>
         <article className="legal-page__article">

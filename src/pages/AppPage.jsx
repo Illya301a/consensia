@@ -37,6 +37,58 @@ function capitalizeFirst(value) {
   return text[0].toUpperCase() + text.slice(1)
 }
 
+function visibleSessionTitle(value) {
+  const raw = String(value ?? '').trim()
+  if (!raw) return ''
+  const lowered = raw.toLowerCase()
+  // Hide technical placeholders like "Сессия <id>" / "Session <id>".
+  if (/^(сессия|session)\s+[a-z0-9-]{6,}$/i.test(raw)) return ''
+  if (lowered === 'сессия' || lowered === 'session') return ''
+  return capitalizeFirst(raw)
+}
+
+function mergeSessionsKeepingMeta(prevList, incomingList) {
+  const prev = Array.isArray(prevList) ? prevList : []
+  const incoming = Array.isArray(incomingList) ? incomingList : []
+  const prevById = new Map(prev.map((s) => [s?.id, s]))
+  return incoming.map((next) => {
+    const prevItem = prevById.get(next?.id)
+    const nextTitle = String(next?.title ?? '').trim()
+    const prevTitle = String(prevItem?.title ?? '').trim()
+    const visibleNext = visibleSessionTitle(nextTitle)
+    const visiblePrev = visibleSessionTitle(prevTitle)
+    const nextRoundsRaw = next?.rounds
+    const prevRoundsRaw = prevItem?.rounds
+    const nextRounds =
+      typeof nextRoundsRaw === 'number' && Number.isFinite(nextRoundsRaw) && nextRoundsRaw > 0
+        ? nextRoundsRaw
+        : null
+    const prevRounds =
+      typeof prevRoundsRaw === 'number' && Number.isFinite(prevRoundsRaw) && prevRoundsRaw > 0
+        ? prevRoundsRaw
+        : null
+
+    const patched = { ...next }
+    if (!visibleNext && visiblePrev) patched.title = prevTitle
+    if (nextRounds == null && prevRounds != null) patched.rounds = prevRounds
+    return patched
+  })
+}
+
+function keepPreviousSessionsOnTransientEmpty(prevList, nextList) {
+  const prev = Array.isArray(prevList) ? prevList : []
+  const next = Array.isArray(nextList) ? nextList : []
+  // Avoid sidebar flicker: if API briefly returns empty while we already have history, keep previous list.
+  if (prev.length > 0 && next.length === 0) return prev
+  return next
+}
+
+function deriveImmediateSessionTitle(value) {
+  const raw = String(value ?? '').replace(/\s+/g, ' ').trim()
+  if (!raw) return ''
+  return raw.slice(0, 90)
+}
+
 function formatWhen(ts) {
   const d = new Date(ts)
   if (Number.isNaN(d.getTime())) return ''
@@ -191,7 +243,8 @@ export default function AppPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const sessionFromUrl = searchParams.get('session') || ''
-  const { token, user, isAuthenticated, authChecked, loginWithGoogle, logout } = useAuth()
+  const { token, user, isAuthenticated, authChecked, loginWithGoogle, logout, refreshUser } =
+    useAuth()
 
   const {
     status,
@@ -205,6 +258,32 @@ export default function AppPage() {
     sessionId,
   } = useOrchestratorWs({
     onSessionId: (sid) => {
+      const optimisticTitle = deriveImmediateSessionTitle(context)
+      const optimisticCreatedAt = new Date().toISOString()
+      setSessions((prev) => {
+        const list = Array.isArray(prev) ? prev : []
+        const existingIndex = list.findIndex((x) => x?.id === sid)
+        if (existingIndex >= 0) {
+          const existing = list[existingIndex]
+          const shouldUseOptimisticTitle =
+            !String(existing?.title ?? '').trim() ||
+            String(existing?.title ?? '').trim().toLowerCase().startsWith('сессия ')
+          if (!shouldUseOptimisticTitle || !optimisticTitle) return list
+          const next = list.slice()
+          next[existingIndex] = { ...existing, title: optimisticTitle }
+          return next
+        }
+        return [
+          {
+            id: sid,
+            title: optimisticTitle,
+            createdAt: optimisticCreatedAt,
+            mode,
+            rounds,
+          },
+          ...list,
+        ]
+      })
       navigate(`/app?session=${encodeURIComponent(sid)}`, { replace: true })
     },
   })
@@ -251,6 +330,7 @@ export default function AppPage() {
   const urlSessionConnectRef = useRef('')
   /** Prevent stale `?session=` effect right after pressing "Новый чат". */
   const suppressUrlSessionLoadRef = useRef(false)
+  const lastNonEmptySessionsRef = useRef([])
   useEffect(() => {
     codeRef.current = code
     modeRef.current = mode
@@ -258,8 +338,16 @@ export default function AppPage() {
     roundsRef.current = rounds
   }, [code, mode, context, rounds])
 
+  useEffect(() => {
+    if (Array.isArray(sessions) && sessions.length > 0) {
+      lastNonEmptySessionsRef.current = sessions
+    }
+  }, [sessions])
+
   const endRef = useRef(null)
   const messagesRef = useRef(null)
+  const prevInputLockedRef = useRef(true)
+  const prevInputLockedCreditsRef = useRef(true)
 
   const amountNum = Number(topUpAmount)
   const promoMultiplier =
@@ -298,6 +386,64 @@ export default function AppPage() {
   useEffect(() => {
     if (!isAuthenticated) disconnect()
   }, [isAuthenticated, disconnect])
+
+  useEffect(() => {
+    if (!isAuthenticated || !token) {
+      prevInputLockedRef.current = inputLocked
+      return
+    }
+    const wasLocked = prevInputLockedRef.current
+    prevInputLockedRef.current = inputLocked
+    if (!wasLocked || inputLocked) return
+    const timer = window.setTimeout(() => {
+      void refreshUser?.()
+    }, 250)
+    return () => window.clearTimeout(timer)
+  }, [inputLocked, isAuthenticated, token, refreshUser])
+
+  useEffect(() => {
+    if (!isAuthenticated || !token) {
+      prevInputLockedCreditsRef.current = inputLocked
+      return
+    }
+    const activeSessionId = sessionFromUrl || sessionId || ''
+    if (!activeSessionId) return
+    const wasLocked = prevInputLockedCreditsRef.current
+    prevInputLockedCreditsRef.current = inputLocked
+    if (!wasLocked || inputLocked) return
+    let cancelled = false
+    const timer = window.setTimeout(async () => {
+      for (let i = 0; i < 3; i += 1) {
+        const sessionsRes = await fetchSessionsList()
+        const normalizedFromList = sessionsRes.ok
+          ? normalizeSessionsFromApi(sessionsRes.sessions)
+          : []
+        const res = await fetchSessionDetails(activeSessionId)
+        if (cancelled) return
+        if (res.ok && res.detail) {
+          const d = res.detail || {}
+          const sd = d.session_data || {}
+          const currentSessionMeta = sessionsRes.ok
+            ? normalizedFromList.find((s) => s.id === activeSessionId) || null
+            : null
+          const resumeUsageEvents = buildResumeUsageEventsFromSessionData(sd)
+          const restoredFromDetail = extractSpentCreditsFromDetail(d, sd, currentSessionMeta)
+          const restoredFromHistory = Math.floor(
+            resumeUsageEvents.reduce((sum, e) => sum + totalTokensFromUsage(e?.usage), 0) / 1000
+          )
+          const nextSpent = Math.max(restoredFromDetail ?? 0, restoredFromHistory)
+          setRestoredSpentCredits((prev) => Math.max(prev ?? 0, nextSpent))
+        }
+        if (i < 2) {
+          await new Promise((resolve) => window.setTimeout(resolve, 900))
+        }
+      }
+    }, 350)
+    return () => {
+      cancelled = true
+      window.clearTimeout(timer)
+    }
+  }, [inputLocked, isAuthenticated, token, sessionFromUrl, sessionId])
 
   useEffect(() => {
     if (!isAuthenticated || !token) return
@@ -351,13 +497,17 @@ export default function AppPage() {
       setSessionsLoading(false)
       if (!res.ok) {
         setSessionsError(res.error || 'Не удалось загрузить список сессий')
-        setSessions([])
         return
       }
       const normalized = normalizeSessionsFromApi(res.sessions)
-      setSessions(normalized)
       const enriched = await hydrateSessionsFromDetails(normalized)
-      if (!cancelled) setSessions(enriched)
+      if (!cancelled) {
+        const finalList = Array.isArray(enriched) && enriched.length ? enriched : normalized
+        setSessions((prev) => {
+          const merged = mergeSessionsKeepingMeta(prev, finalList)
+          return keepPreviousSessionsOnTransientEmpty(prev, merged)
+        })
+      }
     })()
     return () => {
       cancelled = true
@@ -371,9 +521,14 @@ export default function AppPage() {
       const res = await fetchSessionsList()
       if (cancelled || !res.ok) return
       const normalized = normalizeSessionsFromApi(res.sessions)
-      setSessions(normalized)
       const enriched = await hydrateSessionsFromDetails(normalized)
-      if (!cancelled) setSessions(enriched)
+      if (!cancelled) {
+        const finalList = Array.isArray(enriched) && enriched.length ? enriched : normalized
+        setSessions((prev) => {
+          const merged = mergeSessionsKeepingMeta(prev, finalList)
+          return keepPreviousSessionsOnTransientEmpty(prev, merged)
+        })
+      }
     })()
     return () => {
       cancelled = true
@@ -737,14 +892,32 @@ export default function AppPage() {
 
   const busy = status === 'connecting'
   const statusText = statusLabel(status)
-  const waitingForAi = status === 'open' && inputLocked
+  const lastMessageKind = messages.length ? messages[messages.length - 1]?.kind : ''
+  const waitingForAi =
+    status === 'open' &&
+    inputLocked &&
+    (
+      lastMessageKind === 'user' ||
+      lastMessageKind === 'stream' ||
+      (!sessionFromUrl && lastMessageKind === 'task')
+    )
   const hasFinalVerdict = messages.some((m) => m.kind === 'final')
   const spentCreditsLive = useMemo(() => {
     const totalTokens = usageEvents.reduce((sum, e) => sum + totalTokensFromUsage(e?.usage), 0)
     return Math.floor(totalTokens / 1000)
   }, [usageEvents])
-  const spentCredits = Math.max(restoredSpentCredits ?? 0, spentCreditsLive)
+  const sessionsForRender =
+    Array.isArray(sessions) && sessions.length > 0 ? sessions : lastNonEmptySessionsRef.current
   const activeSid = sessionFromUrl || sessionId || ''
+  const activeSessionMeta = useMemo(
+    () => sessionsForRender.find((s) => s.id === activeSid) || null,
+    [sessionsForRender, activeSid]
+  )
+  const spentCreditsFromMeta = useMemo(
+    () => extractSpentCreditsFromDetail(null, null, activeSessionMeta) ?? 0,
+    [activeSessionMeta]
+  )
+  const spentCredits = Math.max(restoredSpentCredits ?? 0, spentCreditsLive, spentCreditsFromMeta)
   const renderedMessages = useMemo(
     () => messages.map((msg) => <ChatMessageItem key={msg.id} msg={msg} />),
     [messages]
@@ -950,15 +1123,16 @@ export default function AppPage() {
               Новый чат
             </button>
             <div className="chat-app__sidebar-list" role="list">
-              {sessionsLoading && !sessions.length ? (
+              {sessionsLoading && !sessionsForRender.length ? (
                 <div className="chat-app__sidebar-empty">Загрузка…</div>
               ) : sessionsError ? (
                 <div className="chat-app__sidebar-empty" role="alert">
                   {sessionsError}
                 </div>
-              ) : sessions.length ? (
-                sessions.map((h) => {
+              ) : sessionsForRender.length ? (
+                sessionsForRender.map((h) => {
                   const isActive = activeSid && h.id === activeSid
+                  const titleText = visibleSessionTitle(h.title)
                   return (
                     <div
                       key={h.id}
@@ -966,7 +1140,7 @@ export default function AppPage() {
                         'chat-app__sidebar-item' + (isActive ? ' chat-app__sidebar-item--active' : '')
                       }
                       role="listitem"
-                      title={h.id}
+                      title={titleText || ''}
                     >
                       <button
                         type="button"
@@ -974,7 +1148,7 @@ export default function AppPage() {
                         onClick={() => openHistorySession(h.id)}
                       >
                         <div className="chat-app__sidebar-item-title">
-                          {capitalizeFirst(h.title) || `Сессия ${h.id.slice(0, 8)}`}
+                          {titleText}
                         </div>
                         <div className="chat-app__sidebar-item-meta">
                           <span>{formatWhen(h.createdAt)}</span>

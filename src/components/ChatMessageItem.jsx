@@ -34,6 +34,7 @@ function Markdown({ children }) {
   if (text.includes('\\n') && !text.includes('\n')) {
     text = text.replaceAll('\\n', '\n')
   }
+  text = normalizeRenderedText(text)
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}
@@ -112,6 +113,45 @@ function Markdown({ children }) {
       {text}
     </ReactMarkdown>
   )
+}
+
+function normalizeRenderedText(text) {
+  const raw = String(text ?? '')
+  if (!raw) return ''
+
+  // Do not alter fenced code blocks; clean only prose segments.
+  const parts = raw.split(/(```[\s\S]*?```)/g)
+  const cleaned = parts.map((part) => {
+    if (part.startsWith('```') && part.endsWith('```')) return part
+
+    let chunk = part.replace(/\r\n/g, '\n')
+
+    // Collapse lines with single punctuation (often token-stream artifacts).
+    chunk = chunk.replace(/\n[ \t]*\.[ \t]*\n/g, '. ')
+    chunk = chunk.replace(/\n[ \t]*[,;:!?][ \t]*\n/g, ' ')
+
+    // Turn bracket labels into readable headings.
+    chunk = chunk.replace(/(^|\n)\s*(\d+\.\s*)\[(.+?)\]\s*:\s*/g, '$1$2**$3:** ')
+    chunk = chunk.replace(/(^|\n)\s*\[(.+?)\]\s*:\s*/g, '$1**$2:** ')
+    chunk = chunk.replace(/(^|\n)\s*(\d+\.\s*)\[(.+?)\]\s+(?=\S)/g, '$1$2**$3:** ')
+    chunk = chunk.replace(/(^|\n)\s*\[(.+?)\]\s+(?=\S)/g, '$1**$2:** ')
+
+    // Remove repeated empty lines from fragmented responses.
+    chunk = chunk.replace(/\n{3,}/g, '\n\n')
+    return chunk
+  })
+
+  return cleaned.join('')
+}
+
+function normalizeListItemText(value) {
+  const text = value == null ? '' : String(value)
+  return text
+    .replace(/^\s*\d+\s*[\.\)]\s+/u, '')
+    .replace(/^\s*[-*•]\s+/u, '')
+    .replace(/^\s*\[(.+?)\]\s*:\s+/u, '**$1:** ')
+    .replace(/^\s*\[(.+?)\]\s+(?=\S)/u, '**$1:** ')
+    .trimStart()
 }
 
 function extractFencedCode(value) {
@@ -207,7 +247,12 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
       const c = msg.content || {}
       const agentName = String(msg.agent || 'Agent')
       const isJudge = /judge|arbiter|суд/i.test(agentName)
-      const issues = Array.isArray(c.issues_found) ? c.issues_found : []
+      const issuesRaw = Array.isArray(c.issues_found) ? c.issues_found : []
+      const issues = issuesRaw.map((issue) =>
+        typeof issue === 'string'
+          ? { type: 'note', description: normalizeListItemText(issue) }
+          : issue
+      )
       const thoughtsFold = shouldFold(c.thoughts, 280)
       const summaryFold = shouldFold(c.summary, 320)
       const hasMain =
@@ -247,10 +292,10 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
                     <div className="chat-msg__md">
                       {shouldFold(issue.description) ? (
                         <Fold title="Описание" defaultOpen={false}>
-                          <Markdown>{issue.description}</Markdown>
+                          <Markdown>{normalizeListItemText(issue.description)}</Markdown>
                         </Fold>
                       ) : (
-                        <Markdown>{issue.description}</Markdown>
+                        <Markdown>{normalizeListItemText(issue.description)}</Markdown>
                       )}
                     </div>
                   ) : null}
@@ -327,7 +372,11 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
                 {fixes.map((x, i) => (
                   <li key={i}>
                     <div className="chat-msg__md">
-                      <Markdown>{typeof x === 'string' ? x : JSON.stringify(x)}</Markdown>
+                      <Markdown>
+                        {typeof x === 'string'
+                          ? normalizeListItemText(x)
+                          : JSON.stringify(x)}
+                      </Markdown>
                     </div>
                   </li>
                 ))}
@@ -341,7 +390,11 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
                 {improvements.map((x, i) => (
                   <li key={i}>
                     <div className="chat-msg__md">
-                      <Markdown>{typeof x === 'string' ? x : JSON.stringify(x)}</Markdown>
+                      <Markdown>
+                        {typeof x === 'string'
+                          ? normalizeListItemText(x)
+                          : JSON.stringify(x)}
+                      </Markdown>
                     </div>
                   </li>
                 ))}

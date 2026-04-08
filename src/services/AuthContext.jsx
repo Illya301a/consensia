@@ -87,6 +87,31 @@ export function AuthProvider({ children }) {
     setUser(null)
   }, [])
 
+  const refreshUser = useCallback(async () => {
+    if (!token) {
+      setUser(null)
+      return { ok: false, status: 401 }
+    }
+    try {
+      const result = await fetchCurrentUser()
+      if (result.ok === false && result.status === 401) {
+        writeToken(null)
+        setTokenState(null)
+        setUser(null)
+        return result
+      }
+      if (result.ok && result.user) {
+        setUser(result.user)
+        return result
+      }
+      setUser(null)
+      return result
+    } catch {
+      setUser(null)
+      return { ok: false, status: 0 }
+    }
+  }, [token])
+
   useEffect(() => {
     if (!token) {
       setUser(null)
@@ -128,8 +153,9 @@ export function AuthProvider({ children }) {
       setToken,
       loginWithGoogle,
       logout,
+      refreshUser,
     }),
-    [token, user, authChecked, setToken, loginWithGoogle, logout]
+    [token, user, authChecked, setToken, loginWithGoogle, logout, refreshUser]
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

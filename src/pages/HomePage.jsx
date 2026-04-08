@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import '../App.scss'
 import { Reveal } from '../components/Reveal.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
+import DevelopersPage from '../pages/DevelopersPage.jsx'
 import { useAuth } from '../services/AuthContext.jsx'
 import { apiFetch } from '../services/http.js'
 
@@ -226,10 +227,9 @@ export default function HomePage() {
             <span className="logo">Consensia</span>
             <div className="top__end">
               <nav className="top__nav top__nav--desktop" aria-label="Навигация по странице">
-                <a href="#how">Как это работает</a>
-                <a href="#features">Возможности</a>
-                <a href="#cases">Сценарии</a>
-                {/* <Link to="/developers">Developers</Link> */}
+                <Link to="/about">О нас</Link>
+                <Link to="/models">Модели</Link>
+                <Link to="/developers">Разработчики</Link>
               </nav>
               {isAuthenticated ? (
                 <div className="chat-app__profile" ref={profileRef}>
@@ -347,23 +347,20 @@ export default function HomePage() {
           >
             <div className="top__menu-main">
               <nav className="top__menu-nav" aria-label="Навигация по странице">
-                <a href="#how" onClick={closeMobileMenu}>
-                  Как это работает
-                </a>
-                <a href="#features" onClick={closeMobileMenu}>
-                  Возможности
-                </a>
-                <a href="#cases" onClick={closeMobileMenu}>
-                  Сценарии
-                </a>
-                {/* <Link to="/developers" onClick={closeMobileMenu}>
-                  Developers
-                </Link> */}
+                <Link to="/about" onClick={closeMobileMenu}>
+                  О нас
+                </Link>
+                <Link to="/models" onClick={closeMobileMenu}>
+                  Модели
+                </Link>
+                <Link to="/developers" onClick={closeMobileMenu}>
+                  Разработчики
+                </Link>
               </nav>
               {!isAuthenticated ? (
                 <button
                   type="button"
-                  className="top__cta top__cta--menu"
+                  className="motion-toggle motion-toggle--menu"
                   onClick={() => {
                     loginWithGoogle()
                     closeMobileMenu()

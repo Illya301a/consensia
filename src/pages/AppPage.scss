@@ -88,9 +88,17 @@ $bg-deep: #fce7f3;
   letter-spacing: -0.02em;
   color: $text;
   text-decoration: none;
+  display: inline-block;
+  padding-bottom: 3px;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  transition: color 0.2s ease, background-size 0.25s ease;
 
   &:hover {
     color: $rose-500;
+    background-size: 100% 1px;
   }
 }
 
@@ -432,6 +440,10 @@ $bg-deep: #fce7f3;
   .chat-msg__md {
     color: #fff;
   }
+
+  .md-p {
+    white-space: pre-wrap;
+  }
 }
 
 .chat-msg--task {
@@ -621,6 +633,10 @@ $bg-deep: #fce7f3;
   background: rgba(255, 255, 255, 0.84);
   border: 1px solid rgba(244, 114, 182, 0.2);
   box-shadow: 0 8px 28px rgba(244, 114, 182, 0.08);
+
+  .md-p {
+    white-space: pre-wrap;
+  }
 }
 
 .chat-msg__md {
@@ -876,11 +892,22 @@ $bg-deep: #fce7f3;
   backdrop-filter: none;
 }
 
+.chat-app__composer-inner--expanded {
+  align-items: stretch;
+}
+
+.chat-app__input-wrap {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+}
+
 .chat-app__input {
   flex: 1;
   min-height: 2.5rem;
   max-height: 8rem;
   resize: none;
+  overflow-y: auto;
   border: none;
   background: transparent;
   font: inherit;
@@ -894,6 +921,47 @@ $bg-deep: #fce7f3;
 
   &:disabled {
     opacity: 0.55;
+  }
+}
+
+.chat-app__input--expanded {
+  min-height: clamp(12rem, 42vh, 24rem);
+  max-height: clamp(12rem, 42vh, 24rem);
+}
+
+.chat-app__composer-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.chat-app__composer-actions--with-expand {
+  align-self: stretch;
+  justify-content: space-between;
+}
+
+.chat-app__input-expand {
+  position: static;
+  width: 1.45rem;
+  height: 1.45rem;
+  border-radius: 999px;
+  border: 1px solid rgba(244, 114, 182, 0.3);
+  background: rgba(255, 255, 255, 0.88);
+  color: rgba(107, 74, 88, 0.92);
+  font-size: 0.88rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    color: $text;
+    border-color: rgba(244, 114, 182, 0.55);
   }
 }
 
@@ -1689,6 +1757,11 @@ $bg-deep: #fce7f3;
   .chat-app__composer-inner {
     border-radius: 1.05rem;
     padding: 0.52rem 0.62rem;
+  }
+
+  .chat-app__input--expanded {
+    min-height: min(48dvh, 19rem);
+    max-height: min(48dvh, 19rem);
   }
 
   .chat-msg--user,

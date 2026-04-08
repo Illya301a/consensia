@@ -157,6 +157,20 @@ export function useOrchestratorWs({ onSessionId } = {}) {
               const prevStable = Array.isArray(prev)
                 ? prev.filter((m) => m?.kind !== 'stream')
                 : []
+              const reinsertFinalsAtPreviousAnchor = (nonFinals, finals) => {
+                const finalsToUse = Array.isArray(finals) ? finals : []
+                if (!finalsToUse.length) return nonFinals
+                const firstFinalIndex = prevStable.findIndex((m) => m?.kind === 'final')
+                if (firstFinalIndex < 0) return [...nonFinals, ...finalsToUse]
+                const beforeCount = prevStable
+                  .slice(0, firstFinalIndex)
+                  .filter((m) => m?.kind !== 'final').length
+                return [
+                  ...nonFinals.slice(0, beforeCount),
+                  ...finalsToUse,
+                  ...nonFinals.slice(beforeCount),
+                ]
+              }
               const prevHasAgents = prevStable.some((m) => m?.kind === 'agent')
               const nextHasAgents = historyMessages.some((m) => m?.kind === 'agent')
 
@@ -167,7 +181,7 @@ export function useOrchestratorWs({ onSessionId } = {}) {
                 const finals = finalsFromHistory.length
                   ? finalsFromHistory
                   : prevStable.filter((m) => m?.kind === 'final')
-                return [...preserved, ...finals]
+                return reinsertFinalsAtPreviousAnchor(preserved, finals)
               }
 
               const historyHasContext = historyMessages.some((m) =>
@@ -182,7 +196,7 @@ export function useOrchestratorWs({ onSessionId } = {}) {
 
               const preserved = prevStable.filter((m) => m?.kind !== 'final')
               const finalsFromHistory = historyMessages.filter((m) => m?.kind === 'final')
-              return [...preserved, ...finalsFromHistory]
+              return reinsertFinalsAtPreviousAnchor(preserved, finalsFromHistory)
             })
           }
           break
