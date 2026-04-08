@@ -229,7 +229,7 @@ export default function HomePage() {
                 <a href="#how">Как это работает</a>
                 <a href="#features">Возможности</a>
                 <a href="#cases">Сценарии</a>
-                <Link to="/developers">Developers</Link>
+                {/* <Link to="/developers">Developers</Link> */}
               </nav>
               {isAuthenticated ? (
                 <div className="chat-app__profile" ref={profileRef}>
@@ -345,34 +345,34 @@ export default function HomePage() {
             aria-modal="true"
             aria-label="Меню"
           >
-            <nav className="top__menu-nav" aria-label="Навигация по странице">
-              <a href="#how" onClick={closeMobileMenu}>
-                Как это работает
-              </a>
-              <a href="#features" onClick={closeMobileMenu}>
-                Возможности
-              </a>
-              <a href="#cases" onClick={closeMobileMenu}>
-                Сценарии
-              </a>
-              <Link to="/developers" onClick={closeMobileMenu}>
-                Developers
-              </Link>
-            </nav>
-            {!isAuthenticated ? (
-              <button
-                type="button"
-                className="top__cta top__cta--menu"
-                onClick={() => {
-                  loginWithGoogle()
-                  closeMobileMenu()
-                }}
-              >
-                Войти
-              </button>
-            ) : (
-              <div className="top__menu-profile">{mobileProfile}</div>
-            )}
+            <div className="top__menu-main">
+              <nav className="top__menu-nav" aria-label="Навигация по странице">
+                <a href="#how" onClick={closeMobileMenu}>
+                  Как это работает
+                </a>
+                <a href="#features" onClick={closeMobileMenu}>
+                  Возможности
+                </a>
+                <a href="#cases" onClick={closeMobileMenu}>
+                  Сценарии
+                </a>
+                {/* <Link to="/developers" onClick={closeMobileMenu}>
+                  Developers
+                </Link> */}
+              </nav>
+              {!isAuthenticated ? (
+                <button
+                  type="button"
+                  className="top__cta top__cta--menu"
+                  onClick={() => {
+                    loginWithGoogle()
+                    closeMobileMenu()
+                  }}
+                >
+                  Войти
+                </button>
+              ) : null}
+            </div>
             <button
               type="button"
               className="motion-toggle motion-toggle--menu"
@@ -382,6 +382,7 @@ export default function HomePage() {
             >
               {animationsEnabled ? 'Остановить фон' : 'Анимировать фон'}
             </button>
+            {isAuthenticated ? <div className="top__menu-profile">{mobileProfile}</div> : null}
           </div>
 
           <div className="hero__main">

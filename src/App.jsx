@@ -16,7 +16,7 @@ export default function App() {
       <Route path="/privacy" element={<PrivacyPolicyPage />} />
       <Route path="/faq" element={<FaqPage />} />
       <Route path="/auth/callback" element={<AuthCallbackPage />} />
-      <Route path="/developers" element={<DevelopersPage />} />
+      {/* <Route path="/developers" element={<DevelopersPage />} /> */}
       <Route
         path="/app"
         element={

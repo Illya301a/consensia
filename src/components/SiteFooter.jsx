@@ -17,8 +17,6 @@ export default function SiteFooter() {
             </div>
             <nav className="footer__col" aria-label="Разделы продукта">
               <span className="footer__col-title">Продукт</span>
-              <Link to="/#features">Возможности</Link>
-              <Link to="/#cases">Сценарии</Link>
               <Link to="/faq">FAQ</Link>
               <Link to="/terms">Terms of Service</Link>
               <Link to="/privacy">Privacy Policy</Link>

@@ -5,7 +5,9 @@ export const ChatComposer = memo(function ChatComposer({ disabled, placeholder, 
   const inputRef = useRef(null)
 
   useEffect(() => {
-    if (!disabled) inputRef.current?.focus()
+    if (disabled) return
+    const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches
+    if (isDesktop) inputRef.current?.focus()
   }, [disabled])
 
   const submit = (e) => {
