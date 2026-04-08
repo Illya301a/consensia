@@ -266,9 +266,9 @@ export function useOrchestratorWs({ onSessionId } = {}) {
       rounds,
       ui,
       resumeMessages,
+      resumeUsageEvents,
     }) => {
       setLastError(null)
-      setUsageEvents([])
       setInputLocked(true)
       setCurrentRound(0)
       disconnect()
@@ -283,6 +283,11 @@ export function useOrchestratorWs({ onSessionId } = {}) {
           mode: ui.mode || '',
           rounds: ui.rounds ?? null,
         })
+      }
+      if (Array.isArray(resumeUsageEvents) && resumeUsageEvents.length > 0) {
+        setUsageEvents(resumeUsageEvents)
+      } else {
+        setUsageEvents([])
       }
 
       setStatus('connecting')

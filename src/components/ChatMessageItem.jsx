@@ -145,51 +145,30 @@ function CodeBlock({ value, defaultLanguage = 'text' }) {
   )
 }
 
-function UsageGrid({ usage }) {
+function n(value) {
+  const x = Number(value)
+  return Number.isFinite(x) ? x : 0
+}
+
+function totalTokensFromUsage(usage) {
   const u = usage || {}
-  const prompt = u.prompt ?? u.prompt_tokens
-  const completion = u.completion ?? u.completion_tokens
-  const cached = u.cached ?? u.cached_tokens
+  const directTotal = u.total ?? u.total_tokens ?? u.tokens ?? u.totalTokens
+  if (directTotal != null) return n(directTotal)
   return (
-    <div className="chat-msg__usage-grid" role="table" aria-label="usage">
-      <div className="chat-msg__usage-row" role="row">
-        <div className="chat-msg__usage-k" role="cell">
-          prompt
-        </div>
-        <div className="chat-msg__usage-v" role="cell">
-          {prompt ?? '—'}
-        </div>
-      </div>
-      <div className="chat-msg__usage-row" role="row">
-        <div className="chat-msg__usage-k" role="cell">
-          completion
-        </div>
-        <div className="chat-msg__usage-v" role="cell">
-          {completion ?? '—'}
-        </div>
-      </div>
-      <div className="chat-msg__usage-row" role="row">
-        <div className="chat-msg__usage-k" role="cell">
-          cached
-        </div>
-        <div className="chat-msg__usage-v" role="cell">
-          {cached ?? '—'}
-        </div>
-      </div>
-    </div>
+    n(u.prompt) +
+    n(u.prompt_tokens) +
+    n(u.completion) +
+    n(u.completion_tokens) +
+    n(u.cached) +
+    n(u.cached_tokens) +
+    n(u.input_tokens) +
+    n(u.output_tokens) +
+    n(u.cached_input_tokens)
   )
 }
 
-function usageTitle(agent, usage) {
-  const u = usage || {}
-  const prompt = u.prompt ?? u.prompt_tokens
-  const completion = u.completion ?? u.completion_tokens
-  const cached = u.cached ?? u.cached_tokens
-  const total =
-    [prompt, completion, cached].every((x) => typeof x === 'number' && Number.isFinite(x))
-      ? prompt + completion + cached
-      : null
-  return `${String(agent || 'Agent')}${total != null ? ` · ${total}` : ''}`
+function creditsFromTokens(tokens) {
+  return Math.floor(n(tokens) / 1000)
 }
 
 export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
@@ -428,32 +407,21 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
       )
     }
     case 'usage': {
-      const title = `${usageTitle(msg.agent, msg.usage)} usage`
+      const totalTokens = totalTokensFromUsage(msg.usage)
+      const spentCredits = creditsFromTokens(totalTokens)
       return (
         <div className="chat-msg chat-msg--usage">
-          <Fold title={title} defaultOpen={false}>
-            <UsageGrid usage={msg.usage} />
-          </Fold>
+          <div className="chat-msg__md">Кредитов потрачено: {spentCredits}</div>
         </div>
       )
     }
     case 'usage_group': {
       const events = Array.isArray(msg.events) ? msg.events : []
-      const sorted = events
-        .slice()
-        .sort((a, b) => String(a.agent || '').localeCompare(String(b.agent || ''), undefined, { sensitivity: 'base' }))
-      const title = `Usage · ${sorted.length}`
+      const totalTokens = events.reduce((sum, e) => sum + totalTokensFromUsage(e?.usage), 0)
+      const spentCredits = creditsFromTokens(totalTokens)
       return (
         <div className="chat-msg chat-msg--usage">
-          <Fold title={title} defaultOpen={false}>
-            <div className="chat-msg__usage-group">
-              {sorted.map((e) => (
-                <Fold key={e.id || `${e.agent}`} title={usageTitle(e.agent, e.usage)} defaultOpen={false}>
-                  <UsageGrid usage={e.usage} />
-                </Fold>
-              ))}
-            </div>
-          </Fold>
+          <div className="chat-msg__md">Кредитов потрачено: {spentCredits}</div>
         </div>
       )
     }

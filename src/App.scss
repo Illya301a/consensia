@@ -10,6 +10,32 @@ $font-ui: 'Onest', system-ui, sans-serif;
 $font-display: 'Literata', Georgia, 'Times New Roman', serif;
 $font-logo: $font-display;
 
+/* Global pink scrollbars (Firefox + WebKit) */
+* {
+  // scrollbar-width: thin;
+  scrollbar-color: rgba(244, 114, 182, 0.44) rgba(255, 255, 255, 0.95);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(244, 114, 182, 0.42);
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.95);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(244, 114, 182, 0.56);
+}
+
 .title,
 .section__title,
 .cta-band__title,

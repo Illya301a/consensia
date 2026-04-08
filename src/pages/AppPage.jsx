@@ -8,6 +8,7 @@ import { useAuth } from '../services/AuthContext.jsx'
 import { apiFetch } from '../services/http.js'
 import {
   buildResumeMessagesFromSessionData,
+  buildResumeUsageEventsFromSessionData,
   deriveSessionRounds,
   deriveSessionTitle,
   deleteSession,
@@ -87,6 +88,105 @@ function statusLabel(status) {
   }
 }
 
+function n(value) {
+  const x = Number(value)
+  return Number.isFinite(x) ? x : 0
+}
+
+function totalTokensFromUsage(usage) {
+  const u = usage && typeof usage === 'object' ? usage : {}
+  const directTotal = u.total ?? u.total_tokens ?? u.tokens ?? u.totalTokens
+  if (directTotal != null) return n(directTotal)
+  return (
+    n(u.prompt) +
+    n(u.prompt_tokens) +
+    n(u.completion) +
+    n(u.completion_tokens) +
+    n(u.cached) +
+    n(u.cached_tokens) +
+    n(u.input_tokens) +
+    n(u.output_tokens) +
+    n(u.cached_input_tokens)
+  )
+}
+
+function collectNumericDeep(value, keys, out, depth = 0) {
+  if (!value || typeof value !== 'object' || depth > 5) return
+  if (Array.isArray(value)) {
+    value.forEach((item) => collectNumericDeep(item, keys, out, depth + 1))
+    return
+  }
+  for (const [k, v] of Object.entries(value)) {
+    if (keys.has(k)) {
+      const n = Number(v)
+      if (Number.isFinite(n) && n >= 0) out.push(n)
+    }
+    if (v && typeof v === 'object') collectNumericDeep(v, keys, out, depth + 1)
+  }
+}
+
+function extractSpentCreditsFromDetail(detail, sessionData, sessionMeta) {
+  const d = detail && typeof detail === 'object' ? detail : {}
+  const sd = sessionData && typeof sessionData === 'object' ? sessionData : {}
+  const sm = sessionMeta && typeof sessionMeta === 'object' ? sessionMeta : {}
+
+  const directTokenCandidates = [
+    d.tokens_used,
+    d.total_tokens,
+    d.tokens,
+    sd.tokens_used,
+    sd.total_tokens,
+    sd.tokens,
+    sm.tokens_used,
+    sm.total_tokens,
+    sm.tokens,
+  ]
+  const deepTokenCandidates = []
+  collectNumericDeep(d, new Set(['tokens_used', 'total_tokens', 'tokens']), deepTokenCandidates)
+  collectNumericDeep(sd, new Set(['tokens_used', 'total_tokens', 'tokens']), deepTokenCandidates)
+  collectNumericDeep(sm, new Set(['tokens_used', 'total_tokens', 'tokens']), deepTokenCandidates)
+  const tokenCandidates = [...directTokenCandidates, ...deepTokenCandidates]
+    .map((x) => Number(x))
+    .filter((x) => Number.isFinite(x) && x >= 0)
+  const maxTokens = tokenCandidates.length ? Math.max(...tokenCandidates) : null
+  if (maxTokens != null && maxTokens > 0) {
+    return Math.floor(maxTokens / 1000)
+  }
+
+  const directCreditCandidates = [
+    d.burned_credits,
+    d.spent_credits,
+    sd.burned_credits,
+    sd.spent_credits,
+    sm.burned_credits,
+    sm.spent_credits,
+  ]
+  const deepCreditCandidates = []
+  collectNumericDeep(
+    d,
+    new Set(['burned_credits', 'spent_credits', 'credits_spent', 'used_credits']),
+    deepCreditCandidates
+  )
+  collectNumericDeep(
+    sd,
+    new Set(['burned_credits', 'spent_credits', 'credits_spent', 'used_credits']),
+    deepCreditCandidates
+  )
+  collectNumericDeep(
+    sm,
+    new Set(['burned_credits', 'spent_credits', 'credits_spent', 'used_credits']),
+    deepCreditCandidates
+  )
+  const creditCandidates = [...directCreditCandidates, ...deepCreditCandidates]
+    .map((x) => Number(x))
+    .filter((x) => Number.isFinite(x) && x >= 0)
+  const maxCredits = creditCandidates.length ? Math.max(...creditCandidates) : null
+  if (maxCredits != null && maxCredits > 0) {
+    return Math.floor(maxCredits)
+  }
+  return null
+}
+
 export default function AppPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -124,6 +224,7 @@ export default function AppPage() {
   const [sessionsError, setSessionsError] = useState(null)
   const [sessionLoading, setSessionLoading] = useState(false)
   const [sessionLoadError, setSessionLoadError] = useState(null)
+  const [restoredSpentCredits, setRestoredSpentCredits] = useState(null)
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
 
   const [profileOpen, setProfileOpen] = useState(false)
@@ -334,6 +435,13 @@ export default function AppPage() {
         }
         const d = res.detail || {}
         const sd = d.session_data || {}
+        const resumeUsageEvents = buildResumeUsageEventsFromSessionData(sd)
+        const currentSessionMeta = sessions.find((s) => s.id === sessionFromUrl) || null
+        const restoredFromDetail = extractSpentCreditsFromDetail(d, sd, currentSessionMeta)
+        const restoredFromHistory = Math.floor(
+          resumeUsageEvents.reduce((sum, e) => sum + totalTokensFromUsage(e?.usage), 0) / 1000
+        )
+        setRestoredSpentCredits(Math.max(restoredFromDetail ?? 0, restoredFromHistory))
         const detailTitle = deriveSessionTitle(d) || deriveSessionTitle(sd)
         const detailRounds = deriveSessionRounds(d) ?? deriveSessionRounds(sd)
         const resumeBase = buildResumeMessagesFromSessionData(sd)
@@ -425,6 +533,7 @@ export default function AppPage() {
             rounds: roundsForWs,
           },
           resumeMessages: resumeMessages.length ? resumeMessages : undefined,
+          resumeUsageEvents: resumeUsageEvents.length ? resumeUsageEvents : undefined,
         })
       } catch (e) {
         if (!cancelled) setSessionLoadError(e?.message || String(e))
@@ -443,6 +552,7 @@ export default function AppPage() {
       e.preventDefault()
       if (!token) return
       setProfileOpen(false)
+      setRestoredSpentCredits(null)
       window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
       connect({
         token,
@@ -472,6 +582,7 @@ export default function AppPage() {
     navigate('/app', { replace: true })
     setShowSetup(true)
     setProfileOpen(false)
+    setRestoredSpentCredits(null)
     setSessionLoadError(null)
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
   }, [disconnect, navigate])
@@ -628,6 +739,11 @@ export default function AppPage() {
   const statusText = statusLabel(status)
   const waitingForAi = status === 'open' && inputLocked
   const hasFinalVerdict = messages.some((m) => m.kind === 'final')
+  const spentCreditsLive = useMemo(() => {
+    const totalTokens = usageEvents.reduce((sum, e) => sum + totalTokensFromUsage(e?.usage), 0)
+    return Math.floor(totalTokens / 1000)
+  }, [usageEvents])
+  const spentCredits = Math.max(restoredSpentCredits ?? 0, spentCreditsLive)
   const activeSid = sessionFromUrl || sessionId || ''
   const renderedMessages = useMemo(
     () => messages.map((msg) => <ChatMessageItem key={msg.id} msg={msg} />),
@@ -1053,14 +1169,6 @@ export default function AppPage() {
                 ) : null}
                 <div ref={messagesRef} className="chat-app__messages" role="log" aria-live="polite">
                   {renderedMessages}
-                  {hasFinalVerdict && usageEvents.length ? (
-                    <div className="chat-app__usage-after-final" aria-label="Usage">
-                      <ChatMessageItem
-                        key="usage-group"
-                        msg={{ id: 'usage-group', kind: 'usage_group', events: usageEvents }}
-                      />
-                    </div>
-                  ) : null}
                   <div ref={endRef} />
                 </div>
 
@@ -1071,6 +1179,12 @@ export default function AppPage() {
                       <span className="chat-app__typing-dot" />
                       <span className="chat-app__typing-dot" />
                       <span className="chat-app__typing-text">Генерируем ответ…</span>
+                    </div>
+                  ) : null}
+                  {hasFinalVerdict && (usageEvents.length > 0 || restoredSpentCredits != null) ? (
+                    <div className="chat-app__spent-credits" aria-live="polite">
+                      <span className="chat-app__spent-credits-label">Кредитов потрачено</span>
+                      <strong className="chat-app__spent-credits-value">{spentCredits}</strong>
                     </div>
                   ) : null}
                   <ChatComposer

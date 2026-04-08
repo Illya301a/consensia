@@ -83,6 +83,28 @@ function isAgentPayload(payload) {
   return 'thoughts' in payload || 'issues_found' in payload || 'snippet' in payload
 }
 
+function pickUsagePayload(item) {
+  const direct = item?.usage
+  if (direct && typeof direct === 'object') return direct
+  const payload = parseHistoryPayload(item)
+  if (!payload || typeof payload !== 'object') return null
+  if (payload.usage && typeof payload.usage === 'object') return payload.usage
+  if (
+    'prompt' in payload ||
+    'prompt_tokens' in payload ||
+    'completion' in payload ||
+    'completion_tokens' in payload ||
+    'cached' in payload ||
+    'cached_tokens' in payload ||
+    'total' in payload ||
+    'total_tokens' in payload ||
+    'tokens' in payload
+  ) {
+    return payload
+  }
+  return null
+}
+
 export function mapSessionHistoryToMessages(history) {
   if (!Array.isArray(history)) return []
   return history.map((h, i) => {
@@ -166,6 +188,24 @@ export function mapSessionHistoryToMessages(history) {
       text,
     }
   })
+}
+
+export function mapSessionHistoryToUsageEvents(history) {
+  if (!Array.isArray(history)) return []
+  const out = []
+  for (let i = 0; i < history.length; i += 1) {
+    const h = history[i]
+    const typeRaw = String(h?.type ?? '').toLowerCase()
+    const usage = pickUsagePayload(h)
+    if (typeRaw !== 'agent_usage' && !usage) continue
+    out.push({
+      id: `hist-usage-${i}-${uid()}`,
+      kind: 'usage',
+      agent: String(h?.agent ?? h?.role ?? 'Agent'),
+      usage: usage || {},
+    })
+  }
+  return out
 }
 
 function getRoundNumber(key, fallback = 0) {
@@ -325,6 +365,11 @@ export function buildResumeMessagesFromSessionData(sessionData) {
   const finals = fromHistory.filter((m) => m?.kind === 'final')
   const nonFinals = fromHistory.filter((m) => m?.kind !== 'final')
   return normalizeConversationOrder([...nonFinals, ...fromRounds, ...finals])
+}
+
+export function buildResumeUsageEventsFromSessionData(sessionData) {
+  const sd = sessionData && typeof sessionData === 'object' ? sessionData : {}
+  return mapSessionHistoryToUsageEvents(sd.history)
 }
 
 export async function fetchSessionsList() {
