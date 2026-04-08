@@ -1,0 +1,162 @@
+{
+  "common": {
+    "loading": "Loading…",
+    "brand": "Consensia"
+  },
+  "a11y": {
+    "mainNav": "Main navigation",
+    "chooseLanguage": "Interface language"
+  },
+  "nav": {
+    "about": "About",
+    "models": "Models",
+    "developers": "Developers"
+  },
+  "languages": {
+    "ru": "Russian",
+    "uk": "Ukrainian",
+    "en": "English"
+  },
+  "home": {
+    "a11y": {
+      "hero": "Main screen",
+      "pageNav": "Page navigation",
+      "keyFeatures": "Key features"
+    },
+    "auth": {
+      "login": "Sign in"
+    },
+    "menu": {
+      "open": "Open menu",
+      "close": "Close menu",
+      "label": "Menu"
+    },
+    "hero": {
+      "eyebrow": "Multi-model intelligence",
+      "titleLine1": "One answer",
+      "titleLine2": "from model consensus",
+      "lede": "Several models discuss the task and converge on the best solution — you get an answer assembled and verified by Consensia.",
+      "start": "Get started",
+      "howItWorks": "How it works",
+      "scrollHint": "Scroll down",
+      "motionToggleTitle": "Only animates the background 3D layer, not the page",
+      "stopBackground": "Stop background",
+      "animateBackground": "Animate background",
+      "tags": {
+        "models": "Multiple models",
+        "dialog": "Internal dialogue",
+        "consensus": "One aligned answer"
+      }
+    },
+    "profile": {
+      "label": "Profile",
+      "open": "Open profile",
+      "credits": "Credits: {{count}}",
+      "dataCollection": "Data collection",
+      "logout": "Log out",
+      "topUp": {
+        "amountAria": "Top-up amount in dollars",
+        "preview": "{{count}} cr.",
+        "button": "Top up",
+        "rateTitle": "Rate: {{multiplier}} credits per $1",
+        "minAmount": "Minimum top-up amount is $1",
+        "createPaymentError": "Failed to create payment",
+        "checkoutUrlError": "Stripe checkout URL was not received"
+      }
+    },
+    "strip": {
+      "a11y": "In short",
+      "idea": {
+        "label": "Idea",
+        "text": "One task — different model viewpoints, then consolidation into a shared conclusion."
+      },
+      "difference": {
+        "label": "Difference",
+        "text": "Not button-based voting, but an exchange of arguments and clarifications between models."
+      },
+      "result": {
+        "label": "Result",
+        "text": "Fewer random mistakes and fewer confident inaccuracies from a single model."
+      }
+    },
+    "how": {
+      "title": "How it works",
+      "lead": "Three steps from request to an answer that passed an internal check.",
+      "steps": {
+        "request": {
+          "title": "Request",
+          "text": "You describe the task — just like with a regular assistant."
+        },
+        "dialog": {
+          "title": "Model dialogue",
+          "text": "Several neural networks exchange conclusions and refine each other."
+        },
+        "result": {
+          "title": "Outcome",
+          "text": "Consensia returns one aligned, verified answer."
+        }
+      }
+    },
+    "features": {
+      "title": "Capabilities",
+      "lead": "Everything you need to trust the answer — not only the text, but also the path to it.",
+      "cards": {
+        "depth": {
+          "title": "Depth",
+          "text": "Weak spots of one model are offset by the strengths of another."
+        },
+        "transparency": {
+          "title": "Transparency",
+          "text": "You can see how the final result was reached — not a black box, but collaborative reasoning."
+        },
+        "quality": {
+          "title": "Quality",
+          "text": "Focused on one best answer, not a stream of conflicting versions."
+        }
+      }
+    },
+    "cases": {
+      "title": "Where it helps",
+      "lead": "Any task where accuracy, multiple perspectives, and careful wording matter.",
+      "items": {
+        "code": {
+          "title": "Code and architecture",
+          "text": "Review ideas, find edge cases, align style, and account for stack constraints."
+        },
+        "writing": {
+          "title": "Writing and communication",
+          "text": "Emails, documents, and tone of voice — when nuance matters."
+        },
+        "analytics": {
+          "title": "Analytics and decisions",
+          "text": "Compare options, validate assumptions, and arrive at a steadier, better-grounded outcome."
+        },
+        "learning": {
+          "title": "Learning and ideation",
+          "text": "Break topics down, spot gaps, and build a coherent big picture."
+        }
+      }
+    },
+    "quote": {
+      "a11y": "Product positioning",
+      "text": "We are not chasing the most creative answer at any cost — we focus on an aligned and verifiable result."
+    },
+    "cta": {
+      "a11y": "Call to action",
+      "title": "Ready for Consensia?",
+      "sub": "Paste your code or prompt — it is the fastest way to see the result in practice.",
+      "openApp": "Open app"
+    }
+  },
+  "footer": {
+    "tagline": "Collective model intelligence in one interface.",
+    "badge": "Beta version",
+    "productAria": "Product sections",
+    "product": "Product",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "sessions": "Sessions",
+    "sessionsText": "You can continue analyses later — history is saved in your account.",
+    "rights": "All rights reserved"
+  }
+}

@@ -1,9 +1,10 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import '../App.scss'
 import { Reveal } from '../components/Reveal.jsx'
+import LanguageSwitcher from '../components/LanguageSwitcher.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
-import DevelopersPage from '../pages/DevelopersPage.jsx'
 import { useAuth } from '../services/AuthContext.jsx'
 import { apiFetch } from '../services/http.js'
 
@@ -15,14 +16,14 @@ const NAV_MOBILE_MAX_PX = 768
 const DATA_COLLECTION_KEY = 'consensia_data_collection_v1'
 
 function getUserLabel(user) {
-  if (!user || typeof user !== 'object') return 'Профиль'
+  if (!user || typeof user !== 'object') return ''
   return (
     user.email ||
     user.name ||
     user.full_name ||
     user.display_name ||
     user.given_name ||
-    'Профиль'
+    ''
   )
 }
 
@@ -37,8 +38,11 @@ function getCredits(user) {
 }
 
 export default function HomePage() {
+  const { t } = useTranslation()
   const { isAuthenticated, user, loginWithGoogle, logout } = useAuth()
-  const avatarLetter = String(getUserLabel(user)).slice(0, 1).toUpperCase()
+  const profileLabel = t('home.profile.label')
+  const userLabel = getUserLabel(user) || profileLabel
+  const avatarLetter = String(userLabel).slice(0, 1).toUpperCase()
   const [animationsEnabled, setAnimationsEnabled] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
@@ -123,7 +127,7 @@ export default function HomePage() {
   const handleTopUp = async () => {
     const amount = Number(topUpAmount)
     if (!Number.isFinite(amount) || amount < 1) {
-      setTopUpError('Минимальная сумма пополнения — 1$')
+      setTopUpError(t('home.profile.topUp.minAmount'))
       return
     }
     setTopUpError('')
@@ -135,8 +139,8 @@ export default function HomePage() {
         body: JSON.stringify({ amount_usd: Math.round(amount) }),
       })
       const data = await r.json().catch(() => null)
-      if (!r.ok) throw new Error(data?.detail || 'Ошибка создания платежа')
-      if (!data?.checkout_url) throw new Error('Stripe checkout URL не получен')
+      if (!r.ok) throw new Error(data?.detail || t('home.profile.topUp.createPaymentError'))
+      if (!data?.checkout_url) throw new Error(t('home.profile.topUp.checkoutUrlError'))
       window.location.href = data.checkout_url
     } catch (e) {
       setTopUpError(e?.message || String(e))
@@ -154,9 +158,11 @@ export default function HomePage() {
             {avatarLetter}
           </span>
           <div>
-            <div className="chat-app__profile-title">{getUserLabel(user)}</div>
+            <div className="chat-app__profile-title">{userLabel}</div>
             {getCredits(user) != null ? (
-              <div className="chat-app__profile-sub">Кредиты: {getCredits(user)}</div>
+              <div className="chat-app__profile-sub">
+                {t('home.profile.credits', { count: getCredits(user) })}
+              </div>
             ) : null}
           </div>
         </div>
@@ -170,17 +176,19 @@ export default function HomePage() {
                 step={1}
                 value={topUpAmount}
                 onChange={(e) => setTopUpAmount(e.target.value)}
-                aria-label="Сумма пополнения в долларах"
+                aria-label={t('home.profile.topUp.amountAria')}
               />
-              <span className="chat-app__topup-preview">{creditsPreview} кр.</span>
+              <span className="chat-app__topup-preview">
+                {t('home.profile.topUp.preview', { count: creditsPreview })}
+              </span>
               <button
                 type="button"
                 className="chat-app__topup-btn"
                 onClick={handleTopUp}
                 disabled={topUpLoading}
-                title={`Курс: ${promoMultiplier} кредитов за $1`}
+                title={t('home.profile.topUp.rateTitle', { multiplier: promoMultiplier })}
               >
-                {topUpLoading ? '...' : 'Пополнить'}
+                {topUpLoading ? '...' : t('home.profile.topUp.button')}
               </button>
             </div>
           </div>
@@ -195,7 +203,7 @@ export default function HomePage() {
             onChange={(e) => setDataCollection(e.target.checked)}
           />
           <span className="chat-app__toggle-ui" aria-hidden="true" />
-          <span>Сбор данных</span>
+          <span>{t('home.profile.dataCollection')}</span>
         </label>
       </div>
       <div className="chat-app__profile-actions">
@@ -207,7 +215,7 @@ export default function HomePage() {
             closeMobileMenu()
           }}
         >
-          Выйти
+          {t('home.profile.logout')}
         </button>
       </div>
     </div>
@@ -215,7 +223,7 @@ export default function HomePage() {
 
   return (
     <div className="app">
-      <section className="hero" aria-label="Главный экран">
+      <section className="hero" aria-label={t('home.a11y.hero')}>
         <div className="hero__canvas" aria-hidden="true">
           <Suspense fallback={null}>
             <ConsensiaScene animationsEnabled={animationsEnabled} />
@@ -224,13 +232,14 @@ export default function HomePage() {
         <div className="hero__gradient" aria-hidden="true" />
         <div className="hero__content">
           <header className="top">
-            <span className="logo">Consensia</span>
+            <span className="logo">{t('common.brand')}</span>
             <div className="top__end">
-              <nav className="top__nav top__nav--desktop" aria-label="Навигация по странице">
-                <Link to="/about">О нас</Link>
-                <Link to="/models">Модели</Link>
-                <Link to="/developers">Разработчики</Link>
+              <nav className="top__nav top__nav--desktop" aria-label={t('home.a11y.pageNav')}>
+                <Link to="/about">{t('nav.about')}</Link>
+                <Link to="/models">{t('nav.models')}</Link>
+                <Link to="/developers">{t('nav.developers')}</Link>
               </nav>
+              <LanguageSwitcher className="top__lang top__lang--desktop" />
               {isAuthenticated ? (
                 <div className="chat-app__profile" ref={profileRef}>
                   <button
@@ -239,7 +248,7 @@ export default function HomePage() {
                     onClick={() => setProfileOpen((v) => !v)}
                     aria-haspopup="menu"
                     aria-expanded={profileOpen ? 'true' : 'false'}
-                    aria-label="Открыть профиль"
+                    aria-label={t('home.profile.open')}
                   >
                     <span className="chat-app__profile-avatar" aria-hidden="true">
                       {avatarLetter}
@@ -248,10 +257,12 @@ export default function HomePage() {
                   {profileOpen ? (
                     <div className="chat-app__profile-pop" role="menu">
                       <div className="chat-app__profile-head">
-                        <div className="chat-app__profile-title">{getUserLabel(user)}</div>
+                        <div className="chat-app__profile-title">{userLabel}</div>
                         {getCredits(user) != null ? (
                           <div className="chat-app__profile-credits-line">
-                            <div className="chat-app__profile-sub">Кредиты: {getCredits(user)}</div>
+                            <div className="chat-app__profile-sub">
+                              {t('home.profile.credits', { count: getCredits(user) })}
+                            </div>
                             <div className="chat-app__topup-inline">
                               <input
                                 className="chat-app__topup-input"
@@ -260,17 +271,19 @@ export default function HomePage() {
                                 step={1}
                                 value={topUpAmount}
                                 onChange={(e) => setTopUpAmount(e.target.value)}
-                                aria-label="Сумма пополнения в долларах"
+                                aria-label={t('home.profile.topUp.amountAria')}
                               />
-                              <span className="chat-app__topup-preview">{creditsPreview} кр.</span>
+                              <span className="chat-app__topup-preview">
+                                {t('home.profile.topUp.preview', { count: creditsPreview })}
+                              </span>
                               <button
                                 type="button"
                                 className="chat-app__topup-btn"
                                 onClick={handleTopUp}
                                 disabled={topUpLoading}
-                                title={`Курс: ${promoMultiplier} кредитов за $1`}
+                                title={t('home.profile.topUp.rateTitle', { multiplier: promoMultiplier })}
                               >
-                                {topUpLoading ? '...' : 'Пополнить'}
+                                {topUpLoading ? '...' : t('home.profile.topUp.button')}
                               </button>
                             </div>
                           </div>
@@ -285,7 +298,7 @@ export default function HomePage() {
                             onChange={(e) => setDataCollection(e.target.checked)}
                           />
                           <span className="chat-app__toggle-ui" aria-hidden="true" />
-                          <span>Сбор данных</span>
+                          <span>{t('home.profile.dataCollection')}</span>
                         </label>
                       </div>
                       <div className="chat-app__profile-actions">
@@ -297,7 +310,7 @@ export default function HomePage() {
                             logout()
                           }}
                         >
-                          Выйти
+                          {t('home.profile.logout')}
                         </button>
                       </div> 
                     </div>
@@ -305,24 +318,24 @@ export default function HomePage() {
                 </div>
               ) : (
                 <button type="button" className="top__cta" onClick={loginWithGoogle}>
-                  Войти
+                  {t('home.auth.login')}
                 </button>
               )}
               <button
                 type="button"
                 className="motion-toggle motion-toggle--desktop"
                 aria-pressed={animationsEnabled}
-                title="Только анимация заднего 3D-слоя, не страница"
+                title={t('home.hero.motionToggleTitle')}
                 onClick={() => setAnimationsEnabled((v) => !v)}
               >
-                {animationsEnabled ? 'Остановить фон' : 'Анимировать фон'}
+                {animationsEnabled ? t('home.hero.stopBackground') : t('home.hero.animateBackground')}
               </button>
               <button
                 type="button"
                 className={`top__burger${mobileMenuOpen ? ' top__burger--open' : ''}`}
                 aria-expanded={mobileMenuOpen}
                 aria-controls="top-mobile-menu"
-                aria-label={mobileMenuOpen ? 'Закрыть меню' : 'Открыть меню'}
+                aria-label={mobileMenuOpen ? t('home.menu.close') : t('home.menu.open')}
                 onClick={() => setMobileMenuOpen((o) => !o)}
               >
                 <span className="top__burger-line" aria-hidden="true" />
@@ -343,20 +356,21 @@ export default function HomePage() {
             className={`top__menu-panel${mobileMenuOpen ? ' top__menu-panel--open' : ''}`}
             role="dialog"
             aria-modal="true"
-            aria-label="Меню"
+            aria-label={t('home.menu.label')}
           >
             <div className="top__menu-main">
-              <nav className="top__menu-nav" aria-label="Навигация по странице">
+              <nav className="top__menu-nav" aria-label={t('home.a11y.pageNav')}>
                 <Link to="/about" onClick={closeMobileMenu}>
-                  О нас
+                  {t('nav.about')}
                 </Link>
                 <Link to="/models" onClick={closeMobileMenu}>
-                  Модели
+                  {t('nav.models')}
                 </Link>
                 <Link to="/developers" onClick={closeMobileMenu}>
-                  Разработчики
+                  {t('nav.developers')}
                 </Link>
               </nav>
+              <LanguageSwitcher className="top__lang top__lang--menu" />
               {!isAuthenticated ? (
                 <button
                   type="button"
@@ -366,7 +380,7 @@ export default function HomePage() {
                     closeMobileMenu()
                   }}
                 >
-                  Войти
+                  {t('home.auth.login')}
                 </button>
               ) : null}
             </div>
@@ -374,66 +388,57 @@ export default function HomePage() {
               type="button"
               className="motion-toggle motion-toggle--menu"
               aria-pressed={animationsEnabled}
-              title="Только анимация заднего 3D-слоя, не страница"
+              title={t('home.hero.motionToggleTitle')}
               onClick={() => setAnimationsEnabled((v) => !v)}
             >
-              {animationsEnabled ? 'Остановить фон' : 'Анимировать фон'}
+              {animationsEnabled ? t('home.hero.stopBackground') : t('home.hero.animateBackground')}
             </button>
             {isAuthenticated ? <div className="top__menu-profile">{mobileProfile}</div> : null}
           </div>
 
           <div className="hero__main">
-            <p className="eyebrow">Мульти-модельный интеллект</p>
+            <p className="eyebrow">{t('home.hero.eyebrow')}</p>
             <h1 className="title">
-              Один ответ
-              <span className="title__line">из согласия нейросетей</span>
+              {t('home.hero.titleLine1')}
+              <span className="title__line">{t('home.hero.titleLine2')}</span>
             </h1>
-            <p className="lede">
-              Несколько моделей обсуждают задачу и сходятся к лучшему решению —
-              вы получаете ответ, собранный и проверенный в Consensia.
-            </p>
+            <p className="lede">{t('home.hero.lede')}</p>
             <div className="cta">
               <a className="btn btn--primary" href="/app">
-                Начать
+                {t('home.hero.start')}
               </a>
               <a className="btn btn--ghost" href="#how">
-                Как это работает
+                {t('home.hero.howItWorks')}
               </a>
             </div>
-            <ul className="hero__tags" aria-label="Ключевые особенности">
-              <li>Несколько моделей</li>
-              <li>Внутренний диалог</li>
-              <li>Один согласованный ответ</li>
+            <ul className="hero__tags" aria-label={t('home.a11y.keyFeatures')}>
+              <li>{t('home.hero.tags.models')}</li>
+              <li>{t('home.hero.tags.dialog')}</li>
+              <li>{t('home.hero.tags.consensus')}</li>
             </ul>
           </div>
 
-          <p className="scroll-hint">Листайте вниз</p>
+          <p className="scroll-hint">{t('home.hero.scrollHint')}</p>
         </div>
       </section>
 
-      <section className="section section--strip" aria-label="В двух словах">
+      <section className="section section--strip" aria-label={t('home.strip.a11y')}>
         <Reveal>
           <div className="section__inner">
             <div className="strip">
               <div className="strip__item">
-                <span className="strip__label">Идея</span>
-                <p className="strip__text">
-                  Одна задача — разные «взгляды» моделей, затем сведение к общему выводу.
-                </p>
+                <span className="strip__label">{t('home.strip.idea.label')}</span>
+                <p className="strip__text">{t('home.strip.idea.text')}</p>
               </div>
               <div className="strip__divider" aria-hidden="true" />
               <div className="strip__item">
-                <span className="strip__label">Отличие</span>
-                <p className="strip__text">
-                  Не голосование по кнопке, а обмен аргументами и уточнениями между нейросетями.
-                </p>
+                <span className="strip__label">{t('home.strip.difference.label')}</span>
+                <p className="strip__text">{t('home.strip.difference.text')}</p>
               </div>
               <div className="strip__divider" aria-hidden="true" />
               <div className="strip__item">
-                <span className="strip__label">Результат</span>
-                <p className="strip__text">
-                  Меньше случайных ошибок и «уверенных» неточностей одной модели.
-                </p>
+                <span className="strip__label">{t('home.strip.result.label')}</span>
+                <p className="strip__text">{t('home.strip.result.text')}</p>
               </div>
             </div>
           </div>
@@ -443,27 +448,23 @@ export default function HomePage() {
       <section id="how" className="section section--how">
         <Reveal>
           <div className="section__inner">
-            <h2 className="section__title">Как это работает</h2>
-            <p className="section__lead">
-              Три шага от запроса до ответа, который прошёл внутреннюю проверку.
-            </p>
+            <h2 className="section__title">{t('home.how.title')}</h2>
+            <p className="section__lead">{t('home.how.lead')}</p>
             <ol className="steps">
               <li>
                 <span className="steps__num">01</span>
-                <h3>Запрос</h3>
-                <p>Вы формулируете задачу — как обычному ассистенту.</p>
+                <h3>{t('home.how.steps.request.title')}</h3>
+                <p>{t('home.how.steps.request.text')}</p>
               </li>
               <li>
                 <span className="steps__num">02</span>
-                <h3>Диалог моделей</h3>
-                <p>
-                  Несколько нейросетей обмениваются выводами и уточняют друг друга.
-                </p>
+                <h3>{t('home.how.steps.dialog.title')}</h3>
+                <p>{t('home.how.steps.dialog.text')}</p>
               </li>
               <li>
                 <span className="steps__num">03</span>
-                <h3>Итог</h3>
-                <p>Consensia отдаёт один согласованный, проверенный ответ.</p>
+                <h3>{t('home.how.steps.result.title')}</h3>
+                <p>{t('home.how.steps.result.text')}</p>
               </li>
             </ol>
           </div>
@@ -473,22 +474,20 @@ export default function HomePage() {
       <section id="features" className="section section--features">
         <Reveal>
           <div className="section__inner">
-            <h2 className="section__title">Возможности</h2>
-            <p className="section__lead">
-              Всё, что нужно, чтобы доверять ответу — не только его тексту, но и пути к нему.
-            </p>
+            <h2 className="section__title">{t('home.features.title')}</h2>
+            <p className="section__lead">{t('home.features.lead')}</p>
             <div className="cards">
               <article className="card">
-                <h3>Глубина</h3>
-                <p>Слабые места одной модели компенсируются сильными сторонами другой.</p>
+                <h3>{t('home.features.cards.depth.title')}</h3>
+                <p>{t('home.features.cards.depth.text')}</p>
               </article>
               <article className="card">
-                <h3>Прозрачность</h3>
-                <p>Видно, как пришли к итогу — не «чёрный ящик», а совместный разбор.</p>
+                <h3>{t('home.features.cards.transparency.title')}</h3>
+                <p>{t('home.features.cards.transparency.text')}</p>
               </article>
               <article className="card">
-                <h3>Качество</h3>
-                <p>Фокус на одном лучшем ответе, а не на потоке несогласованных версий.</p>
+                <h3>{t('home.features.cards.quality.title')}</h3>
+                <p>{t('home.features.cards.quality.text')}</p>
               </article>
             </div>
           </div>
@@ -498,66 +497,59 @@ export default function HomePage() {
       <section id="cases" className="section section--cases">
         <Reveal>
           <div className="section__inner">
-            <h2 className="section__title">Где это пригодится</h2>
-            <p className="section__lead">
-              Любая задача, где важны точность, разные углы зрения и аккуратные формулировки.
-            </p>
+            <h2 className="section__title">{t('home.cases.title')}</h2>
+            <p className="section__lead">{t('home.cases.lead')}</p>
             <div className="case-grid">
               <article className="case-card">
                 <span className="case-card__icon" aria-hidden="true">
                   ◇
                 </span>
-                <h3>Код и архитектура</h3>
-                <p>Ревью идеи, поиск краевых случаев, согласование стиля и ограничений стека.</p>
+                <h3>{t('home.cases.items.code.title')}</h3>
+                <p>{t('home.cases.items.code.text')}</p>
               </article>
               <article className="case-card">
                 <span className="case-card__icon" aria-hidden="true">
                   ◇
                 </span>
-                <h3>Тексты и коммуникации</h3>
-                <p>Письма, документы, тон голоса — когда важно не перегнуть и не упустить нюанс.</p>
+                <h3>{t('home.cases.items.writing.title')}</h3>
+                <p>{t('home.cases.items.writing.text')}</p>
               </article>
               <article className="case-card">
                 <span className="case-card__icon" aria-hidden="true">
                   ◇
                 </span>
-                <h3>Аналитика и решения</h3>
-                <p>Разбор вариантов, проверка допущений, более ровный и обоснованный итог.</p>
+                <h3>{t('home.cases.items.analytics.title')}</h3>
+                <p>{t('home.cases.items.analytics.text')}</p>
               </article>
               <article className="case-card">
                 <span className="case-card__icon" aria-hidden="true">
                   ◇
                 </span>
-                <h3>Обучение и идеи</h3>
-                <p>Разложить тему по полочкам, увидеть пробелы и собрать цельную картину.</p>
+                <h3>{t('home.cases.items.learning.title')}</h3>
+                <p>{t('home.cases.items.learning.text')}</p>
               </article>
             </div>
           </div>
         </Reveal>
       </section>
 
-      <aside className="quote-block" aria-label="Позиционирование продукта">
+      <aside className="quote-block" aria-label={t('home.quote.a11y')}>
         <Reveal>
           <blockquote className="quote-block__inner">
-            <p>
-              Мы не гонимся за самым «креативным» ответом любой ценой — мы нацелены на{' '}
-              <strong>согласованный</strong> и <strong>проверяемый</strong> результат.
-            </p>
+            <p>{t('home.quote.text')}</p>
           </blockquote>
         </Reveal>
       </aside>
 
-      <section className="cta-band" id="start" aria-label="Призыв к действию">
+      <section className="cta-band" id="start" aria-label={t('home.cta.a11y')}>
         <Reveal>
           <div className="cta-band__inner">
             <div className="cta-band__copy">
-              <h2 className="cta-band__title">Готовы к Consensia?</h2>
-              <p className="cta-band__sub">
-                Подставьте свой код или формулировку — так проще всего увидеть результат на практике.
-              </p>
+              <h2 className="cta-band__title">{t('home.cta.title')}</h2>
+              <p className="cta-band__sub">{t('home.cta.sub')}</p>
             </div>
             <a className="btn btn--primary btn--lg" href="/app">
-              Открыть приложение
+              {t('home.cta.openApp')}
             </a>
           </div>
         </Reveal>

@@ -1,4 +1,5 @@
 import { lazy, Suspense } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Route, Routes } from 'react-router-dom'
 import HomePage from './pages/HomePage.jsx'
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage.jsx'
@@ -10,7 +11,9 @@ import AboutPage from './pages/AboutPage.jsx'
 import ModelsPage from './pages/ModelsPage.jsx'
 
 const AppPage = lazy(() => import('./pages/AppPage.jsx'))
-export default function App() {
+
+function AppRoutes() {
+  const { t } = useTranslation()
   return (
     <Routes>
       <Route path="/" index element={<HomePage />} />
@@ -24,11 +27,15 @@ export default function App() {
       <Route
         path="/app"
         element={
-          <Suspense fallback={<div className="app-suspense-fallback">Загрузка…</div>}>
+          <Suspense fallback={<div className="app-suspense-fallback">{t('common.loading')}</div>}>
             <AppPage />
           </Suspense>
         }
       />
     </Routes>
   )
+}
+
+export default function App() {
+  return <AppRoutes />
 }

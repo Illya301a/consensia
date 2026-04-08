@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Reveal } from './Reveal.jsx'
 
 export default function SiteFooter() {
+  const { t } = useTranslation()
   return (
     <footer className="footer">
       <div className="footer__sheen" aria-hidden="true" />
@@ -10,22 +12,18 @@ export default function SiteFooter() {
           <div className="footer__grid">
             <div className="footer__brand">
               <span className="footer__logo">Consensia</span>
-              <p className="footer__tagline">
-                Коллективный разум моделей — в одном интерфейсе.
-              </p>
-              <span className="footer__badge">Beta версия</span>
+              <p className="footer__tagline">{t('footer.tagline')}</p>
+              <span className="footer__badge">{t('footer.badge')}</span>
             </div>
-            <nav className="footer__col" aria-label="Разделы продукта">
-              <span className="footer__col-title">Продукт</span>
+            <nav className="footer__col" aria-label={t('footer.productAria')}>
+              <span className="footer__col-title">{t('footer.product')}</span>
               <Link to="/faq">FAQ</Link>
-              <Link to="/terms">Terms of Service</Link>
-              <Link to="/privacy">Privacy Policy</Link>
+              <Link to="/terms">{t('footer.terms')}</Link>
+              <Link to="/privacy">{t('footer.privacy')}</Link>
             </nav>
             <div className="footer__col footer__col--panel" id="docs">
-              <span className="footer__col-title">Сессии</span>
-              <p className="footer__panel-text">
-                Разборы можно продолжать позже — история сохраняется в вашем аккаунте.
-              </p>
+              <span className="footer__col-title">{t('footer.sessions')}</span>
+              <p className="footer__panel-text">{t('footer.sessionsText')}</p>
             </div>
           </div>
         </div>
@@ -33,7 +31,7 @@ export default function SiteFooter() {
       </Reveal>
       <div className="footer__bar">
         <p className="footer__copy">
-          © {new Date().getFullYear()} Consensia · All rights reserved
+          © {new Date().getFullYear()} Consensia · {t('footer.rights')}
         </p>
       </div>
     </footer>
