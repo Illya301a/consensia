@@ -20,7 +20,6 @@ export default function SiteHeader() {
           <NavLink to="/developers" className={({ isActive }) => `site-header__nav-link${isActive ? ' site-header__nav-link--active' : ''}`}>
             {t('nav.developers')}
           </NavLink>
-        <LanguageSwitcher className="site-header__lang" />
         </nav>
       </div>
     </header>

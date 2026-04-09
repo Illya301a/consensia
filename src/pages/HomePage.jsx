@@ -370,7 +370,6 @@ export default function HomePage() {
                   {t('nav.developers')}
                 </Link>
               </nav>
-              <LanguageSwitcher className="top__lang top__lang--menu" />
               {!isAuthenticated ? (
                 <button
                   type="button"
@@ -384,9 +383,10 @@ export default function HomePage() {
                 </button>
               ) : null}
             </div>
+            <LanguageSwitcher className="top__lang top__lang--menu" />
             <button
               type="button"
-              className="motion-toggle motion-toggle--menu"
+              className={`motion-toggle motion-toggle--menu${isAuthenticated ? ' motion-toggle--menu-with-profile' : ''}`}
               aria-pressed={animationsEnabled}
               title={t('home.hero.motionToggleTitle')}
               onClick={() => setAnimationsEnabled((v) => !v)}

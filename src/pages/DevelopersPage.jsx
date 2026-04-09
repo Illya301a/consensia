@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import illiaPhoto from '../photos/illia.png'
 import andriiPhoto from '../photos/andrii.png'
 import SiteFooter from '../components/SiteFooter.jsx'
@@ -5,14 +6,85 @@ import SiteHeader from '../components/SiteHeader.jsx'
 import { Reveal } from '../components/Reveal.jsx'
 import './DevelopersPage.scss'
 
-const DEVELOPERS = [
+const COPY = {
+  ru: {
+    eyebrow: 'Создатели Consensia',
+    title: 'Разработчики',
+    lead: 'Команда, которая собрала Consensia от идеи до реального продукта.',
+    contactsAria: 'Контакты разработчиков',
+    illiaContactText: 'Вопросы по продукту, предложения и баг-репорты:',
+    andriiContactText: 'Сложные технические вопросы и фидбек по качеству AI-ответов:',
+    developers: [
+      {
+        id: 'illia',
+        name: 'Илья',
+        role: 'Product / Frontend / Integration',
+        about:
+          'Отвечает за клиентскую часть сайта: визуальный интерфейс, пользовательский опыт (UX) и интеграцию всех визуальных компонентов.',
+      },
+      {
+        id: 'andrii',
+        name: 'Андрей',
+        role: 'AI / Backend / ML',
+        about:
+          'Отвечает за техническую архитектуру и бекенд. Разработал оркестратор, который синхронизирует работу 6 различных AI-моделей в единую систему.',
+      },
+    ],
+  },
+  uk: {
+    eyebrow: 'Творці Consensia',
+    title: 'Розробники',
+    lead: 'Команда, яка зібрала Consensia від ідеї до реального продукту.',
+    contactsAria: 'Контакти розробників',
+    illiaContactText: 'Питання щодо продукту, пропозиції та баг-репорти:',
+    andriiContactText: 'Складні технічні питання та фідбек щодо якості AI-відповідей:',
+    developers: [
+      {
+        id: 'illia',
+        name: 'Ілля',
+        role: 'Product / Frontend / Integration',
+        about:
+          'Відповідає за клієнтську частину сайту: візуальний інтерфейс, користувацький досвід (UX) та інтеграцію всіх візуальних компонентів.',
+      },
+      {
+        id: 'andrii',
+        name: 'Андрій',
+        role: 'AI / Backend / ML',
+        about:
+          'Відповідає за технічну архітектуру та бекенд. Розробив оркестратор, який синхронізує роботу 6 різних AI-моделей в єдину систему.',
+      },
+    ],
+  },
+  en: {
+    eyebrow: 'Builders of Consensia',
+    title: 'Developers',
+    lead: 'The team that built Consensia from idea to a real product.',
+    contactsAria: 'Developer contacts',
+    illiaContactText: 'Product questions, ideas, and bug reports:',
+    andriiContactText: 'Advanced technical questions and feedback on AI answer quality:',
+    developers: [
+      {
+        id: 'illia',
+        name: 'Illia',
+        role: 'Product / Frontend / Integration',
+        about:
+          'Responsible for the client side of the website: visual interface, user experience (UX), and integration of all visual components.',
+      },
+      {
+        id: 'andrii',
+        name: 'Andrii',
+        role: 'AI / Backend / ML',
+        about:
+          'Responsible for technical architecture and backend. Built the orchestrator that synchronizes 6 different AI models into one system.',
+      },
+    ],
+  },
+}
+
+const LINKS = [
   {
     id: 'illia',
-    name: 'Илья',
-    role: 'Product / Frontend / Integration',
     photo: illiaPhoto,
-    about:
-      'Отвечает за клиентскую часть сайта: визуальный интерфейс, пользовательский опыт (UX) и интеграцию всех визуальных компонентов.',
     email: 'andrelukaillya@gmail.com',
     linkedin: 'https://www.linkedin.com/in/illiaandreluka/',
     instagram: 'https://www.instagram.com/andreluka.nginx/',
@@ -21,11 +93,7 @@ const DEVELOPERS = [
   },
   {
     id: 'andrii',
-    name: 'Андрей',
-    role: 'AI / Backend / ML',
     photo: andriiPhoto,
-    about:
-      'Отвечает за техническую архитектуру и бекенд. Разработал оркестратор, который синхронизирует работу 6 различных AI-моделей в единую систему.',
     email: 'andriishumko@gmail.com',
     linkedin: 'https://www.linkedin.com/in/andrii-shumko-3aa818313/',
     instagram: 'https://www.instagram.com/andrii_shumko/',
@@ -115,32 +183,38 @@ function DevCard({ dev, side }) {
 }
 
 export default function DevelopersPage() {
+  const { i18n } = useTranslation()
+  const lang = String(i18n.resolvedLanguage || i18n.language || 'ru').split('-')[0]
+  const c = COPY[lang] || COPY.ru
+  const developers = c.developers.map((d) => ({
+    ...d,
+    ...LINKS.find((link) => link.id === d.id),
+  }))
+
   return (
     <main className="developers-page">
       <SiteHeader />
 
       <Reveal>
         <header className="developers-page__top">
-          <p className="developers-page__eyebrow">Builders of Consensia</p>
-          <h1>Разработчики</h1>
-          <p className="developers-page__lead">
-            Команда, которая собрала Consensia от идеи до реального продукта.
-          </p>
+          <p className="developers-page__eyebrow">{c.eyebrow}</p>
+          <h1>{c.title}</h1>
+          <p className="developers-page__lead">{c.lead}</p>
         </header>
       </Reveal>
 
       <Reveal>
         <section className="developers">
-          <DevCard dev={DEVELOPERS[0]} side="left" />
-          <DevCard dev={DEVELOPERS[1]} side="right" />
+          <DevCard dev={developers[0]} side="left" />
+          <DevCard dev={developers[1]} side="right" />
         </section>
       </Reveal>
 
       <Reveal>
-        <section className="developers-page__contacts" aria-label="Контакты разработчиков">
+        <section className="developers-page__contacts" aria-label={c.contactsAria}>
           <div className="developers-page__question">
-            <h3>Илья</h3>
-            <p>Вопросы по продукту, предложения и баг-репорты:</p>
+            <h3>{developers[0].name}</h3>
+            <p>{c.illiaContactText}</p>
             <a
               className="developers__link-btn developers__link-btn--mail"
               href="mailto:andrelukaillya@gmail.com"
@@ -149,8 +223,8 @@ export default function DevelopersPage() {
             </a>
           </div>
           <div className="developers-page__question">
-            <h3>Андрей</h3>
-            <p>Сложные технические вопросы и фидбек по качеству AI-ответов:</p>
+            <h3>{developers[1].name}</h3>
+            <p>{c.andriiContactText}</p>
             <a
               className="developers__link-btn developers__link-btn--mail"
               href="mailto:andriishumko@gmail.com"

@@ -19,6 +19,7 @@ import {
 import { useOrchestratorWs } from '../services/useOrchestratorWs.js'
 
 const DATA_COLLECTION_KEY = 'consensia_data_collection_v1'
+const MAX_SESSION_CONNECT_ATTEMPTS = 3
 
 const MODES = [
   { value: 'ECONOMY', label: 'Экономия' },
@@ -138,6 +139,21 @@ function statusLabel(status) {
     default:
       return null
   }
+}
+
+function isInsufficientCreditsError(value) {
+  const text = String(value ?? '').toLowerCase()
+  if (!text) return false
+  return (
+    text.includes('insufficient') ||
+    text.includes('not enough credit') ||
+    text.includes('no credits') ||
+    text.includes('недостаточно кредит') ||
+    text.includes('недостаточно средств') ||
+    text.includes('закончились кредиты') ||
+    text.includes('credit limit') ||
+    text.includes('out of credits')
+  )
 }
 
 function n(value) {
@@ -304,6 +320,7 @@ export default function AppPage() {
   const [sessionLoading, setSessionLoading] = useState(false)
   const [sessionLoadError, setSessionLoadError] = useState(null)
   const [restoredSpentCredits, setRestoredSpentCredits] = useState(null)
+  const [showTypingHint, setShowTypingHint] = useState(false)
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
 
   const [profileOpen, setProfileOpen] = useState(false)
@@ -328,6 +345,8 @@ export default function AppPage() {
   const roundsRef = useRef(rounds)
   /** Avoid re-running session load while WS is already connecting/open for the same ?session= */
   const urlSessionConnectRef = useRef('')
+  const sessionConnectAttemptsRef = useRef(new Map())
+  const blockedReconnectSessionsRef = useRef(new Set())
   /** Prevent stale `?session=` effect right after pressing "Новый чат". */
   const suppressUrlSessionLoadRef = useRef(false)
   const lastNonEmptySessionsRef = useRef([])
@@ -573,6 +592,20 @@ export default function AppPage() {
     ) {
       return
     }
+    if (blockedReconnectSessionsRef.current.has(sessionFromUrl)) return
+
+    const attemptsMap = sessionConnectAttemptsRef.current
+    const attempts = attemptsMap.get(sessionFromUrl) ?? 0
+    if (attempts >= MAX_SESSION_CONNECT_ATTEMPTS) {
+      blockedReconnectSessionsRef.current.add(sessionFromUrl)
+      if (!sessionLoadError) {
+        setSessionLoadError(
+          lastError || 'Подключение остановлено. Попробуйте снова.'
+        )
+      }
+      return
+    }
+    attemptsMap.set(sessionFromUrl, attempts + 1)
 
     urlSessionConnectRef.current = sessionFromUrl
 
@@ -700,7 +733,15 @@ export default function AppPage() {
     return () => {
       cancelled = true
     }
-  }, [sessionFromUrl, token, isAuthenticated, sessionId, status, connect])
+  }, [sessionFromUrl, token, isAuthenticated, sessionId, status, connect, lastError, sessionLoadError])
+
+  useEffect(() => {
+    const sid = sessionFromUrl || sessionId || ''
+    if (!sid || !lastError) return
+    if (!isInsufficientCreditsError(lastError)) return
+    blockedReconnectSessionsRef.current.add(sid)
+    setSessionLoadError(lastError)
+  }, [lastError, sessionFromUrl, sessionId])
 
   const handleStart = useCallback(
     (e) => {
@@ -708,6 +749,11 @@ export default function AppPage() {
       if (!token) return
       setProfileOpen(false)
       setRestoredSpentCredits(null)
+      setShowTypingHint(true)
+      if (sessionFromUrl) {
+        blockedReconnectSessionsRef.current.delete(sessionFromUrl)
+        sessionConnectAttemptsRef.current.delete(sessionFromUrl)
+      }
       window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
       connect({
         token,
@@ -731,6 +777,8 @@ export default function AppPage() {
   const handleNewSession = useCallback(() => {
     suppressUrlSessionLoadRef.current = true
     urlSessionConnectRef.current = ''
+    sessionConnectAttemptsRef.current.clear()
+    blockedReconnectSessionsRef.current.clear()
     setMobileSidebarOpen(false)
     disconnect()
     setSessionLoading(false)
@@ -738,6 +786,7 @@ export default function AppPage() {
     setShowSetup(true)
     setProfileOpen(false)
     setRestoredSpentCredits(null)
+    setShowTypingHint(false)
     setSessionLoadError(null)
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
   }, [disconnect, navigate])
@@ -855,6 +904,8 @@ export default function AppPage() {
       disconnect()
       setShowSetup(false)
       setSessionLoadError(null)
+      blockedReconnectSessionsRef.current.delete(sid)
+      sessionConnectAttemptsRef.current.delete(sid)
       window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
       navigate(`/app?session=${encodeURIComponent(sid)}`, { replace: true })
     },
@@ -885,6 +936,7 @@ export default function AppPage() {
       const value = String(text ?? '').trim()
       if (!value) return
       setProfileOpen(false)
+      setShowTypingHint(true)
       sendFollowUp(value)
     },
     [sendFollowUp]
@@ -892,15 +944,25 @@ export default function AppPage() {
 
   const busy = status === 'connecting'
   const statusText = statusLabel(status)
-  const lastMessageKind = messages.length ? messages[messages.length - 1]?.kind : ''
-  const waitingForAi =
-    status === 'open' &&
-    inputLocked &&
-    (
-      lastMessageKind === 'user' ||
-      lastMessageKind === 'stream' ||
-      (!sessionFromUrl && lastMessageKind === 'task')
-    )
+  useEffect(() => {
+    if (status === 'closed' || status === 'idle') {
+      setShowTypingHint(false)
+      return
+    }
+    if (lastError) {
+      setShowTypingHint(false)
+      return
+    }
+    // Don't hide instantly on transient unlocks from snapshot updates.
+    if (!inputLocked) {
+      const timer = window.setTimeout(() => {
+        setShowTypingHint(false)
+      }, 450)
+      return () => window.clearTimeout(timer)
+    }
+  }, [inputLocked, status, lastError])
+
+  const waitingForAi = status === 'open' && showTypingHint
   const hasFinalVerdict = messages.some((m) => m.kind === 'final')
   const spentCreditsLive = useMemo(() => {
     const totalTokens = usageEvents.reduce((sum, e) => sum + totalTokensFromUsage(e?.usage), 0)

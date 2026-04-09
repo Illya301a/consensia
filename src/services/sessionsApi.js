@@ -83,6 +83,69 @@ function isAgentPayload(payload) {
   return 'thoughts' in payload || 'issues_found' in payload || 'snippet' in payload
 }
 
+function extractHistoryTimestamp(item) {
+  if (!item || typeof item !== 'object') return NaN
+  const candidates = [
+    item.created_at,
+    item.createdAt,
+    item.updated_at,
+    item.updatedAt,
+    item.timestamp,
+    item.ts,
+    item.time,
+    item.datetime,
+    item.date,
+    item?.meta?.created_at,
+    item?.meta?.timestamp,
+    item?.meta?.ts,
+  ]
+  for (const value of candidates) {
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      // Handle both seconds and milliseconds.
+      return value > 1e12 ? value : value * 1000
+    }
+    if (typeof value === 'string' && value.trim()) {
+      const parsed = Date.parse(value)
+      if (Number.isFinite(parsed)) return parsed
+      const num = Number(value)
+      if (Number.isFinite(num)) return num > 1e12 ? num : num * 1000
+    }
+  }
+  return NaN
+}
+
+function normalizeHistoryOrder(history) {
+  const list = Array.isArray(history) ? history.slice() : []
+  if (list.length < 2) return list
+
+  const withTs = list.map((item, idx) => ({
+    item,
+    idx,
+    ts: extractHistoryTimestamp(item),
+  }))
+  const tsValues = withTs.map((x) => x.ts).filter((v) => Number.isFinite(v))
+  if (tsValues.length >= 2) {
+    const min = Math.min(...tsValues)
+    const max = Math.max(...tsValues)
+    if (min !== max) {
+      return withTs
+        .sort((a, b) => (a.ts - b.ts) || (a.idx - b.idx))
+        .map((x) => x.item)
+    }
+  }
+
+  // Fallback heuristic: if "initial request" appears after final verdict, list is reversed.
+  const initIndex = list.findIndex((h) => String(h?.type ?? '').toLowerCase() === 'initial_request')
+  const finalIndex = list.findIndex((h) => {
+    const typeRaw = String(h?.type ?? '').toLowerCase()
+    return typeRaw === 'final_verdict' || typeRaw === 'verdict'
+  })
+  if (initIndex !== -1 && finalIndex !== -1 && initIndex > finalIndex) {
+    return list.reverse()
+  }
+  return list
+}
+
 function pickUsagePayload(item) {
   const direct = item?.usage
   if (direct && typeof direct === 'object') return direct
@@ -106,8 +169,8 @@ function pickUsagePayload(item) {
 }
 
 export function mapSessionHistoryToMessages(history) {
-  if (!Array.isArray(history)) return []
-  return history.map((h, i) => {
+  const normalizedHistory = normalizeHistoryOrder(history)
+  return normalizedHistory.map((h, i) => {
     const id = `hist-${i}-${uid()}`
     const roleRaw = String(h?.role ?? '').toLowerCase()
     const typeRaw = String(h?.type ?? '').toLowerCase()
@@ -191,10 +254,10 @@ export function mapSessionHistoryToMessages(history) {
 }
 
 export function mapSessionHistoryToUsageEvents(history) {
-  if (!Array.isArray(history)) return []
+  const normalizedHistory = normalizeHistoryOrder(history)
   const out = []
-  for (let i = 0; i < history.length; i += 1) {
-    const h = history[i]
+  for (let i = 0; i < normalizedHistory.length; i += 1) {
+    const h = normalizedHistory[i]
     const typeRaw = String(h?.type ?? '').toLowerCase()
     const usage = pickUsagePayload(h)
     if (typeRaw !== 'agent_usage' && !usage) continue
@@ -341,30 +404,23 @@ export function buildResumeMessagesFromSessionData(sessionData) {
   const sd = sessionData && typeof sessionData === 'object' ? sessionData : {}
   const fromHistory = mapSessionHistoryToMessages(sd.history)
 
-  function normalizeConversationOrder(list) {
-    if (!Array.isArray(list) || !list.length) return []
-    const hasAgent = list.some((m) => m?.kind === 'agent')
-    const hasFinal = list.some((m) => m?.kind === 'final')
-    if (!hasAgent || !hasFinal) return list
-
-    // Keep task/init first, then debate block (agents + finals), then post-verdict chat.
-    const task = list.filter((m) => m?.kind === 'task')
-    const debate = list.filter((m) => m?.kind === 'agent' || m?.kind === 'final')
-    const tail = list.filter(
-      (m) => m && m.kind !== 'task' && m.kind !== 'agent' && m.kind !== 'final'
-    )
-    return [...task, ...debate, ...tail]
-  }
-
   const hasAgentInHistory = fromHistory.some((m) => m?.kind === 'agent')
-  if (hasAgentInHistory) return normalizeConversationOrder(fromHistory)
+  // Preserve backend history order exactly: it already contains the true chronology,
+  // including user messages between rounds.
+  if (hasAgentInHistory) return fromHistory
 
   const fromRounds = mapRoundDataToAgentMessages(sd.round_data)
   if (!fromRounds.length) return fromHistory
 
-  const finals = fromHistory.filter((m) => m?.kind === 'final')
-  const nonFinals = fromHistory.filter((m) => m?.kind !== 'final')
-  return normalizeConversationOrder([...nonFinals, ...fromRounds, ...finals])
+  // Fallback for legacy sessions where history missed agent reports:
+  // inject reconstructed round reports right before first final verdict.
+  const firstFinalIndex = fromHistory.findIndex((m) => m?.kind === 'final')
+  if (firstFinalIndex < 0) return [...fromHistory, ...fromRounds]
+  return [
+    ...fromHistory.slice(0, firstFinalIndex),
+    ...fromRounds,
+    ...fromHistory.slice(firstFinalIndex),
+  ]
 }
 
 export function buildResumeUsageEventsFromSessionData(sessionData) {

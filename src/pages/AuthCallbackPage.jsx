@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { ACCESS_TOKEN_KEY } from '../services/constants.js'
 
 function extractToken() {
@@ -28,6 +29,10 @@ function extractToken() {
 
 export default function AuthCallbackPage() {
   const navigate = useNavigate()
+  const { i18n } = useTranslation()
+  const lang = String(i18n.resolvedLanguage || i18n.language || 'ru').split('-')[0]
+  const loadingLabel =
+    lang === 'uk' ? 'Вхід…' : lang === 'en' ? 'Signing in…' : 'Вход…'
 
   useEffect(() => {
     const { token, error } = extractToken()
@@ -46,7 +51,7 @@ export default function AuthCallbackPage() {
 
   return (
     <div className="app-suspense-fallback" role="status">
-      Вход…
+      {loadingLabel}
     </div>
   )
 }
