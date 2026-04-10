@@ -11,6 +11,7 @@ import {
   buildResumeMessagesFromSessionData,
   buildResumeUsageEventsFromSessionData,
   deriveSessionRounds,
+  deriveSessionScenario,
   deriveSessionTitle,
   deleteSession,
   fetchSessionDetails,
@@ -66,10 +67,12 @@ const APP_COPY = {
     historyEmpty: 'Тут появятся ваши чаты после первого запуска.',
     setupTitle: 'Новый чат',
     setupLead: 'Вставьте код или приложите файлы — и опишите задачу.',
+    setupLeadNonReview: 'Опишите задачу и при необходимости приложите файлы.',
     codeLabel: 'Код',
     attachFiles: 'Прикрепить файлы к коду',
     removeFileAria: 'Удалить {{name}}',
-    contextLabel: 'Задача (по желанию)',
+    contextLabelOptional: 'Задача (по желанию)',
+    contextLabelRequired: 'Задача',
     contextPlaceholder: 'Например: найди уязвимости и предложи правки',
     modeLabel: 'Режим',
     roundsLabel: 'Раунды',
@@ -125,10 +128,12 @@ const APP_COPY = {
     historyEmpty: 'Тут зʼявляться ваші чати після першого запуску.',
     setupTitle: 'Новий чат',
     setupLead: 'Вставте код або додайте файли — і опишіть задачу.',
+    setupLeadNonReview: 'Опишіть задачу і за потреби додайте файли.',
     codeLabel: 'Код',
     attachFiles: 'Додати файли до коду',
     removeFileAria: 'Видалити {{name}}',
-    contextLabel: 'Задача (за бажанням)',
+    contextLabelOptional: 'Задача (за бажанням)',
+    contextLabelRequired: 'Задача',
     contextPlaceholder: 'Наприклад: знайди вразливості та запропонуй виправлення',
     modeLabel: 'Режим',
     roundsLabel: 'Раунди',
@@ -184,10 +189,12 @@ const APP_COPY = {
     historyEmpty: 'Your chats will appear here after the first run.',
     setupTitle: 'New chat',
     setupLead: 'Paste code or attach files — and describe your task.',
+    setupLeadNonReview: 'Describe your task and attach files if needed.',
     codeLabel: 'Code',
     attachFiles: 'Attach files to code',
     removeFileAria: 'Remove {{name}}',
-    contextLabel: 'Task (optional)',
+    contextLabelOptional: 'Task (optional)',
+    contextLabelRequired: 'Task',
     contextPlaceholder: 'For example: find vulnerabilities and suggest fixes',
     modeLabel: 'Mode',
     roundsLabel: 'Rounds',
@@ -208,9 +215,86 @@ const MODES = [
   { value: 'MAX_POWER', key: 'maxPower' },
 ]
 
+const SCENARIOS = [
+  { value: 'CODE_REVIEW', key: 'codeReview' },
+  { value: 'CODE_WRITER', key: 'codeWriter' },
+  { value: 'QUICK', key: 'quick' },
+  { value: 'LEGAL', key: 'legal' },
+  { value: 'INVESTOR', key: 'investor' },
+  { value: 'SCIENCE', key: 'science' },
+]
+
 function modeLabel(value, copy) {
   const m = MODES.find((x) => x.value === value)
   return m ? copy.modes[m.key] : value || copy.roundMissing
+}
+
+function scenarioLabel(value, t) {
+  const s = SCENARIOS.find((x) => x.value === value)
+  return s ? t(`app.scenario.options.${s.key}`) : value || 'CODE_REVIEW'
+}
+
+function PrettySelect({ id, label, value, options, onChange }) {
+  const [open, setOpen] = useState(false)
+  const rootRef = useRef(null)
+
+  useEffect(() => {
+    if (!open) return
+    const onDown = (ev) => {
+      const el = rootRef.current
+      if (!el) return
+      if (ev.target instanceof Node && !el.contains(ev.target)) setOpen(false)
+    }
+    const onKey = (ev) => {
+      if (ev.key === 'Escape') setOpen(false)
+    }
+    window.addEventListener('mousedown', onDown)
+    window.addEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('mousedown', onDown)
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+
+  const selected = options.find((opt) => opt.value === value) || options[0]
+
+  return (
+    <div className="chat-app__fselect" ref={rootRef}>
+      <label htmlFor={id}>{label}</label>
+      <button
+        id={id}
+        type="button"
+        className="chat-app__fselect-button"
+        aria-haspopup="listbox"
+        aria-expanded={open ? 'true' : 'false'}
+        onClick={() => setOpen((v) => !v)}
+      >
+        <span>{selected?.label ?? ''}</span>
+        <span className={`chat-app__fselect-chevron${open ? ' chat-app__fselect-chevron--open' : ''}`} aria-hidden="true">
+          ▼
+        </span>
+      </button>
+      {open ? (
+        <div className="chat-app__fselect-menu" role="listbox" aria-labelledby={id}>
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              role="option"
+              aria-selected={value === opt.value ? 'true' : 'false'}
+              className={`chat-app__fselect-item${value === opt.value ? ' chat-app__fselect-item--active' : ''}`}
+              onClick={() => {
+                setOpen(false)
+                onChange(opt.value)
+              }}
+            >
+              {opt.label}
+            </button>
+          ))}
+    </div>
+      ) : null}
+    </div>
+  )
 }
 
 function capitalizeFirst(value) {
@@ -241,6 +325,8 @@ function mergeSessionsKeepingMeta(prevList, incomingList) {
     const visiblePrev = visibleSessionTitle(prevTitle)
     const nextRoundsRaw = next?.rounds
     const prevRoundsRaw = prevItem?.rounds
+    const nextScenarioRaw = String(next?.scenario ?? '').trim()
+    const prevScenarioRaw = String(prevItem?.scenario ?? '').trim()
     const nextRounds =
       typeof nextRoundsRaw === 'number' && Number.isFinite(nextRoundsRaw) && nextRoundsRaw > 0
         ? nextRoundsRaw
@@ -253,6 +339,7 @@ function mergeSessionsKeepingMeta(prevList, incomingList) {
     const patched = { ...next }
     if (!visibleNext && visiblePrev) patched.title = prevTitle
     if (nextRounds == null && prevRounds != null) patched.rounds = prevRounds
+    if (!nextScenarioRaw && prevScenarioRaw) patched.scenario = prevScenarioRaw
     return patched
   })
 }
@@ -346,17 +433,9 @@ function totalTokensFromUsage(usage) {
   const u = usage && typeof usage === 'object' ? usage : {}
   const directTotal = u.total ?? u.total_tokens ?? u.tokens ?? u.totalTokens
   if (directTotal != null) return n(directTotal)
-  return (
-    n(u.prompt) +
-    n(u.prompt_tokens) +
-    n(u.completion) +
-    n(u.completion_tokens) +
-    n(u.cached) +
-    n(u.cached_tokens) +
-    n(u.input_tokens) +
-    n(u.output_tokens) +
-    n(u.cached_input_tokens)
-  )
+  const promptTokens = u.prompt ?? u.prompt_tokens ?? u.input_tokens
+  const completionTokens = u.completion ?? u.completion_tokens ?? u.output_tokens
+  return n(promptTokens) + n(completionTokens)
 }
 
 function collectNumericDeep(value, keys, out, depth = 0) {
@@ -437,7 +516,7 @@ function extractSpentCreditsFromDetail(detail, sessionData, sessionMeta) {
 }
 
 export default function AppPage() {
-  const { i18n } = useTranslation()
+  const { i18n, t } = useTranslation()
   const lang = String(i18n.resolvedLanguage || i18n.language || 'en').split('-')[0]
   const c = APP_COPY[lang] || APP_COPY.ru
   const navigate = useNavigate()
@@ -470,7 +549,11 @@ export default function AppPage() {
             String(existing?.title ?? '').trim().toLowerCase().startsWith('сессия ')
           if (!shouldUseOptimisticTitle || !optimisticTitle) return list
           const next = list.slice()
-          next[existingIndex] = { ...existing, title: optimisticTitle }
+          next[existingIndex] = {
+            ...existing,
+            title: optimisticTitle,
+            scenario: existing?.scenario || scenario || 'CODE_REVIEW',
+          }
           return next
         }
         return [
@@ -479,6 +562,7 @@ export default function AppPage() {
             title: optimisticTitle,
             createdAt: optimisticCreatedAt,
             mode,
+            scenario: scenario || 'CODE_REVIEW',
             rounds,
           },
           ...list,
@@ -488,10 +572,11 @@ export default function AppPage() {
     },
   })
 
-  const [code, setCode] = useState('const example = () => {\n  return 1;\n};')
+  const [code, setCode] = useState('')
   const [context, setContext] = useState('')
   const [rounds, setRounds] = useState(1)
   const [mode, setMode] = useState('ECONOMY')
+  const [scenario, setScenario] = useState('CODE_REVIEW')
   const [showSetup, setShowSetup] = useState(true)
   const [authGateError, setAuthGateError] = useState('')
 
@@ -525,6 +610,7 @@ export default function AppPage() {
 
   const codeRef = useRef(code)
   const modeRef = useRef(mode)
+  const scenarioRef = useRef(scenario)
   const contextRef = useRef(context)
   const roundsRef = useRef(rounds)
   const connectRef = useRef(connect)
@@ -542,6 +628,7 @@ export default function AppPage() {
   useEffect(() => {
     codeRef.current = code
     modeRef.current = mode
+    scenarioRef.current = scenario
     contextRef.current = context
     roundsRef.current = rounds
     connectRef.current = connect
@@ -688,6 +775,7 @@ export default function AppPage() {
           title: deriveSessionTitle(d) || deriveSessionTitle(sd) || s.title || '',
           rounds: deriveSessionRounds(d) ?? deriveSessionRounds(sd) ?? s.rounds ?? null,
           mode: (typeof sd.mode === 'string' && sd.mode) || s.mode || '',
+          scenario: deriveSessionScenario(d) || deriveSessionScenario(sd) || s.scenario || '',
         }
       })
     )
@@ -766,6 +854,16 @@ export default function AppPage() {
     return parts.join('\n')
   }, [code, attached])
 
+  const isCodeReviewScenario = scenario === 'CODE_REVIEW'
+  const canChooseRounds = scenario !== 'CODE_WRITER' && scenario !== 'QUICK'
+  const setupLeadText = isCodeReviewScenario ? c.setupLead : c.setupLeadNonReview
+
+  useEffect(() => {
+    if (isCodeReviewScenario) return
+    if (attached.length) setAttached([])
+    if (attachError) setAttachError('')
+  }, [isCodeReviewScenario, attached.length, attachError])
+
   useEffect(() => {
     if (!sessionFromUrl) {
       suppressUrlSessionLoadRef.current = false
@@ -821,7 +919,12 @@ export default function AppPage() {
         setRestoredSpentCredits(Math.max(restoredFromDetail ?? 0, restoredFromHistory))
         const detailTitle = deriveSessionTitle(d) || deriveSessionTitle(sd)
         const detailRounds = deriveSessionRounds(d) ?? deriveSessionRounds(sd)
-        const resumeBase = buildResumeMessagesFromSessionData(sd)
+        const detailScenario = deriveSessionScenario(d) || deriveSessionScenario(sd)
+        const resumeBase = buildResumeMessagesFromSessionData(sd).map((m) =>
+          m?.kind === 'task' && !m?.scenario
+            ? { ...m, scenario: detailScenario || scenarioRef.current || 'CODE_REVIEW' }
+            : m
+        )
         const hasUserInHistory = resumeBase.some((m) => m?.kind === 'user' || m?.kind === 'task')
         const firstTask = resumeBase.find((m) => m?.kind === 'task')
         const firstTaskTitle =
@@ -841,11 +944,16 @@ export default function AppPage() {
         if (typeof sdMode === 'string' && MODES.some((m) => m.value === sdMode)) {
           setMode(sdMode)
         }
+        if (SCENARIOS.some((s) => s.value === detailScenario)) {
+          setScenario(detailScenario)
+        }
         const cr = sd.current_round
         if (typeof cr === 'number' && cr >= 1 && cr <= 3) setRounds(cr)
 
         const codeForWs = codeBody || codeRef.current
         const modeForWs = (typeof sdMode === 'string' && sdMode ? sdMode : null) || modeRef.current
+        const scenarioForWs =
+          SCENARIOS.some((s) => s.value === detailScenario) ? detailScenario : scenarioRef.current
         const roundsForWs =
           typeof cr === 'number' && cr >= 1 && cr <= 3 ? cr : roundsRef.current
         const initialContext =
@@ -878,6 +986,7 @@ export default function AppPage() {
                   context: initialContext,
                   code: originalCode,
                   mode: modeForWs,
+                  scenario: scenarioForWs,
                   rounds: roundsForWs,
                 },
                 ...resumeBase,
@@ -890,6 +999,7 @@ export default function AppPage() {
               ? {
                   ...s,
                   title: detailTitle || firstTaskTitle || s.title,
+                  scenario: detailScenario || s.scenario || '',
                   rounds: detailRounds ?? s.rounds ?? null,
                 }
               : s
@@ -900,6 +1010,7 @@ export default function AppPage() {
           token,
           sessionId: sessionFromUrl,
           mode: modeForWs,
+          scenario: scenarioForWs,
           code: codeForWs,
           context: ctx,
           rounds: roundsForWs,
@@ -907,6 +1018,7 @@ export default function AppPage() {
             context: ctx,
             code: codeForWs,
             mode: modeForWs,
+            scenario: scenarioForWs,
             rounds: roundsForWs,
           },
           resumeMessages: resumeMessages.length ? resumeMessages : undefined,
@@ -952,19 +1064,32 @@ export default function AppPage() {
         token,
         sessionId: sessionFromUrl || null,
         mode,
-        code: fullCode,
+        scenario,
+        code: isCodeReviewScenario ? fullCode : '',
         context,
-        rounds,
+        rounds: canChooseRounds ? rounds : 1,
         ui: {
           context,
-          code: fullCode,
+          code: isCodeReviewScenario ? fullCode : '',
           mode,
-          rounds,
+          scenario,
+          rounds: canChooseRounds ? rounds : 1,
         },
       })
       setShowSetup(false)
     },
-    [connect, token, sessionFromUrl, mode, fullCode, context, rounds]
+    [
+      connect,
+      token,
+      sessionFromUrl,
+      mode,
+      scenario,
+      fullCode,
+      context,
+      rounds,
+      isCodeReviewScenario,
+      canChooseRounds,
+    ]
   )
 
   const handleNewSession = useCallback(() => {
@@ -1177,6 +1302,22 @@ export default function AppPage() {
     () => messages.map((msg) => <ChatMessageItem key={msg.id} msg={msg} />),
     [messages]
   )
+  const scenarioOptions = useMemo(
+    () => SCENARIOS.map((s) => ({ value: s.value, label: t(`app.scenario.options.${s.key}`) })),
+    [t]
+  )
+  const modeOptions = useMemo(
+    () => MODES.map((m) => ({ value: m.value, label: c.modes[m.key] })),
+    [c.modes]
+  )
+  const roundsOptions = useMemo(
+    () => [
+      { value: '1', label: '1' },
+      { value: '2', label: '2' },
+      { value: '3', label: '3' },
+    ],
+    []
+  )
 
   if (!authChecked) {
     return (
@@ -1281,7 +1422,26 @@ export default function AppPage() {
                 aria-expanded={profileOpen ? 'true' : 'false'}
               >
                 <span className="chat-app__profile-avatar" aria-hidden="true">
-                  {String(getUserLabel(user, c.profileLabel)).slice(0, 1).toUpperCase()}
+                  <svg
+                    className="chat-app__profile-avatar-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path
+                      d="M12 12.25C9.95 12.25 8.25 10.55 8.25 8.5C8.25 6.45 9.95 4.75 12 4.75C14.05 4.75 15.75 6.45 15.75 8.5C15.75 10.55 14.05 12.25 12 12.25Z"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M5.75 18.5C5.75 15.96 8.54 14 12 14C15.46 14 18.25 15.96 18.25 18.5"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
                 </span>
               </button>
               {profileOpen ? (
@@ -1407,7 +1567,7 @@ export default function AppPage() {
                         <div className="chat-app__sidebar-item-meta">
                           <span>{formatWhen(h.createdAt)}</span>
                           <span className="chat-app__sidebar-item-side">
-                            {modeLabel(h.mode, c)} · {h.rounds ? `${c.roundLabel} ${h.rounds}` : c.roundMissing}
+                            {scenarioLabel(h.scenario || 'CODE_REVIEW', t)} · {modeLabel(h.mode, c)}
                           </span>
                         </div>
                       </button>
@@ -1496,82 +1656,88 @@ export default function AppPage() {
                 <form className="chat-app__setup-card" onSubmit={handleStart}>
                   <h2 className="chat-app__setup-title">{c.setupTitle}</h2>
                   <p className="chat-app__setup-lede">
-                    {c.setupLead}
+                    {setupLeadText}
                   </p>
-                  <div className="chat-app__field">
-                    <label htmlFor="code">{c.codeLabel}</label>
-                    <textarea
-                      id="code"
-                      value={code}
-                      onChange={(e) => setCode(e.target.value)}
-                      spellCheck={false}
+                  <div className={`chat-app__row${canChooseRounds ? '' : ' chat-app__row--two'}`}>
+                    <PrettySelect
+                      id="scenario"
+                      label={t('app.scenario.label')}
+                      value={scenario}
+                      options={scenarioOptions}
+                      onChange={setScenario}
                     />
-                    <div className="chat-app__attach">
-                      <label className="chat-app__attach-btn">
-                        <input
-                          type="file"
-                          multiple
-                          onChange={handlePickFiles}
-                          accept=".js,.jsx,.ts,.tsx,.py,.go,.rs,.java,.kt,.cs,.cpp,.c,.h,.hpp,.json,.yml,.yaml,.toml,.md,.txt,.html,.css,.scss,.sql"
-                        />
-                        {c.attachFiles}
-                      </label>
-                      {attachError ? (
-                        <div className="chat-app__attach-error" role="alert">
-                          {attachError}
-                        </div>
-                      ) : null}
-                      {attached.length ? (
-                        <div className="chat-app__attach-list" role="list">
-                          {attached.map((f) => (
-                            <div key={`${f.name}:${f.size}`} className="chat-app__attach-item" role="listitem">
-                              <span className="chat-app__attach-name">{f.name}</span>
-                              <button
-                                type="button"
-                                className="chat-app__attach-remove"
-                                onClick={() => removeAttachment(f.name, f.size)}
-                                aria-label={c.removeFileAria.replace('{{name}}', String(f.name))}
-                              >
-                                ×
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      ) : null}
-                    </div>
+                    <PrettySelect
+                      id="mode"
+                      label={c.modeLabel}
+                      value={mode}
+                      options={modeOptions}
+                      onChange={setMode}
+                    />
+                    {canChooseRounds ? (
+                      <PrettySelect
+                        id="rounds"
+                        label={c.roundsLabel}
+                        value={String(rounds)}
+                        options={roundsOptions}
+                        onChange={(next) => setRounds(Number(next))}
+                      />
+                    ) : null}
                   </div>
-                  <div className="chat-app__field">
-                    <label htmlFor="ctx">{c.contextLabel}</label>
+                  {isCodeReviewScenario ? (
+                    <div className="chat-app__field chat-app__field--code">
+                      <label htmlFor="code">{c.codeLabel}</label>
+                      <textarea
+                        id="code"
+                        value={code}
+                        onChange={(e) => setCode(e.target.value)}
+                        spellCheck={false}
+                      />
+                      <div className="chat-app__attach">
+                        <label className="chat-app__attach-btn">
+                          <input
+                            type="file"
+                            multiple
+                            onChange={handlePickFiles}
+                            accept=".js,.jsx,.ts,.tsx,.py,.go,.rs,.java,.kt,.cs,.cpp,.c,.h,.hpp,.json,.yml,.yaml,.toml,.md,.txt,.html,.css,.scss,.sql"
+                          />
+                          {c.attachFiles}
+                        </label>
+                        {attachError ? (
+                          <div className="chat-app__attach-error" role="alert">
+                            {attachError}
+                          </div>
+                        ) : null}
+                        {attached.length ? (
+                          <div className="chat-app__attach-list" role="list">
+                            {attached.map((f) => (
+                              <div key={`${f.name}:${f.size}`} className="chat-app__attach-item" role="listitem">
+                                <span className="chat-app__attach-name">{f.name}</span>
+                                <button
+                                  type="button"
+                                  className="chat-app__attach-remove"
+                                  onClick={() => removeAttachment(f.name, f.size)}
+                                  aria-label={c.removeFileAria.replace('{{name}}', String(f.name))}
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+                  ) : null}
+                  <div className="chat-app__field chat-app__field--compact">
+                    <label htmlFor="ctx">
+                      {isCodeReviewScenario ? c.contextLabelOptional : c.contextLabelRequired}
+                    </label>
                     <input
                       id="ctx"
                       value={context}
                       onChange={(e) => setContext(e.target.value)}
                       placeholder={c.contextPlaceholder}
+                      required={!isCodeReviewScenario}
                     />
-                  </div>
-                  <div className="chat-app__row">
-                    <div className="chat-app__field">
-                      <label htmlFor="mode">{c.modeLabel}</label>
-                      <select id="mode" value={mode} onChange={(e) => setMode(e.target.value)}>
-                        {MODES.map((m) => (
-                          <option key={m.value} value={m.value}>
-                            {c.modes[m.key]}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="chat-app__field">
-                      <label htmlFor="rounds">{c.roundsLabel}</label>
-                      <select
-                        id="rounds"
-                        value={rounds}
-                        onChange={(e) => setRounds(Number(e.target.value))}
-                      >
-                        <option value={1}>1</option>
-                        <option value={2}>2</option>
-                        <option value={3}>3</option>
-                      </select>
-                    </div>
                   </div>
                   {sessionFromUrl ? (
                     <p className="chat-app__hint">{c.resumeHint}</p>

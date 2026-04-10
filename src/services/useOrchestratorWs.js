@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { mapSessionHistoryToMessages } from './sessionsApi.js'
 
-// WebSocket оркестратора: первое сообщение после open — JSON { token, session_id, mode, code, context, rounds }
+// WebSocket оркестратора: первое сообщение после open — JSON { token, session_id, mode, scenario, code, context, rounds }
 // Входящие сообщения — JSON с полем type (session_id, system, agent_report, input_required, final_verdict, chunk, error)
 const WS_URL =
   import.meta.env.VITE_ORCHESTRATOR_WS_URL ??
@@ -277,6 +277,7 @@ export function useOrchestratorWs({ onSessionId } = {}) {
       token,
       sessionId: sidIn,
       mode,
+      scenario,
       code,
       context,
       rounds,
@@ -291,12 +292,13 @@ export function useOrchestratorWs({ onSessionId } = {}) {
 
       if (Array.isArray(resumeMessages) && resumeMessages.length > 0) {
         setMessages(resumeMessages)
-      } else if (ui && (ui.context || ui.code || ui.mode || ui.rounds)) {
+      } else if (ui && (ui.context || ui.code || ui.mode || ui.scenario || ui.rounds)) {
         append({
           kind: 'task',
           context: ui.context || '',
           code: ui.code || '',
           mode: ui.mode || '',
+          scenario: ui.scenario || 'CODE_REVIEW',
           rounds: ui.rounds ?? null,
         })
       }
@@ -317,6 +319,7 @@ export function useOrchestratorWs({ onSessionId } = {}) {
           token: token || '',
           session_id: sidIn || null,
           mode: mode || 'BALANCED',
+          scenario: scenario || 'CODE_REVIEW',
           code: code || '',
           context: context || '',
           rounds: Number(rounds) || 3,

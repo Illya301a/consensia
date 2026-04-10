@@ -172,6 +172,17 @@
       "expand": "Развернуть поле ввода",
       "send": "Отправить"
     },
+    "scenario": {
+      "label": "Сценарий",
+      "options": {
+        "codeReview": "Ревью кода",
+        "codeWriter": "Генерация кода",
+        "quick": "Простой чат",
+        "legal": "Юридический",
+        "investor": "Инвестор",
+        "science": "Наука"
+      }
+    },
     "chatMessage": {
       "codeFold": "Код (свернуть/развернуть)",
       "thoughts": "Мысли",

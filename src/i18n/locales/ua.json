@@ -172,6 +172,17 @@
       "expand": "Розгорнути поле введення",
       "send": "Надіслати"
     },
+    "scenario": {
+      "label": "Сценарій",
+      "options": {
+        "codeReview": "Рев'ю коду",
+        "codeWriter": "Генерація коду",
+        "quick": "Простий чат",
+        "legal": "Юридичний",
+        "investor": "Інвестор",
+        "science": "Наука"
+      }
+    },
     "chatMessage": {
       "codeFold": "Код (згорнути/розгорнути)",
       "thoughts": "Думки",

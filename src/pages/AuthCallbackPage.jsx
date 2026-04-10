@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ACCESS_TOKEN_KEY } from '../services/constants.js'
+import SiteHeader from '../components/SiteHeader.jsx'
 
 function extractToken() {
   const search = new URLSearchParams(window.location.search)
@@ -50,8 +51,11 @@ export default function AuthCallbackPage() {
   }, [navigate])
 
   return (
-    <div className="app-suspense-fallback" role="status">
-      {loadingLabel}
+    <div className="app legal-page">
+      <SiteHeader />
+      <div className="app-suspense-fallback" role="status">
+        {loadingLabel}
+      </div>
     </div>
   )
 }

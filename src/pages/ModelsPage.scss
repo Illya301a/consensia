@@ -35,6 +35,11 @@
   font-size: clamp(1.15rem, 2.1vw, 1.45rem);
   font-weight: 700;
   letter-spacing: -0.02em;
+  transition: color 0.22s ease;
+
+  &:hover {
+    color: #db2777;
+  }
 }
 
 .experts-page__nav {
@@ -51,11 +56,14 @@
     border-radius: 999px;
     border: 1px solid rgba(244, 114, 182, 0.2);
     background: rgba(255, 255, 255, 0.72);
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease,
+      transform 0.2s ease;
 
     &:hover {
       color: #fff;
       background: #f472b6;
       border-color: #f472b6;
+      transform: translateY(-1px);
     }
   }
 }
@@ -116,6 +124,13 @@
   padding: 0.95rem 0.95rem 1rem;
   display: grid;
   gap: 0.52rem;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: rgba(244, 114, 182, 0.34);
+    box-shadow: 0 18px 42px rgba(244, 114, 182, 0.16);
+  }
 }
 
 .experts-page__card-head {
@@ -178,6 +193,13 @@
     background: rgba(252, 231, 243, 0.62);
     border-radius: 999px;
     padding: 0.2rem 0.5rem;
+    transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      background: rgba(252, 231, 243, 0.78);
+      border-color: rgba(244, 114, 182, 0.34);
+    }
   }
 }
 
@@ -203,6 +225,13 @@
   background: rgba(255, 255, 255, 0.78);
   box-shadow: 0 12px 30px rgba(244, 114, 182, 0.1);
   padding: 0.95rem 1rem;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: rgba(244, 114, 182, 0.32);
+    box-shadow: 0 16px 38px rgba(244, 114, 182, 0.14);
+  }
 
   h2 {
     margin: 0 0 0.35rem;
@@ -270,6 +299,13 @@
   border: 1px solid rgba(244, 114, 182, 0.16);
   background: rgba(255, 255, 255, 0.72);
   padding: 0.6rem 0.7rem;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: rgba(244, 114, 182, 0.28);
+    box-shadow: 0 8px 20px rgba(244, 114, 182, 0.1);
+  }
 
   h3 {
     margin: 0;
@@ -311,6 +347,13 @@
   border: 1px solid rgba(244, 114, 182, 0.16);
   background: rgba(255, 255, 255, 0.72);
   padding: 0.6rem 0.7rem;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: rgba(244, 114, 182, 0.28);
+    box-shadow: 0 8px 20px rgba(244, 114, 182, 0.1);
+  }
 
   h3 {
     margin: 0;
@@ -340,5 +383,18 @@
   .experts-page__grid,
   .experts-page__system {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .experts-page__logo,
+  .experts-page__nav a,
+  .experts-page__card,
+  .experts-page__panel,
+  .experts-page__arbiter-block,
+  .experts-page__router-rule,
+  .experts-page__chips span {
+    transition: none !important;
+    transform: none !important;
   }
 }

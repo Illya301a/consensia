@@ -172,6 +172,17 @@
       "expand": "Expand input field",
       "send": "Send"
     },
+    "scenario": {
+      "label": "Scenario",
+      "options": {
+        "codeReview": "Code Review",
+        "codeWriter": "Code Writer",
+        "quick": "Simple chat",
+        "legal": "Legal",
+        "investor": "Investor",
+        "science": "Science"
+      }
+    },
     "chatMessage": {
       "codeFold": "Code (collapse/expand)",
       "thoughts": "Thoughts",

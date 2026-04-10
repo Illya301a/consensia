@@ -195,17 +195,9 @@ function totalTokensFromUsage(usage) {
   const u = usage || {}
   const directTotal = u.total ?? u.total_tokens ?? u.tokens ?? u.totalTokens
   if (directTotal != null) return n(directTotal)
-  return (
-    n(u.prompt) +
-    n(u.prompt_tokens) +
-    n(u.completion) +
-    n(u.completion_tokens) +
-    n(u.cached) +
-    n(u.cached_tokens) +
-    n(u.input_tokens) +
-    n(u.output_tokens) +
-    n(u.cached_input_tokens)
-  )
+  const promptTokens = u.prompt ?? u.prompt_tokens ?? u.input_tokens
+  const completionTokens = u.completion ?? u.completion_tokens ?? u.output_tokens
+  return n(promptTokens) + n(completionTokens)
 }
 
 function creditsFromTokens(tokens) {

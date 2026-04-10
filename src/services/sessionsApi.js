@@ -200,6 +200,10 @@ export function mapSessionHistoryToMessages(history) {
         context: reqText || '',
         code: reqCode || '',
         mode: h?.mode ?? '',
+        scenario:
+          (typeof h?.scenario === 'string' && h.scenario) ||
+          (typeof payload?.scenario === 'string' && payload.scenario) ||
+          '',
         rounds: h?.max_rounds ?? h?.rounds ?? null,
       }
     }
@@ -363,6 +367,22 @@ function extractInitPayloadFromHistory(history) {
   return null
 }
 
+export function deriveSessionScenario(session) {
+  if (!session || typeof session !== 'object') return ''
+  const sd = session.session_data && typeof session.session_data === 'object' ? session.session_data : null
+  const fromInit =
+    extractInitPayloadFromHistory(sd?.history)?.scenario ??
+    extractInitPayloadFromHistory(session?.history)?.scenario
+  const raw =
+    fromInit ??
+    session.scenario ??
+    session.scenario_id ??
+    sd?.scenario ??
+    sd?.scenario_id
+  const text = String(raw ?? '').trim().toUpperCase()
+  return text
+}
+
 export function deriveSessionTitle(session) {
   if (!session || typeof session !== 'object') return ''
   const sd = session.session_data
@@ -457,16 +477,6 @@ export function mapRoundDataToAgentMessages(roundData) {
 
 export function buildResumeMessagesFromSessionData(sessionData) {
   const sd = sessionData && typeof sessionData === 'object' ? sessionData : {}
-  // DEBUG: remove after confirming order fix
-  if (Array.isArray(sd.history) && sd.history.length) {
-    console.log('[DEBUG restore] raw history from backend:', JSON.stringify(sd.history.map((h, i) => ({
-      i, type: h?.type, role: h?.role, round: h?.round, agent: h?.agent,
-      text: String(h?.content ?? h?.text ?? h?.message ?? '').slice(0, 60),
-    })), null, 2))
-  }
-  if (sd.round_data) {
-    console.log('[DEBUG restore] round_data keys:', Object.keys(sd.round_data))
-  }
   const fromHistory = mapSessionHistoryToMessages(sd.history)
 
   const hasAgentInHistory = fromHistory.some((m) => m?.kind === 'agent')
@@ -543,6 +553,7 @@ export function normalizeSessionsFromApi(list) {
       title: deriveSessionTitle(s),
       status: s.status,
       mode: s.mode,
+      scenario: deriveSessionScenario(s),
       rounds: deriveSessionRounds(s),
       type: s.type,
       createdAt: Number.isFinite(created) ? created : Date.now(),
@@ -553,3 +564,4 @@ export function normalizeSessionsFromApi(list) {
   out.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
   return out.slice(0, 80)
 }
+

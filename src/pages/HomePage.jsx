@@ -5,8 +5,11 @@ import '../App.scss'
 import { Reveal } from '../components/Reveal.jsx'
 import LanguageSwitcher from '../components/LanguageSwitcher.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
+import TopBurgerMenu from '../components/TopBurgerMenu.jsx'
+import MobileProfilePanel from '../components/MobileProfilePanel.jsx'
 import { useAuth } from '../services/AuthContext.jsx'
 import { apiFetch } from '../services/http.js'
+import { getCredits, getUserLabel } from '../services/profileUtils.js'
 
 const ConsensiaScene = lazy(() =>
   import('../components/ConsensiaScene').then((m) => ({ default: m.ConsensiaScene }))
@@ -15,34 +18,11 @@ const ConsensiaScene = lazy(() =>
 const NAV_MOBILE_MAX_PX = 768
 const DATA_COLLECTION_KEY = 'consensia_data_collection_v1'
 
-function getUserLabel(user) {
-  if (!user || typeof user !== 'object') return ''
-  return (
-    user.email ||
-    user.name ||
-    user.full_name ||
-    user.display_name ||
-    user.given_name ||
-    ''
-  )
-}
-
-function getCredits(user) {
-  if (!user || typeof user !== 'object') return null
-  const candidates = [user.credits, user.credit_balance, user.balance, user.remaining_credits]
-  for (const v of candidates) {
-    if (typeof v === 'number' && Number.isFinite(v)) return v
-    if (typeof v === 'string' && v.trim() && Number.isFinite(Number(v))) return Number(v)
-  }
-  return null
-}
-
 export default function HomePage() {
   const { t } = useTranslation()
   const { isAuthenticated, user, loginWithGoogle, logout } = useAuth()
   const profileLabel = t('home.profile.label')
   const userLabel = getUserLabel(user) || profileLabel
-  const avatarLetter = String(userLabel).slice(0, 1).toUpperCase()
   const [animationsEnabled, setAnimationsEnabled] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
@@ -63,15 +43,12 @@ export default function HomePage() {
 
   useEffect(() => {
     if (!mobileMenuOpen) return
-    const prevOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
     const mq = window.matchMedia(`(min-width: ${NAV_MOBILE_MAX_PX}px)`)
     const closeIfDesktop = () => {
       if (mq.matches) setMobileMenuOpen(false)
     }
     mq.addEventListener('change', closeIfDesktop)
     return () => {
-      document.body.style.overflow = prevOverflow
       mq.removeEventListener('change', closeIfDesktop)
     }
   }, [mobileMenuOpen])
@@ -151,74 +128,22 @@ export default function HomePage() {
 
   const closeMobileMenu = () => setMobileMenuOpen(false)
   const mobileProfile = isAuthenticated ? (
-    <div className="chat-app__profile-pop chat-app__profile-pop--menu" role="menu">
-      <div className="chat-app__profile-head">
-        <div className="top__menu-profile-user">
-          <span className="chat-app__profile-avatar" aria-hidden="true">
-            {avatarLetter}
-          </span>
-          <div>
-            <div className="chat-app__profile-title">{userLabel}</div>
-            {getCredits(user) != null ? (
-              <div className="chat-app__profile-sub">
-                {t('home.profile.credits', { count: getCredits(user) })}
-              </div>
-            ) : null}
-          </div>
-        </div>
-        {getCredits(user) != null ? (
-          <div className="chat-app__profile-credits-line">
-            <div className="chat-app__topup-inline">
-              <input
-                className="chat-app__topup-input"
-                type="number"
-                min={1}
-                step={1}
-                value={topUpAmount}
-                onChange={(e) => setTopUpAmount(e.target.value)}
-                aria-label={t('home.profile.topUp.amountAria')}
-              />
-              <span className="chat-app__topup-preview">
-                {t('home.profile.topUp.preview', { count: creditsPreview })}
-              </span>
-              <button
-                type="button"
-                className="chat-app__topup-btn"
-                onClick={handleTopUp}
-                disabled={topUpLoading}
-                title={t('home.profile.topUp.rateTitle', { multiplier: promoMultiplier })}
-              >
-                {topUpLoading ? '...' : t('home.profile.topUp.button')}
-              </button>
-            </div>
-          </div>
-        ) : null}
-        {topUpError ? <div className="chat-app__profile-sub">{topUpError}</div> : null}
-      </div>
-      <div className="chat-app__profile-row">
-        <label className="chat-app__toggle">
-          <input
-            type="checkbox"
-            checked={dataCollection}
-            onChange={(e) => setDataCollection(e.target.checked)}
-          />
-          <span className="chat-app__toggle-ui" aria-hidden="true" />
-          <span>{t('home.profile.dataCollection')}</span>
-        </label>
-      </div>
-      <div className="chat-app__profile-actions">
-        <button
-          type="button"
-          className="chat-app__profile-logout"
-          onClick={() => {
-            logout()
-            closeMobileMenu()
-          }}
-        >
-          {t('home.profile.logout')}
-        </button>
-      </div>
-    </div>
+    <MobileProfilePanel
+      user={user}
+      topUpAmount={topUpAmount}
+      onTopUpAmountChange={setTopUpAmount}
+      creditsPreview={creditsPreview}
+      onTopUp={handleTopUp}
+      topUpLoading={topUpLoading}
+      promoMultiplier={promoMultiplier}
+      topUpError={topUpError}
+      dataCollection={dataCollection}
+      onDataCollectionChange={setDataCollection}
+      onLogout={() => {
+        logout()
+        closeMobileMenu()
+      }}
+    />
   ) : null
 
   return (
@@ -251,7 +176,22 @@ export default function HomePage() {
                     aria-label={t('home.profile.open')}
                   >
                     <span className="chat-app__profile-avatar" aria-hidden="true">
-                      {avatarLetter}
+                      <svg className="chat-app__profile-avatar-icon" viewBox="0 0 24 24" fill="none">
+                        <path
+                          d="M12 12.25C9.95 12.25 8.25 10.55 8.25 8.5C8.25 6.45 9.95 4.75 12 4.75C14.05 4.75 15.75 6.45 15.75 8.5C15.75 10.55 14.05 12.25 12 12.25Z"
+                          stroke="currentColor"
+                          strokeWidth="1.8"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M5.75 18.5C5.75 15.96 8.54 14 12 14C15.46 14 18.25 15.96 18.25 18.5"
+                          stroke="currentColor"
+                          strokeWidth="1.8"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
                     </span>
                   </button>
                   {profileOpen ? (
@@ -330,71 +270,56 @@ export default function HomePage() {
               >
                 {animationsEnabled ? t('home.hero.stopBackground') : t('home.hero.animateBackground')}
               </button>
-              <button
-                type="button"
-                className={`top__burger${mobileMenuOpen ? ' top__burger--open' : ''}`}
-                aria-expanded={mobileMenuOpen}
-                aria-controls="top-mobile-menu"
-                aria-label={mobileMenuOpen ? t('home.menu.close') : t('home.menu.open')}
-                onClick={() => setMobileMenuOpen((o) => !o)}
+              <TopBurgerMenu
+                isOpen={mobileMenuOpen}
+                onToggle={() => setMobileMenuOpen((o) => !o)}
+                onClose={closeMobileMenu}
+                menuId="top-mobile-menu"
+                openAriaLabel={t('home.menu.open')}
+                closeAriaLabel={t('home.menu.close')}
+                menuAriaLabel={t('home.menu.label')}
+                main={
+                  <>
+                    <nav className="top__menu-nav" aria-label={t('home.a11y.pageNav')}>
+                      <Link to="/about" onClick={closeMobileMenu}>
+                        {t('nav.about')}
+                      </Link>
+                      <Link to="/models" onClick={closeMobileMenu}>
+                        {t('nav.models')}
+                      </Link>
+                      <Link to="/developers" onClick={closeMobileMenu}>
+                        {t('nav.developers')}
+                      </Link>
+                    </nav>
+                    {!isAuthenticated ? (
+                      <button
+                        type="button"
+                        className="motion-toggle motion-toggle--menu"
+                        onClick={() => {
+                          loginWithGoogle()
+                          closeMobileMenu()
+                        }}
+                      >
+                        {t('home.auth.login')}
+                      </button>
+                    ) : null}
+                  </>
+                }
               >
-                <span className="top__burger-line" aria-hidden="true" />
-                <span className="top__burger-line" aria-hidden="true" />
-                <span className="top__burger-line" aria-hidden="true" />
-              </button>
-            </div>
-          </header>
-
-          <div
-            className={`top__menu-backdrop${mobileMenuOpen ? ' top__menu-backdrop--visible' : ''}`}
-            aria-hidden="true"
-            onClick={closeMobileMenu}
-          />
-
-          <div
-            id="top-mobile-menu"
-            className={`top__menu-panel${mobileMenuOpen ? ' top__menu-panel--open' : ''}`}
-            role="dialog"
-            aria-modal="true"
-            aria-label={t('home.menu.label')}
-          >
-            <div className="top__menu-main">
-              <nav className="top__menu-nav" aria-label={t('home.a11y.pageNav')}>
-                <Link to="/about" onClick={closeMobileMenu}>
-                  {t('nav.about')}
-                </Link>
-                <Link to="/models" onClick={closeMobileMenu}>
-                  {t('nav.models')}
-                </Link>
-                <Link to="/developers" onClick={closeMobileMenu}>
-                  {t('nav.developers')}
-                </Link>
-              </nav>
-              {!isAuthenticated ? (
+                <LanguageSwitcher className="top__lang top__lang--menu" />
                 <button
                   type="button"
-                  className="motion-toggle motion-toggle--menu"
-                  onClick={() => {
-                    loginWithGoogle()
-                    closeMobileMenu()
-                  }}
+                  className={`motion-toggle motion-toggle--menu${isAuthenticated ? ' motion-toggle--menu-with-profile' : ''}`}
+                  aria-pressed={animationsEnabled}
+                  title={t('home.hero.motionToggleTitle')}
+                  onClick={() => setAnimationsEnabled((v) => !v)}
                 >
-                  {t('home.auth.login')}
+                  {animationsEnabled ? t('home.hero.stopBackground') : t('home.hero.animateBackground')}
                 </button>
-              ) : null}
+                {isAuthenticated ? <div className="top__menu-profile">{mobileProfile}</div> : null}
+              </TopBurgerMenu>
             </div>
-            <LanguageSwitcher className="top__lang top__lang--menu" />
-            <button
-              type="button"
-              className={`motion-toggle motion-toggle--menu${isAuthenticated ? ' motion-toggle--menu-with-profile' : ''}`}
-              aria-pressed={animationsEnabled}
-              title={t('home.hero.motionToggleTitle')}
-              onClick={() => setAnimationsEnabled((v) => !v)}
-            >
-              {animationsEnabled ? t('home.hero.stopBackground') : t('home.hero.animateBackground')}
-            </button>
-            {isAuthenticated ? <div className="top__menu-profile">{mobileProfile}</div> : null}
-          </div>
+          </header>
 
           <div className="hero__main">
             <p className="eyebrow">{t('home.hero.eyebrow')}</p>

@@ -30,6 +30,7 @@
   border-bottom: 1px solid rgba(244, 114, 182, 0.2);
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
+  transition: border-color 0.24s ease, background-color 0.24s ease;
 }
 
 .developers-page__logo {
@@ -133,6 +134,11 @@
   transform: translateY(-4px);
   border-color: rgba(244, 114, 182, 0.38);
   box-shadow: 0 22px 56px rgba(244, 114, 182, 0.18), 0 2px 0 rgba(255, 255, 255, 0.62) inset;
+
+  .developers__photo {
+    transform: scale(1.03);
+    filter: drop-shadow(0 16px 30px rgba(26, 10, 18, 0.2));
+  }
 }
 
 .developers__photo-wrap {
@@ -152,11 +158,24 @@
   object-position: center bottom;
   display: block;
   filter: drop-shadow(0 10px 24px rgba(26, 10, 18, 0.18));
+  transition: transform 0.28s ease, filter 0.28s ease;
+  transform-origin: center bottom;
 }
 
 .developers__card--left .developers__photo {
   transform: scale(1.08);
-  transform-origin: center bottom;
+}
+
+.developers__card--left:hover .developers__photo {
+  transform: scale(1.1);
+}
+
+.developers__card--right .developers__photo {
+  transform: scale(1.03);
+}
+
+.developers__card--right:hover .developers__photo {
+  transform: scale(1.06);
 }
 
 .developers__photo-wrap::before {
@@ -264,6 +283,7 @@
   padding-inline: clamp(1rem, 2.2vw, 1.2rem);
   display: grid;
   gap: 0.35rem;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 
   h3 {
     margin: 0;
@@ -274,6 +294,12 @@
     margin: 0.2rem 0 0;
     color: #6b4a58;
     line-height: 1.5;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: rgba(244, 114, 182, 0.3);
+    box-shadow: 0 16px 38px rgba(244, 114, 182, 0.14), 0 1px 0 rgba(255, 255, 255, 0.72) inset;
   }
 }
 
@@ -294,7 +320,34 @@
     height: min(82vw, 36rem);
   }
 
+  .developers__card--left .developers__photo {
+    transform: scale(0.98);
+  }
+
+  .developers__card--right .developers__photo {
+    transform: scale(1.01);
+  }
+
+  .developers__card--left:hover .developers__photo {
+    transform: scale(1);
+  }
+
+  .developers__card--right:hover .developers__photo {
+    transform: scale(1.03);
+  }
+
   .developers-page__contacts {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .developers-page__header,
+  .developers__card,
+  .developers__photo,
+  .developers__link-btn,
+  .developers-page__question {
+    transition: none !important;
+    transform: none !important;
   }
 }

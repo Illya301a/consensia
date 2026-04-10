@@ -245,6 +245,7 @@ $font-logo: $font-display;
 .lang-switcher {
   position: relative;
   min-width: 7.5rem;
+  z-index: 2;
 }
 
 .lang-switcher__button {
@@ -296,7 +297,7 @@ $font-logo: $font-display;
   border: 1px solid rgba(244, 114, 182, 0.26);
   box-shadow: 0 12px 34px rgba(244, 114, 182, 0.16);
   backdrop-filter: blur(12px);
-  z-index: 95;
+  z-index: 120;
 }
 
 .lang-switcher__item {
@@ -437,11 +438,16 @@ $font-logo: $font-display;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
-  color: $text;
+  color: $rose-500;
   background: rgba(255, 255, 255, 0.85);
   border: 1px solid rgba(244, 114, 182, 0.3);
   box-shadow: 0 8px 24px rgba(244, 114, 182, 0.14);
+}
+
+.chat-app__profile-avatar-icon {
+  width: 1.55rem;
+  height: 1.55rem;
+  display: block;
 }
 
 .chat-app__profile-pop {
@@ -626,6 +632,7 @@ $font-logo: $font-display;
 .top__burger {
   display: none;
   position: relative;
+  z-index: 105;
   flex-shrink: 0;
   width: 2.75rem;
   height: 2.75rem;
@@ -715,7 +722,7 @@ $font-logo: $font-display;
 .top__menu-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 80;
+  z-index: 180;
   background: rgba(26, 10, 18, 0.35);
   opacity: 0;
   visibility: hidden;
@@ -740,7 +747,7 @@ $font-logo: $font-display;
   top: 0;
   right: 0;
   bottom: 0;
-  z-index: 90;
+  z-index: 190;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -1639,6 +1646,9 @@ $font-logo: $font-display;
 }
 
 .site-header {
+  position: relative;
+  z-index: 70;
+  isolation: isolate;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -1715,46 +1725,31 @@ $font-logo: $font-display;
 @media (max-width: 767.98px) {
   .site-header {
     position: sticky;
-    top: calc(0.35rem + env(safe-area-inset-top, 0px));
-    z-index: 35;
-    margin: 0.2rem 0.6rem 0.6rem;
-    padding: 0.6rem 0.7rem;
-    border-radius: 0.95rem;
-    border: 1px solid rgba(244, 114, 182, 0.24);
-    background: rgba(255, 255, 255, 0.86);
-    box-shadow: 0 10px 28px rgba(244, 114, 182, 0.14);
+    top: 0;
+    z-index: 170;
+    margin: 0;
+    padding: 0.78rem 0.9rem;
+    flex-wrap: nowrap;
+    align-items: center;
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid rgba(244, 114, 182, 0.24);
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: none;
     backdrop-filter: blur(12px);
   }
 
   .site-header__logo {
-    font-size: 1.2rem;
+    font-size: 1.28rem;
     padding-bottom: 0;
   }
 
   .site-header__row {
-    width: 100%;
-    justify-content: space-between;
-    gap: 0.5rem;
-  }
-
-  .site-header__nav {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    max-width: 100%;
-    padding-bottom: 0.1rem;
-    scrollbar-width: none;
-  }
-
-  .site-header__nav::-webkit-scrollbar {
     display: none;
   }
 
-  .site-header__nav .site-header__nav-link {
-    white-space: nowrap;
-  }
-
-  .site-header__lang {
-    min-width: 7.3rem;
+  .site-header .top__burger {
+    display: inline-flex;
     margin-left: auto;
   }
 }
@@ -1767,6 +1762,33 @@ $font-logo: $font-display;
     border-radius: 0;
     box-shadow: none;
   }
+
+  .site-header .top__burger {
+    display: none;
+  }
+}
+
+.top__menu-link {
+  display: block;
+  padding: 0.85rem 0.65rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: $text;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(244, 114, 182, 0.1);
+    color: $rose-500;
+    outline: none;
+  }
+}
+
+.top__menu-link--active {
+  background: rgba(244, 114, 182, 0.12);
+  color: $rose-500 !important;
 }
 
 .legal-page__logo {
