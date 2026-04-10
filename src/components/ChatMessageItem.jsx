@@ -1,4 +1,5 @@
 import { memo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import ReactMarkdown from 'react-markdown'
@@ -212,6 +213,7 @@ function creditsFromTokens(tokens) {
 }
 
 export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
+  const { t } = useTranslation()
   switch (msg.kind) {
     case 'system':
       return null
@@ -235,7 +237,7 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
               </div>
             ) : null}
             {code ? (
-              <Fold title="Код (свернуть/развернуть)" defaultOpen={false}>
+              <Fold title={t('app.chatMessage.codeFold')} defaultOpen={false}>
                 <Markdown>{`\`\`\`\n${code}\n\`\`\``}</Markdown>
               </Fold>
             ) : null}
@@ -262,7 +264,7 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
           {c.thoughts ? (
             <div className="chat-msg__thoughts chat-msg__md">
               {thoughtsFold ? (
-                <Fold title="Thoughts" defaultOpen={false}>
+                <Fold title={t('app.chatMessage.thoughts')} defaultOpen={false}>
                   <Markdown>{c.thoughts}</Markdown>
                 </Fold>
               ) : (
@@ -273,7 +275,7 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
           {c.summary ? (
             <div className="chat-msg__summary chat-msg__md">
               {summaryFold ? (
-                <Fold title="Summary" defaultOpen={false}>
+                <Fold title={t('app.chatMessage.summary')} defaultOpen={false}>
                   <Markdown>{c.summary}</Markdown>
                 </Fold>
               ) : (
@@ -291,7 +293,7 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
                   {issue.description ? (
                     <div className="chat-msg__md">
                       {shouldFold(issue.description) ? (
-                        <Fold title="Описание" defaultOpen={false}>
+                        <Fold title={t('app.chatMessage.description')} defaultOpen={false}>
                           <Markdown>{normalizeListItemText(issue.description)}</Markdown>
                         </Fold>
                       ) : (
@@ -300,7 +302,7 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
                     </div>
                   ) : null}
                   {issue.snippet ? (
-                    <Fold title="Snippet" defaultOpen={!shouldFold(issue.snippet, 240)}>
+                    <Fold title={t('app.chatMessage.snippet')} defaultOpen={!shouldFold(issue.snippet, 240)}>
                       <SyntaxHighlighter
                         language="javascript"
                         style={oneLight}
@@ -326,7 +328,7 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
           ) : null}
           {!hasMain && c.raw ? (
             <div className="chat-msg__md">
-              <Fold title="Raw" defaultOpen={false}>
+              <Fold title={t('app.chatMessage.raw')} defaultOpen={false}>
                 <Markdown>{c.raw}</Markdown>
               </Fold>
             </div>
@@ -341,10 +343,10 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
             </span>
             <div>
               <strong className="chat-msg__agent-name">{agentName}</strong>
-              <span className="chat-msg__round">Round {msg.round}</span>
+              <span className="chat-msg__round">{t('app.chatMessage.round')} {msg.round}</span>
             </div>
           </div>
-          {isJudge ? body : <Fold title="Показать ответ" defaultOpen={false}>{body}</Fold>}
+          {isJudge ? body : <Fold title={t('app.chatMessage.showResponse')} defaultOpen={false}>{body}</Fold>}
         </div>
       )
     }
@@ -367,7 +369,7 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
           ) : null}
           {fixes.length > 0 ? (
             <div className="chat-msg__list-block">
-              <h4>Critical fixes</h4>
+              <h4>{t('app.chatMessage.criticalFixes')}</h4>
               <ul>
                 {fixes.map((x, i) => (
                   <li key={i}>
@@ -385,7 +387,7 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
           ) : null}
           {improvements.length > 0 ? (
             <div className="chat-msg__list-block">
-              <h4>Improvements</h4>
+              <h4>{t('app.chatMessage.improvements')}</h4>
               <ul>
                 {improvements.map((x, i) => (
                   <li key={i}>
@@ -407,8 +409,8 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
         <div className={`chat-msg chat-msg--final${hasFinalCode ? '' : ' chat-msg--final-compact'}`}>
           {hasFinalCode ? (
             <>
-              <h3 className="chat-msg__final-title">Final verdict</h3>
-              <Fold title="Показать/скрыть" closedTitle="Показать" openTitle="Скрыть" defaultOpen>
+              <h3 className="chat-msg__final-title">{t('app.chatMessage.finalVerdict')}</h3>
+              <Fold title={t('app.chatMessage.showHide')} closedTitle={t('app.chatMessage.show')} openTitle={t('app.chatMessage.hide')} defaultOpen>
                 {verdictBody}
               </Fold>
             </>
@@ -417,8 +419,8 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
           )}
           {hasFinalCode ? (
             <div className="chat-msg__list-block">
-              <h3 className="chat-msg__final-title">Final code</h3>
-              <Fold title="Показать/скрыть" closedTitle="Показать" openTitle="Скрыть" defaultOpen>
+              <h3 className="chat-msg__final-title">{t('app.chatMessage.finalCode')}</h3>
+              <Fold title={t('app.chatMessage.showHide')} closedTitle={t('app.chatMessage.show')} openTitle={t('app.chatMessage.hide')} defaultOpen>
                 <div className="chat-msg__code">
                   <CodeBlock value={finalCode} defaultLanguage="python" />
                 </div>
@@ -427,15 +429,15 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
           ) : null}
           {diff ? (
             <div className="chat-msg__list-block">
-              <h4>Diff</h4>
-              <Fold title="Показать diff" defaultOpen={false}>
+              <h4>{t('app.chatMessage.diff')}</h4>
+              <Fold title={t('app.chatMessage.showDiff')} defaultOpen={false}>
                 <pre className="chat-msg__diff">{String(diff)}</pre>
               </Fold>
             </div>
           ) : null}
           {!hasMain && c.raw ? (
             <div className="chat-msg__md">
-              <Fold title="Raw" defaultOpen={false}>
+              <Fold title={t('app.chatMessage.raw')} defaultOpen={false}>
                 <Markdown>{c.raw}</Markdown>
               </Fold>
             </div>
@@ -449,7 +451,7 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
         <div className={`chat-msg chat-msg--chat chat-msg--chat-${role.toLowerCase()}`}>
           <div className="chat-msg__md">
             {shouldFold(msg.text, 900) ? (
-              <Fold title="Показать сообщение" defaultOpen={true}>
+              <Fold title={t('app.chatMessage.showMessage')} defaultOpen={true}>
                 <Markdown>{msg.text}</Markdown>
               </Fold>
             ) : (
@@ -464,7 +466,7 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
       const spentCredits = creditsFromTokens(totalTokens)
       return (
         <div className="chat-msg chat-msg--usage">
-          <div className="chat-msg__md">Кредитов потрачено: {spentCredits}</div>
+          <div className="chat-msg__md">{t('app.chatMessage.creditsSpent', { count: spentCredits })}</div>
         </div>
       )
     }
@@ -474,7 +476,7 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
       const spentCredits = creditsFromTokens(totalTokens)
       return (
         <div className="chat-msg chat-msg--usage">
-          <div className="chat-msg__md">Кредитов потрачено: {spentCredits}</div>
+          <div className="chat-msg__md">{t('app.chatMessage.creditsSpent', { count: spentCredits })}</div>
         </div>
       )
     }

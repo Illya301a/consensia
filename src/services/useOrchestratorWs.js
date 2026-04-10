@@ -1,4 +1,5 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { mapSessionHistoryToMessages } from './sessionsApi.js'
 
 // WebSocket оркестратора: первое сообщение после open — JSON { token, session_id, mode, code, context, rounds }
@@ -8,12 +9,9 @@ const WS_URL =
   'wss://api.consensia.world/ws/orchestrator'
 
 function uid() {
-    // Перевіряємо, чи доступний randomUUID (працює на localhost або HTTPS)
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {
       return crypto.randomUUID();
     }
-    
-    // Запасний варіант (Fallback) для роботи через локальний IP (HTTP)
     return Math.random().toString(36).substring(2, 15) + 
            Math.random().toString(36).substring(2, 15);
   }
@@ -56,7 +54,11 @@ function parseMaybeJson(value) {
 }
 
 export function useOrchestratorWs({ onSessionId } = {}) {
+  const { t } = useTranslation()
   const wsRef = useRef(null)
+  const onSessionIdRef = useRef(onSessionId)
+  useEffect(() => { onSessionIdRef.current = onSessionId })
+
   const [status, setStatus] = useState('idle')
   const [messages, setMessages] = useState([])
   const [usageEvents, setUsageEvents] = useState([])
@@ -88,13 +90,13 @@ export function useOrchestratorWs({ onSessionId } = {}) {
       try {
         data = JSON.parse(raw)
       } catch {
-        append({ kind: 'error', text: 'Invalid JSON from server' })
+        append({ kind: 'error', text: t('app.ws.invalidJson') })
         return
       }
 
       if (data.session_id && !data.type) {
         setSessionId(data.session_id)
-        onSessionId?.(data.session_id)
+        onSessionIdRef.current?.(data.session_id)
         return
       }
 
@@ -105,7 +107,7 @@ export function useOrchestratorWs({ onSessionId } = {}) {
           const sid = data.session_id ?? data.sessionId
           if (sid) {
             setSessionId(sid)
-            onSessionId?.(sid)
+            onSessionIdRef.current?.(sid)
           }
           break
         }
@@ -136,7 +138,7 @@ export function useOrchestratorWs({ onSessionId } = {}) {
           const sid = snapshot.session_id ?? snapshot.sessionId
           if (sid) {
             setSessionId(sid)
-            onSessionId?.(sid)
+            onSessionIdRef.current?.(sid)
           }
 
           const round = Number(snapshot.current_round ?? 0) || 0
@@ -203,7 +205,7 @@ export function useOrchestratorWs({ onSessionId } = {}) {
         }
         case 'input_required': {
           setInputLocked(false)
-          append({ kind: 'system', text: 'Waiting for your reply…' })
+          append({ kind: 'system', text: t('app.ws.waitingReply') })
           break
         }
         case 'final_verdict': {
@@ -267,7 +269,7 @@ export function useOrchestratorWs({ onSessionId } = {}) {
         }
       }
     },
-    [append, onSessionId]
+    [append, t]
   )
 
   const connect = useCallback(
@@ -325,23 +327,25 @@ export function useOrchestratorWs({ onSessionId } = {}) {
       ws.onmessage = (ev) => handleIncoming(ev.data)
 
       ws.onerror = () => {
-        setLastError('WebSocket error')
-        append({ kind: 'error', text: 'WebSocket connection error' })
+        setLastError(t('app.ws.wsError'))
+        append({ kind: 'error', text: t('app.ws.wsConnectionError') })
       }
 
       ws.onclose = () => {
-        setStatus('closed')
-        wsRef.current = null
+        if (wsRef.current === ws) {
+          setStatus('closed')
+          wsRef.current = null
+        }
       }
     },
-    [append, disconnect, handleIncoming]
+    [append, disconnect, handleIncoming, t]
   )
 
   const sendFollowUp = useCallback(
     (message) => {
       const ws = wsRef.current
       if (!ws || ws.readyState !== WebSocket.OPEN) {
-        setLastError('Not connected')
+        setLastError(t('app.ws.notConnected'))
         return
       }
       const text = typeof message === 'string' ? message : String(message ?? '')
@@ -349,7 +353,7 @@ export function useOrchestratorWs({ onSessionId } = {}) {
       append({ kind: 'user', text })
       ws.send(JSON.stringify({ message: text }))
     },
-    [append]
+    [append, t]
   )
 
   return {

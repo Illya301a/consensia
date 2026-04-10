@@ -8,14 +8,14 @@ import { SUPPORTED_LANGUAGES } from '../i18n/constants.js'
 export default function LanguageSwitcher({ className = '' }) {
   const { t, i18n } = useTranslation()
   const [activeLng, setActiveLng] = useState(
-    () => String(i18n.resolvedLanguage || i18n.language || 'ru').split('-')[0]
+    () => String(i18n.resolvedLanguage || i18n.language || 'en').split('-')[0]
   )
   const [open, setOpen] = useState(false)
   const rootRef = useRef(null)
 
   useEffect(() => {
     const sync = () => {
-      setActiveLng(String(i18n.resolvedLanguage || i18n.language || 'ru').split('-')[0])
+      setActiveLng(String(i18n.resolvedLanguage || i18n.language || 'en').split('-')[0])
     }
     i18n.on('languageChanged', sync)
     sync()
@@ -24,7 +24,7 @@ export default function LanguageSwitcher({ className = '' }) {
     }
   }, [i18n])
 
-  const value = SUPPORTED_LANGUAGES.some((l) => l.code === activeLng) ? activeLng : 'ru'
+  const value = SUPPORTED_LANGUAGES.some((l) => l.code === activeLng) ? activeLng : 'en'
   const activeMeta = SUPPORTED_LANGUAGES.find((l) => l.code === value) || SUPPORTED_LANGUAGES[0]
 
   useEffect(() => {

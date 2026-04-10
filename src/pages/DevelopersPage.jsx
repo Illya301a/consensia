@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import '../App.scss'
 import illiaPhoto from '../photos/illia.png'
 import andriiPhoto from '../photos/andrii.png'
 import SiteFooter from '../components/SiteFooter.jsx'
@@ -31,7 +32,7 @@ const COPY = {
       },
     ],
   },
-  uk: {
+  ua: {
     eyebrow: 'Творці Consensia',
     title: 'Розробники',
     lead: 'Команда, яка зібрала Consensia від ідеї до реального продукту.',
@@ -184,7 +185,7 @@ function DevCard({ dev, side }) {
 
 export default function DevelopersPage() {
   const { i18n } = useTranslation()
-  const lang = String(i18n.resolvedLanguage || i18n.language || 'ru').split('-')[0]
+  const lang = String(i18n.resolvedLanguage || i18n.language || 'en').split('-')[0]
   const c = COPY[lang] || COPY.ru
   const developers = c.developers.map((d) => ({
     ...d,

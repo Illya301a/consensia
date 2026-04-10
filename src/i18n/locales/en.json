@@ -14,7 +14,7 @@
   },
   "languages": {
     "ru": "Russian",
-    "uk": "Ukrainian",
+    "ua": "Ukrainian",
     "en": "English"
   },
   "home": {
@@ -158,5 +158,40 @@
     "sessions": "Sessions",
     "sessionsText": "You can continue analyses later — history is saved in your account.",
     "rights": "All rights reserved"
+  },
+  "app": {
+    "ws": {
+      "invalidJson": "Invalid JSON from server",
+      "waitingReply": "Waiting for your reply…",
+      "wsError": "WebSocket error",
+      "wsConnectionError": "WebSocket connection error",
+      "notConnected": "Not connected"
+    },
+    "composer": {
+      "collapse": "Collapse input field",
+      "expand": "Expand input field",
+      "send": "Send"
+    },
+    "chatMessage": {
+      "codeFold": "Code (collapse/expand)",
+      "thoughts": "Thoughts",
+      "summary": "Summary",
+      "description": "Description",
+      "showResponse": "Show response",
+      "round": "Round",
+      "criticalFixes": "Critical fixes",
+      "improvements": "Improvements",
+      "finalVerdict": "Final verdict",
+      "showHide": "Show/hide",
+      "show": "Show",
+      "hide": "Hide",
+      "finalCode": "Final code",
+      "diff": "Diff",
+      "showDiff": "Show diff",
+      "showMessage": "Show message",
+      "creditsSpent": "Credits spent: {{count}}",
+      "raw": "Raw",
+      "snippet": "Snippet"
+    }
   }
 }

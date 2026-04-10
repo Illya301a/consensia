@@ -68,7 +68,7 @@ const COPY = {
       },
     ],
   },
-  uk: {
+  ua: {
     docTitle: 'Умови використання · Consensia',
     skip: 'Перейти до вмісту',
     title: 'Умови використання',
@@ -198,7 +198,7 @@ const COPY = {
 
 export default function TermsOfServicePage() {
   const { i18n } = useTranslation()
-  const lang = String(i18n.resolvedLanguage || i18n.language || 'ru').split('-')[0]
+  const lang = String(i18n.resolvedLanguage || i18n.language || 'en').split('-')[0]
   const c = COPY[lang] || COPY.ru
 
   useEffect(() => {

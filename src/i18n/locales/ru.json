@@ -14,7 +14,7 @@
   },
   "languages": {
     "ru": "Русский",
-    "uk": "Українська",
+    "ua": "Українська",
     "en": "English"
   },
   "home": {
@@ -158,5 +158,40 @@
     "sessions": "Сессии",
     "sessionsText": "Разборы можно продолжать позже — история сохраняется в вашем аккаунте.",
     "rights": "Все права защищены"
+  },
+  "app": {
+    "ws": {
+      "invalidJson": "Некорректный JSON от сервера",
+      "waitingReply": "Ожидаем ваш ответ…",
+      "wsError": "Ошибка WebSocket",
+      "wsConnectionError": "Ошибка подключения WebSocket",
+      "notConnected": "Нет подключения"
+    },
+    "composer": {
+      "collapse": "Свернуть поле ввода",
+      "expand": "Развернуть поле ввода",
+      "send": "Отправить"
+    },
+    "chatMessage": {
+      "codeFold": "Код (свернуть/развернуть)",
+      "thoughts": "Мысли",
+      "summary": "Сводка",
+      "description": "Описание",
+      "showResponse": "Показать ответ",
+      "round": "Раунд",
+      "criticalFixes": "Критические исправления",
+      "improvements": "Улучшения",
+      "finalVerdict": "Финальный вердикт",
+      "showHide": "Показать/скрыть",
+      "show": "Показать",
+      "hide": "Скрыть",
+      "finalCode": "Финальный код",
+      "diff": "Изменения",
+      "showDiff": "Показать diff",
+      "showMessage": "Показать сообщение",
+      "creditsSpent": "Кредитов потрачено: {{count}}",
+      "raw": "Сырые данные",
+      "snippet": "Фрагмент"
+    }
   }
 }

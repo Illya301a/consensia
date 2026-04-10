@@ -688,33 +688,6 @@ $font-logo: $font-display;
 }
 
 @media (max-width: 767.98px) {
-  .top {
-    position: sticky;
-    top: calc(0.35rem + env(safe-area-inset-top, 0px));
-    z-index: 35;
-    margin: 0.2rem 0 0.55rem;
-    padding: 0.55rem 0.65rem;
-    border-radius: 0.95rem;
-    background: rgba(255, 255, 255, 0.86);
-    border: 1px solid rgba(244, 114, 182, 0.24);
-    box-shadow: 0 10px 28px rgba(244, 114, 182, 0.14);
-    backdrop-filter: blur(12px);
-  }
-
-  .top__end {
-    gap: 0.55rem;
-  }
-
-  .logo {
-    font-size: 1.28rem;
-  }
-
-  .top__burger {
-    width: 2.6rem;
-    height: 2.6rem;
-    border-radius: 14px;
-  }
-
   .top__nav--desktop,
   .motion-toggle--desktop {
     display: none;
@@ -734,16 +707,6 @@ $font-logo: $font-display;
 }
 
 @media (min-width: 768px) {
-  .top {
-    position: static;
-    margin: 0;
-    padding: 0;
-    border: none;
-    background: transparent;
-    box-shadow: none;
-    backdrop-filter: none;
-  }
-
   .top__lang--menu {
     display: none;
   }
@@ -1747,6 +1710,63 @@ $font-logo: $font-display;
   background: $rose-500 !important;
   border-color: $rose-500 !important;
   box-shadow: 0 8px 18px rgba(244, 114, 182, 0.25);
+}
+
+@media (max-width: 767.98px) {
+  .site-header {
+    position: sticky;
+    top: calc(0.35rem + env(safe-area-inset-top, 0px));
+    z-index: 35;
+    margin: 0.2rem 0.6rem 0.6rem;
+    padding: 0.6rem 0.7rem;
+    border-radius: 0.95rem;
+    border: 1px solid rgba(244, 114, 182, 0.24);
+    background: rgba(255, 255, 255, 0.86);
+    box-shadow: 0 10px 28px rgba(244, 114, 182, 0.14);
+    backdrop-filter: blur(12px);
+  }
+
+  .site-header__logo {
+    font-size: 1.2rem;
+    padding-bottom: 0;
+  }
+
+  .site-header__row {
+    width: 100%;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .site-header__nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    max-width: 100%;
+    padding-bottom: 0.1rem;
+    scrollbar-width: none;
+  }
+
+  .site-header__nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .site-header__nav .site-header__nav-link {
+    white-space: nowrap;
+  }
+
+  .site-header__lang {
+    min-width: 7.3rem;
+    margin-left: auto;
+  }
+}
+
+@media (min-width: 768px) {
+  .site-header {
+    position: static;
+    top: auto;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
 }
 
 .legal-page__logo {

@@ -1,8 +1,8 @@
-/** Supported locale codes (default UI language: Russian). */
-export const DEFAULT_LANGUAGE = 'ru'
+/** Supported locale codes (default UI language: English). */
+export const DEFAULT_LANGUAGE = 'en'
 
 export const SUPPORTED_LANGUAGES = [
   { code: 'ru', labelKey: 'languages.ru' },
-  { code: 'uk', labelKey: 'languages.uk' },
+  { code: 'ua', labelKey: 'languages.ua' },
   { code: 'en', labelKey: 'languages.en' },
 ]

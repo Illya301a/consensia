@@ -34,7 +34,7 @@ const COPY = {
       },
     ],
   },
-  uk: {
+  ua: {
     docTitle: 'FAQ · Consensia',
     skip: 'Перейти до вмісту',
     title: 'FAQ',
@@ -96,7 +96,7 @@ const COPY = {
 
 export default function FaqPage() {
   const { i18n } = useTranslation()
-  const lang = String(i18n.resolvedLanguage || i18n.language || 'ru').split('-')[0]
+  const lang = String(i18n.resolvedLanguage || i18n.language || 'en').split('-')[0]
   const c = COPY[lang] || COPY.ru
 
   useEffect(() => {

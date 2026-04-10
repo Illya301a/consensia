@@ -14,7 +14,7 @@
   },
   "languages": {
     "ru": "Російська",
-    "uk": "Українська",
+    "ua": "Українська",
     "en": "English"
   },
   "home": {
@@ -158,5 +158,40 @@
     "sessions": "Сесії",
     "sessionsText": "Розбори можна продовжити пізніше — історія зберігається у вашому акаунті.",
     "rights": "Усі права захищено"
+  },
+  "app": {
+    "ws": {
+      "invalidJson": "Некоректний JSON від сервера",
+      "waitingReply": "Очікуємо вашу відповідь…",
+      "wsError": "Помилка WebSocket",
+      "wsConnectionError": "Помилка підключення WebSocket",
+      "notConnected": "Немає підключення"
+    },
+    "composer": {
+      "collapse": "Згорнути поле введення",
+      "expand": "Розгорнути поле введення",
+      "send": "Надіслати"
+    },
+    "chatMessage": {
+      "codeFold": "Код (згорнути/розгорнути)",
+      "thoughts": "Думки",
+      "summary": "Підсумок",
+      "description": "Опис",
+      "showResponse": "Показати відповідь",
+      "round": "Раунд",
+      "criticalFixes": "Критичні виправлення",
+      "improvements": "Покращення",
+      "finalVerdict": "Фінальний вердикт",
+      "showHide": "Показати/сховати",
+      "show": "Показати",
+      "hide": "Сховати",
+      "finalCode": "Фінальний код",
+      "diff": "Зміни",
+      "showDiff": "Показати diff",
+      "showMessage": "Показати повідомлення",
+      "creditsSpent": "Кредитів витрачено: {{count}}",
+      "raw": "Сирі дані",
+      "snippet": "Фрагмент"
+    }
   }
 }

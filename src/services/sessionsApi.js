@@ -170,7 +170,7 @@ function pickUsagePayload(item) {
 
 export function mapSessionHistoryToMessages(history) {
   const normalizedHistory = normalizeHistoryOrder(history)
-  return normalizedHistory.map((h, i) => {
+  const mapped = normalizedHistory.map((h, i) => {
     const id = `hist-${i}-${uid()}`
     const roleRaw = String(h?.role ?? '').toLowerCase()
     const typeRaw = String(h?.type ?? '').toLowerCase()
@@ -216,7 +216,7 @@ export function mapSessionHistoryToMessages(history) {
     }
 
     if (typeRaw === 'chat') {
-      if (roleRaw === 'user') return { id, kind: 'user', text }
+      if (roleRaw === 'user') return { id, kind: 'user', text, _round: round || null }
       return {
         id,
         kind: 'chat',
@@ -226,7 +226,7 @@ export function mapSessionHistoryToMessages(history) {
     }
 
     if (roleRaw === 'user') {
-      return { id, kind: 'user', text }
+      return { id, kind: 'user', text, _round: round || null }
     }
     if (typeRaw === 'final_verdict' || isFinalPayload(payload)) {
       return {
@@ -251,6 +251,61 @@ export function mapSessionHistoryToMessages(history) {
       text,
     }
   })
+  return interleaveUserFollowUpsBetweenRounds(mapped)
+}
+
+/**
+ * Backend may persist history grouped by type (all users before all agents).
+ * Detect this and redistribute user follow-ups between round groups so the
+ * restored chat matches the live chat order:
+ *   [task?] [R1 agents] [user] [R2 agents] [user] [R3 agents] ...
+ */
+function interleaveUserFollowUpsBetweenRounds(messages) {
+  if (!Array.isArray(messages) || messages.length < 4) return messages
+
+  const firstAgentIdx = messages.findIndex((m) => m?.kind === 'agent')
+  if (firstAgentIdx < 1) return messages
+
+  const prefix = messages.slice(0, firstAgentIdx)
+  const hasTask = prefix[0]?.kind === 'task'
+  const followUpCandidates = hasTask ? prefix.slice(1) : prefix
+  const followUps = followUpCandidates.filter((m) => m?.kind === 'user')
+  if (!followUps.length) return messages
+
+  const tail = messages.slice(firstAgentIdx)
+
+  const agentRounds = []
+  const seenRounds = new Set()
+  for (const m of tail) {
+    if (m?.kind === 'agent') {
+      const r = Number(m.round) || 0
+      if (r > 0 && !seenRounds.has(r)) {
+        agentRounds.push(r)
+        seenRounds.add(r)
+      }
+    }
+  }
+  if (agentRounds.length < 2) return messages
+
+  const out = []
+  if (hasTask) out.push(prefix[0])
+
+  const fq = followUps.slice()
+  let lastEmittedRound = 0
+
+  for (const item of tail) {
+    if (item?.kind === 'agent') {
+      const r = Number(item.round) || 0
+      if (r > lastEmittedRound && r > agentRounds[0] && fq.length) {
+        out.push(fq.shift())
+      }
+      lastEmittedRound = r
+    }
+    out.push(item)
+  }
+
+  if (fq.length) out.push(...fq)
+  return out
 }
 
 export function mapSessionHistoryToUsageEvents(history) {
@@ -402,25 +457,36 @@ export function mapRoundDataToAgentMessages(roundData) {
 
 export function buildResumeMessagesFromSessionData(sessionData) {
   const sd = sessionData && typeof sessionData === 'object' ? sessionData : {}
+  // DEBUG: remove after confirming order fix
+  if (Array.isArray(sd.history) && sd.history.length) {
+    console.log('[DEBUG restore] raw history from backend:', JSON.stringify(sd.history.map((h, i) => ({
+      i, type: h?.type, role: h?.role, round: h?.round, agent: h?.agent,
+      text: String(h?.content ?? h?.text ?? h?.message ?? '').slice(0, 60),
+    })), null, 2))
+  }
+  if (sd.round_data) {
+    console.log('[DEBUG restore] round_data keys:', Object.keys(sd.round_data))
+  }
   const fromHistory = mapSessionHistoryToMessages(sd.history)
 
   const hasAgentInHistory = fromHistory.some((m) => m?.kind === 'agent')
-  // Preserve backend history order exactly: it already contains the true chronology,
-  // including user messages between rounds.
   if (hasAgentInHistory) return fromHistory
 
   const fromRounds = mapRoundDataToAgentMessages(sd.round_data)
   if (!fromRounds.length) return fromHistory
 
-  // Fallback for legacy sessions where history missed agent reports:
-  // inject reconstructed round reports right before first final verdict.
   const firstFinalIndex = fromHistory.findIndex((m) => m?.kind === 'final')
-  if (firstFinalIndex < 0) return [...fromHistory, ...fromRounds]
-  return [
-    ...fromHistory.slice(0, firstFinalIndex),
-    ...fromRounds,
-    ...fromHistory.slice(firstFinalIndex),
-  ]
+  let combined
+  if (firstFinalIndex < 0) {
+    combined = [...fromHistory, ...fromRounds]
+  } else {
+    combined = [
+      ...fromHistory.slice(0, firstFinalIndex),
+      ...fromRounds,
+      ...fromHistory.slice(firstFinalIndex),
+    ]
+  }
+  return interleaveUserFollowUpsBetweenRounds(combined)
 }
 
 export function buildResumeUsageEventsFromSessionData(sessionData) {

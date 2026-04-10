@@ -30,9 +30,9 @@ function extractToken() {
 export default function AuthCallbackPage() {
   const navigate = useNavigate()
   const { i18n } = useTranslation()
-  const lang = String(i18n.resolvedLanguage || i18n.language || 'ru').split('-')[0]
+  const lang = String(i18n.resolvedLanguage || i18n.language || 'en').split('-')[0]
   const loadingLabel =
-    lang === 'uk' ? 'Вхід…' : lang === 'en' ? 'Signing in…' : 'Вход…'
+    lang === 'ua' ? 'Вхід…' : lang === 'en' ? 'Signing in…' : 'Вход…'
 
   useEffect(() => {
     const { token, error } = extractToken()

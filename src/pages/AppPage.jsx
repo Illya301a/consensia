@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import '../App.scss'
 import './AppPage.scss'
@@ -21,15 +22,195 @@ import { useOrchestratorWs } from '../services/useOrchestratorWs.js'
 const DATA_COLLECTION_KEY = 'consensia_data_collection_v1'
 const MAX_SESSION_CONNECT_ATTEMPTS = 3
 
+const APP_COPY = {
+  ru: {
+    profileLabel: 'Профиль',
+    modes: { economy: 'Экономия', balanced: 'Баланс', maxPower: 'Максимум' },
+    status: { connecting: 'Подключение…', open: 'Готово', closed: 'Отключено' },
+    errors: {
+      loginFailed: 'Не удалось войти. Попробуйте еще раз.',
+      sessionsLoadFailed: 'Не удалось загрузить список сессий',
+      sessionLoadStopped: 'Подключение остановлено. Попробуйте снова.',
+      sessionLoadFailed: 'Не удалось загрузить сессию',
+      topUpMinAmount: 'Минимальная сумма пополнения — 1$',
+      createPaymentFailed: 'Ошибка создания платежа',
+      checkoutUrlMissing: 'Stripe checkout URL не получен',
+      fileReadFailed: 'Не удалось прочитать файл (слишком большой или недоступен).',
+      deleteSessionFailed: 'Не удалось удалить сессию',
+    },
+    loading: 'Загрузка…',
+    navHome: 'На главную',
+    authTitle: 'Вход в Consensia',
+    authLead: 'Чтобы пользоваться чатом, войдите через Google — так мы связываем сессии с вашим аккаунтом.',
+    continueGoogle: 'Продолжить с Google',
+    beta: 'Beta',
+    closeHistory: 'Закрыть историю',
+    openHistory: 'Открыть историю',
+    newChat: 'Новый чат',
+    credits: 'Кредиты: {{count}}',
+    topUpAmountAria: 'Сумма пополнения в долларах',
+    creditsShort: '{{count}} кр.',
+    topUpRate: 'Курс: {{multiplier}} кредитов за $1',
+    topUpButton: 'Пополнить',
+    dataCollection: 'Сбор данных',
+    logout: 'Выйти',
+    home: 'Главная',
+    historyAria: 'История чатов',
+    historyTitle: 'История',
+    closeMenu: 'Закрыть меню',
+    sessionsLoading: 'Загрузка…',
+    roundLabel: 'Раунд',
+    roundMissing: 'Раунд —',
+    deleteSessionAria: 'Удалить сессию',
+    deleteTitle: 'Удалить',
+    historyEmpty: 'Тут появятся ваши чаты после первого запуска.',
+    setupTitle: 'Новый чат',
+    setupLead: 'Вставьте код или приложите файлы — и опишите задачу.',
+    codeLabel: 'Код',
+    attachFiles: 'Прикрепить файлы к коду',
+    removeFileAria: 'Удалить {{name}}',
+    contextLabel: 'Задача (по желанию)',
+    contextPlaceholder: 'Например: найди уязвимости и предложи правки',
+    modeLabel: 'Режим',
+    roundsLabel: 'Раунды',
+    resumeHint: 'Продолжаем сохраненную сессию.',
+    connectBtn: 'Запустить',
+    loadingSession: 'Загрузка сессии…',
+    generatingAria: 'Генерация ответа',
+    generatingText: 'Генерируем ответ…',
+    spentCredits: 'Кредитов потрачено',
+    placeholderLocked: 'Ожидаем ответ оркестратора…',
+    placeholderOpen: 'Ваш ответ оркестратору…',
+  },
+  ua: {
+    profileLabel: 'Профіль',
+    modes: { economy: 'Економія', balanced: 'Баланс', maxPower: 'Максимум' },
+    status: { connecting: 'Підключення…', open: 'Готово', closed: 'Відключено' },
+    errors: {
+      loginFailed: 'Не вдалося увійти. Спробуйте ще раз.',
+      sessionsLoadFailed: 'Не вдалося завантажити список сесій',
+      sessionLoadStopped: 'Підключення зупинено. Спробуйте знову.',
+      sessionLoadFailed: 'Не вдалося завантажити сесію',
+      topUpMinAmount: 'Мінімальна сума поповнення — 1$',
+      createPaymentFailed: 'Помилка створення платежу',
+      checkoutUrlMissing: 'Stripe checkout URL не отримано',
+      fileReadFailed: 'Не вдалося прочитати файл (завеликий або недоступний).',
+      deleteSessionFailed: 'Не вдалося видалити сесію',
+    },
+    loading: 'Завантаження…',
+    navHome: 'На головну',
+    authTitle: 'Вхід у Consensia',
+    authLead: 'Щоб користуватися чатом, увійдіть через Google — так ми повʼязуємо сесії з вашим акаунтом.',
+    continueGoogle: 'Продовжити з Google',
+    beta: 'Beta',
+    closeHistory: 'Закрити історію',
+    openHistory: 'Відкрити історію',
+    newChat: 'Новий чат',
+    credits: 'Кредити: {{count}}',
+    topUpAmountAria: 'Сума поповнення у доларах',
+    creditsShort: '{{count}} кр.',
+    topUpRate: 'Курс: {{multiplier}} кредитів за $1',
+    topUpButton: 'Поповнити',
+    dataCollection: 'Збір даних',
+    logout: 'Вийти',
+    home: 'Головна',
+    historyAria: 'Історія чатів',
+    historyTitle: 'Історія',
+    closeMenu: 'Закрити меню',
+    sessionsLoading: 'Завантаження…',
+    roundLabel: 'Раунд',
+    roundMissing: 'Раунд —',
+    deleteSessionAria: 'Видалити сесію',
+    deleteTitle: 'Видалити',
+    historyEmpty: 'Тут зʼявляться ваші чати після першого запуску.',
+    setupTitle: 'Новий чат',
+    setupLead: 'Вставте код або додайте файли — і опишіть задачу.',
+    codeLabel: 'Код',
+    attachFiles: 'Додати файли до коду',
+    removeFileAria: 'Видалити {{name}}',
+    contextLabel: 'Задача (за бажанням)',
+    contextPlaceholder: 'Наприклад: знайди вразливості та запропонуй виправлення',
+    modeLabel: 'Режим',
+    roundsLabel: 'Раунди',
+    resumeHint: 'Продовжуємо збережену сесію.',
+    connectBtn: 'Запустити',
+    loadingSession: 'Завантаження сесії…',
+    generatingAria: 'Генерація відповіді',
+    generatingText: 'Генеруємо відповідь…',
+    spentCredits: 'Кредитів витрачено',
+    placeholderLocked: 'Очікуємо відповідь оркестратора…',
+    placeholderOpen: 'Ваша відповідь оркестратору…',
+  },
+  en: {
+    profileLabel: 'Profile',
+    modes: { economy: 'Economy', balanced: 'Balanced', maxPower: 'Maximum' },
+    status: { connecting: 'Connecting…', open: 'Ready', closed: 'Disconnected' },
+    errors: {
+      loginFailed: 'Sign-in failed. Please try again.',
+      sessionsLoadFailed: 'Failed to load sessions list',
+      sessionLoadStopped: 'Connection stopped. Please try again.',
+      sessionLoadFailed: 'Failed to load session',
+      topUpMinAmount: 'Minimum top-up amount is $1',
+      createPaymentFailed: 'Failed to create payment',
+      checkoutUrlMissing: 'Stripe checkout URL was not received',
+      fileReadFailed: 'Failed to read file (too large or unavailable).',
+      deleteSessionFailed: 'Failed to delete session',
+    },
+    loading: 'Loading…',
+    navHome: 'Home',
+    authTitle: 'Sign in to Consensia',
+    authLead: 'To use the chat, sign in with Google — this links sessions to your account.',
+    continueGoogle: 'Continue with Google',
+    beta: 'Beta',
+    closeHistory: 'Close history',
+    openHistory: 'Open history',
+    newChat: 'New chat',
+    credits: 'Credits: {{count}}',
+    topUpAmountAria: 'Top-up amount in dollars',
+    creditsShort: '{{count}} cr.',
+    topUpRate: 'Rate: {{multiplier}} credits per $1',
+    topUpButton: 'Top up',
+    dataCollection: 'Data collection',
+    logout: 'Log out',
+    home: 'Home',
+    historyAria: 'Chat history',
+    historyTitle: 'History',
+    closeMenu: 'Close menu',
+    sessionsLoading: 'Loading…',
+    roundLabel: 'Round',
+    roundMissing: 'Round —',
+    deleteSessionAria: 'Delete session',
+    deleteTitle: 'Delete',
+    historyEmpty: 'Your chats will appear here after the first run.',
+    setupTitle: 'New chat',
+    setupLead: 'Paste code or attach files — and describe your task.',
+    codeLabel: 'Code',
+    attachFiles: 'Attach files to code',
+    removeFileAria: 'Remove {{name}}',
+    contextLabel: 'Task (optional)',
+    contextPlaceholder: 'For example: find vulnerabilities and suggest fixes',
+    modeLabel: 'Mode',
+    roundsLabel: 'Rounds',
+    resumeHint: 'Continuing saved session.',
+    connectBtn: 'Start',
+    loadingSession: 'Loading session…',
+    generatingAria: 'Generating response',
+    generatingText: 'Generating response…',
+    spentCredits: 'Credits spent',
+    placeholderLocked: 'Waiting for orchestrator response…',
+    placeholderOpen: 'Your response to orchestrator…',
+  },
+}
+
 const MODES = [
-  { value: 'ECONOMY', label: 'Экономия' },
-  { value: 'BALANCED', label: 'Баланс' },
-  { value: 'MAX_POWER', label: 'Максимум' },
+  { value: 'ECONOMY', key: 'economy' },
+  { value: 'BALANCED', key: 'balanced' },
+  { value: 'MAX_POWER', key: 'maxPower' },
 ]
 
-function modeLabel(value) {
+function modeLabel(value, copy) {
   const m = MODES.find((x) => x.value === value)
-  return m ? m.label : value || '—'
+  return m ? copy.modes[m.key] : value || copy.roundMissing
 }
 
 function capitalizeFirst(value) {
@@ -43,8 +224,8 @@ function visibleSessionTitle(value) {
   if (!raw) return ''
   const lowered = raw.toLowerCase()
   // Hide technical placeholders like "Сессия <id>" / "Session <id>".
-  if (/^(сессия|session)\s+[a-z0-9-]{6,}$/i.test(raw)) return ''
-  if (lowered === 'сессия' || lowered === 'session') return ''
+  if (/^(сессия|сесія|session)\s+[a-z0-9-]{6,}$/i.test(raw)) return ''
+  if (lowered === 'сессия' || lowered === 'сесія' || lowered === 'session') return ''
   return capitalizeFirst(raw)
 }
 
@@ -96,15 +277,15 @@ function formatWhen(ts) {
   return d.toLocaleDateString(undefined, { month: 'short', day: '2-digit' })
 }
 
-function getUserLabel(user) {
-  if (!user || typeof user !== 'object') return 'Профиль'
+function getUserLabel(user, fallbackLabel) {
+  if (!user || typeof user !== 'object') return fallbackLabel
   return (
     user.email ||
     user.name ||
     user.full_name ||
     user.display_name ||
     user.given_name ||
-    'Профиль'
+    fallbackLabel
   )
 }
 
@@ -128,14 +309,14 @@ async function readTextFile(file, maxBytes = 400_000) {
   return await file.text()
 }
 
-function statusLabel(status) {
+function statusLabel(status, copy) {
   switch (status) {
     case 'connecting':
-      return 'Подключение…'
+      return copy.status.connecting
     case 'open':
-      return 'Готово'
+      return copy.status.open
     case 'closed':
-      return 'Отключено'
+      return copy.status.closed
     default:
       return null
   }
@@ -256,6 +437,9 @@ function extractSpentCreditsFromDetail(detail, sessionData, sessionMeta) {
 }
 
 export default function AppPage() {
+  const { i18n } = useTranslation()
+  const lang = String(i18n.resolvedLanguage || i18n.language || 'en').split('-')[0]
+  const c = APP_COPY[lang] || APP_COPY.ru
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const sessionFromUrl = searchParams.get('session') || ''
@@ -343,6 +527,11 @@ export default function AppPage() {
   const modeRef = useRef(mode)
   const contextRef = useRef(context)
   const roundsRef = useRef(rounds)
+  const connectRef = useRef(connect)
+  const statusRef = useRef(status)
+  const sessionIdRef = useRef(sessionId)
+  const lastErrorRef = useRef(lastError)
+  const sessionLoadErrorRef = useRef(sessionLoadError)
   /** Avoid re-running session load while WS is already connecting/open for the same ?session= */
   const urlSessionConnectRef = useRef('')
   const sessionConnectAttemptsRef = useRef(new Map())
@@ -355,7 +544,12 @@ export default function AppPage() {
     modeRef.current = mode
     contextRef.current = context
     roundsRef.current = rounds
-  }, [code, mode, context, rounds])
+    connectRef.current = connect
+    statusRef.current = status
+    sessionIdRef.current = sessionId
+    lastErrorRef.current = lastError
+    sessionLoadErrorRef.current = sessionLoadError
+  })
 
   useEffect(() => {
     if (Array.isArray(sessions) && sessions.length > 0) {
@@ -382,14 +576,12 @@ export default function AppPage() {
     try {
       const decoded = decodeURIComponent(err)
       // eslint-disable-next-line react-hooks/set-state-in-effect -- this is a one-off URL-to-UI sync
-      setAuthGateError(
-        decoded === 'auth' ? 'Не удалось войти. Попробуйте ещё раз.' : decoded
-      )
+      setAuthGateError(decoded === 'auth' ? c.errors.loginFailed : decoded)
     } catch {
-      setAuthGateError('Не удалось войти')
+      setAuthGateError(c.errors.loginFailed)
     }
     navigate('/app', { replace: true })
-  }, [searchParams, navigate])
+  }, [searchParams, navigate, c.errors.loginFailed])
 
   useEffect(() => {
     const prevBodyOverflow = document.body.style.overflow
@@ -515,7 +707,7 @@ export default function AppPage() {
       if (cancelled) return
       setSessionsLoading(false)
       if (!res.ok) {
-        setSessionsError(res.error || 'Не удалось загрузить список сессий')
+      setSessionsError(res.error || c.errors.sessionsLoadFailed)
         return
       }
       const normalized = normalizeSessionsFromApi(res.sessions)
@@ -585,27 +777,14 @@ export default function AppPage() {
       urlSessionConnectRef.current = ''
       return
     }
-    if (sessionId === sessionFromUrl && status === 'open') return
+    if (sessionIdRef.current === sessionFromUrl && statusRef.current === 'open') return
     if (
-      (status === 'connecting' || status === 'open') &&
+      (statusRef.current === 'connecting' || statusRef.current === 'open') &&
       urlSessionConnectRef.current === sessionFromUrl
     ) {
       return
     }
     if (blockedReconnectSessionsRef.current.has(sessionFromUrl)) return
-
-    const attemptsMap = sessionConnectAttemptsRef.current
-    const attempts = attemptsMap.get(sessionFromUrl) ?? 0
-    if (attempts >= MAX_SESSION_CONNECT_ATTEMPTS) {
-      blockedReconnectSessionsRef.current.add(sessionFromUrl)
-      if (!sessionLoadError) {
-        setSessionLoadError(
-          lastError || 'Подключение остановлено. Попробуйте снова.'
-        )
-      }
-      return
-    }
-    attemptsMap.set(sessionFromUrl, attempts + 1)
 
     urlSessionConnectRef.current = sessionFromUrl
 
@@ -617,8 +796,18 @@ export default function AppPage() {
       try {
         const res = await fetchSessionDetails(sessionFromUrl)
         if (cancelled) return
+
+        const attemptsMap = sessionConnectAttemptsRef.current
+        const attempts = attemptsMap.get(sessionFromUrl) ?? 0
+        if (attempts >= MAX_SESSION_CONNECT_ATTEMPTS) {
+          blockedReconnectSessionsRef.current.add(sessionFromUrl)
+          setSessionLoadError(lastErrorRef.current || c.errors.sessionLoadStopped)
+          return
+        }
+        attemptsMap.set(sessionFromUrl, attempts + 1)
+
         if (!res.ok) {
-          setSessionLoadError(res.error || 'Не удалось загрузить сессию')
+          setSessionLoadError(res.error || c.errors.sessionLoadFailed)
           return
         }
         const d = res.detail || {}
@@ -707,7 +896,7 @@ export default function AppPage() {
           )
         )
 
-        connect({
+        connectRef.current({
           token,
           sessionId: sessionFromUrl,
           mode: modeForWs,
@@ -733,7 +922,11 @@ export default function AppPage() {
     return () => {
       cancelled = true
     }
-  }, [sessionFromUrl, token, isAuthenticated, sessionId, status, connect, lastError, sessionLoadError])
+    // sessionFromUrl and token/isAuthenticated are the real triggers.
+    // connect, status, sessionId, lastError, sessionLoadError are accessed via refs
+    // to avoid spurious re-runs that exhaust the attempt counter.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionFromUrl, token, isAuthenticated])
 
   useEffect(() => {
     const sid = sessionFromUrl || sessionId || ''
@@ -800,7 +993,7 @@ export default function AppPage() {
   const handleTopUp = useCallback(async () => {
     const amount = Number(topUpAmount)
     if (!Number.isFinite(amount) || amount < 1) {
-      setTopUpError('Минимальная сумма пополнения — 1$')
+      setTopUpError(c.errors.topUpMinAmount)
       return
     }
     setTopUpError('')
@@ -813,10 +1006,10 @@ export default function AppPage() {
       })
       const data = await r.json().catch(() => null)
       if (!r.ok) {
-        throw new Error(data?.detail || 'Ошибка создания платежа')
+        throw new Error(data?.detail || c.errors.createPaymentFailed)
       }
       if (!data?.checkout_url) {
-        throw new Error('Stripe checkout URL не получен')
+        throw new Error(c.errors.checkoutUrlMissing)
       }
       window.location.href = data.checkout_url
     } catch (e) {
@@ -889,7 +1082,7 @@ export default function AppPage() {
         return merged.slice(0, 10)
       })
     } catch {
-      setAttachError('Не удалось прочитать файл (слишком большой или недоступен).')
+      setAttachError(c.errors.fileReadFailed)
     }
   }, [])
 
@@ -916,7 +1109,7 @@ export default function AppPage() {
     async (sid) => {
       try {
         const res = await deleteSession(sid)
-        if (!res.ok) throw new Error(res.error || 'Не удалось удалить сессию')
+        if (!res.ok) throw new Error(res.error || c.errors.deleteSessionFailed)
         setSessions((prev) => prev.filter((x) => x.id !== sid))
         const activeSid = sessionFromUrl || sessionId || ''
         if (activeSid && sid === activeSid) {
@@ -943,7 +1136,7 @@ export default function AppPage() {
   )
 
   const busy = status === 'connecting'
-  const statusText = statusLabel(status)
+  const statusText = statusLabel(status, c)
   useEffect(() => {
     if (status === 'closed' || status === 'idle') {
       setShowTypingHint(false)
@@ -989,7 +1182,7 @@ export default function AppPage() {
     return (
       <div className="chat-app">
         <div className="chat-app__shell chat-app__shell--loading">
-          <p className="chat-app__loading-text">Загрузка…</p>
+          <p className="chat-app__loading-text">{c.loading}</p>
         </div>
       </div>
     )
@@ -1006,14 +1199,13 @@ export default function AppPage() {
               </Link>
             </div>
             <Link to="/" className="chat-app__link">
-              На главную
+              {c.navHome}
             </Link>
           </header>
           <section className="chat-app__auth">
-            <h1 className="chat-app__auth-title">Вход в Consensia</h1>
+            <h1 className="chat-app__auth-title">{c.authTitle}</h1>
             <p className="chat-app__auth-lede">
-              Чтобы пользоваться чатом, войдите через Google — так мы связываем сессии с вашим
-              аккаунтом.
+              {c.authLead}
             </p>
             {authGateError ? (
               <p className="chat-app__auth-error" role="alert">
@@ -1045,7 +1237,7 @@ export default function AppPage() {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                 />
               </svg>
-              Продолжить с Google
+              {c.continueGoogle}
             </button>
           </section>
         </div>
@@ -1061,14 +1253,14 @@ export default function AppPage() {
             <Link to="/" className="chat-app__logo">
               Consensia
             </Link>
-            <span className="chat-app__badge">Beta</span>
+            <span className="chat-app__badge">{c.beta}</span>
           </div>
           <div className="chat-app__header-actions">
             {statusText ? <span className="chat-app__meta">{statusText}</span> : null}
             <button
               type="button"
               className={`chat-app__burger${mobileSidebarOpen ? ' chat-app__burger--open' : ''}`}
-              aria-label={mobileSidebarOpen ? 'Закрыть историю' : 'Открыть историю'}
+              aria-label={mobileSidebarOpen ? c.closeHistory : c.openHistory}
               aria-expanded={mobileSidebarOpen ? 'true' : 'false'}
               aria-controls="chat-app-mobile-sidebar"
               onClick={() => setMobileSidebarOpen((v) => !v)}
@@ -1078,7 +1270,7 @@ export default function AppPage() {
               <span className="chat-app__burger-line" aria-hidden="true" />
             </button>
             <button type="button" className="chat-app__btn chat-app__btn--new-chat" onClick={handleNewSession}>
-              Новый чат
+              {c.newChat}
             </button>
             <div className="chat-app__profile" ref={profileRef}>
               <button
@@ -1089,16 +1281,16 @@ export default function AppPage() {
                 aria-expanded={profileOpen ? 'true' : 'false'}
               >
                 <span className="chat-app__profile-avatar" aria-hidden="true">
-                  {String(getUserLabel(user)).slice(0, 1).toUpperCase()}
+                  {String(getUserLabel(user, c.profileLabel)).slice(0, 1).toUpperCase()}
                 </span>
               </button>
               {profileOpen ? (
                 <div className="chat-app__profile-pop" role="menu">
                   <div className="chat-app__profile-head">
-                    <div className="chat-app__profile-title">{getUserLabel(user)}</div>
+                    <div className="chat-app__profile-title">{getUserLabel(user, c.profileLabel)}</div>
                     {getCredits(user) != null ? (
                       <div className="chat-app__profile-credits-line">
-                        <div className="chat-app__profile-sub">Кредиты: {getCredits(user)}</div>
+                        <div className="chat-app__profile-sub">{c.credits.replace('{{count}}', String(getCredits(user)))}</div>
                         <div className="chat-app__topup-inline">
                           <input
                             className="chat-app__topup-input"
@@ -1107,17 +1299,17 @@ export default function AppPage() {
                             step={1}
                             value={topUpAmount}
                             onChange={(e) => setTopUpAmount(e.target.value)}
-                            aria-label="Сумма пополнения в долларах"
+                            aria-label={c.topUpAmountAria}
                           />
-                          <span className="chat-app__topup-preview">{creditsPreview} кр.</span>
+                          <span className="chat-app__topup-preview">{c.creditsShort.replace('{{count}}', String(creditsPreview))}</span>
                           <button
                             type="button"
                             className="chat-app__topup-btn"
                             onClick={handleTopUp}
                             disabled={topUpLoading}
-                            title={`Курс: ${promoMultiplier} кредитов за $1`}
+                            title={c.topUpRate.replace('{{multiplier}}', String(promoMultiplier))}
                           >
-                            {topUpLoading ? '...' : 'Пополнить'}
+                            {topUpLoading ? '...' : c.topUpButton}
                           </button>
                         </div>
                       </div>
@@ -1133,16 +1325,16 @@ export default function AppPage() {
                         onChange={(e) => setDataCollection(e.target.checked)}
                       />
                       <span className="chat-app__toggle-ui" aria-hidden="true" />
-                      <span>Сбор данных</span>
+                      <span>{c.dataCollection}</span>
                     </label>
                   </div>
 
                   <div className="chat-app__profile-actions">
                     <button type="button" className="chat-app__profile-logout" onClick={handleLogout}>
-                      Выйти
+                      {c.logout}
                     </button>
                     <Link to="/" className="chat-app__profile-link" onClick={() => setProfileOpen(false)}>
-                      Главная
+                      {c.home}
                     </Link>
                   </div>
                 </div>
@@ -1161,18 +1353,18 @@ export default function AppPage() {
           <aside
             id="chat-app-mobile-sidebar"
             className={`chat-app__sidebar${mobileSidebarOpen ? ' chat-app__sidebar--open' : ''}`}
-            aria-label="История чатов"
+            aria-label={c.historyAria}
           >
             <div className="chat-app__sidebar-head">
-              <div className="chat-app__sidebar-title">История</div>
-              <button type="button" className="chat-app__sidebar-new" onClick={handleNewSession} title="Новый чат">
+              <div className="chat-app__sidebar-title">{c.historyTitle}</div>
+              <button type="button" className="chat-app__sidebar-new" onClick={handleNewSession} title={c.newChat}>
                 +
               </button>
               <button
                 type="button"
                 className="chat-app__sidebar-close"
                 onClick={() => setMobileSidebarOpen(false)}
-                aria-label="Закрыть меню"
+                aria-label={c.closeMenu}
               >
                 ×
               </button>
@@ -1182,11 +1374,11 @@ export default function AppPage() {
               className="chat-app__sidebar-mobile-new chat-app__sidebar-mobile-new--top"
               onClick={handleNewSession}
             >
-              Новый чат
+              {c.newChat}
             </button>
             <div className="chat-app__sidebar-list" role="list">
               {sessionsLoading && !sessionsForRender.length ? (
-                <div className="chat-app__sidebar-empty">Загрузка…</div>
+                <div className="chat-app__sidebar-empty">{c.sessionsLoading}</div>
               ) : sessionsError ? (
                 <div className="chat-app__sidebar-empty" role="alert">
                   {sessionsError}
@@ -1215,7 +1407,7 @@ export default function AppPage() {
                         <div className="chat-app__sidebar-item-meta">
                           <span>{formatWhen(h.createdAt)}</span>
                           <span className="chat-app__sidebar-item-side">
-                            {modeLabel(h.mode)} · {h.rounds ? `Раунд ${h.rounds}` : 'Раунд —'}
+                            {modeLabel(h.mode, c)} · {h.rounds ? `${c.roundLabel} ${h.rounds}` : c.roundMissing}
                           </span>
                         </div>
                       </button>
@@ -1223,8 +1415,8 @@ export default function AppPage() {
                         type="button"
                         className="chat-app__sidebar-delete"
                         onClick={() => deleteHistorySession(h.id)}
-                        aria-label="Удалить сессию"
-                        title="Удалить"
+                        aria-label={c.deleteSessionAria}
+                        title={c.deleteTitle}
                       >
                         ×
                       </button>
@@ -1232,17 +1424,17 @@ export default function AppPage() {
                   )
                 })
               ) : (
-                <div className="chat-app__sidebar-empty">Тут появятся ваши чаты после первого запуска.</div>
+                <div className="chat-app__sidebar-empty">{c.historyEmpty}</div>
               )}
             </div>
             <div className="chat-app__sidebar-mobile-footer">
               <div className="chat-app__profile chat-app__profile--mobile-drawer">
                 <div className="chat-app__profile-pop chat-app__profile-pop--mobile-inline" role="menu">
                     <div className="chat-app__profile-head">
-                      <div className="chat-app__profile-title">{getUserLabel(user)}</div>
+                      <div className="chat-app__profile-title">{getUserLabel(user, c.profileLabel)}</div>
                       {getCredits(user) != null ? (
                         <div className="chat-app__profile-credits-line">
-                          <div className="chat-app__profile-sub">Кредиты: {getCredits(user)}</div>
+                          <div className="chat-app__profile-sub">{c.credits.replace('{{count}}', String(getCredits(user)))}</div>
                           <div className="chat-app__topup-inline">
                             <input
                               className="chat-app__topup-input"
@@ -1251,17 +1443,17 @@ export default function AppPage() {
                               step={1}
                               value={topUpAmount}
                               onChange={(e) => setTopUpAmount(e.target.value)}
-                              aria-label="Сумма пополнения в долларах"
+                              aria-label={c.topUpAmountAria}
                             />
-                            <span className="chat-app__topup-preview">{creditsPreview} кр.</span>
+                            <span className="chat-app__topup-preview">{c.creditsShort.replace('{{count}}', String(creditsPreview))}</span>
                             <button
                               type="button"
                               className="chat-app__topup-btn"
                               onClick={handleTopUp}
                               disabled={topUpLoading}
-                              title={`Курс: ${promoMultiplier} кредитов за $1`}
+                              title={c.topUpRate.replace('{{multiplier}}', String(promoMultiplier))}
                             >
-                              {topUpLoading ? '...' : 'Пополнить'}
+                              {topUpLoading ? '...' : c.topUpButton}
                             </button>
                           </div>
                         </div>
@@ -1277,20 +1469,20 @@ export default function AppPage() {
                           onChange={(e) => setDataCollection(e.target.checked)}
                         />
                         <span className="chat-app__toggle-ui" aria-hidden="true" />
-                        <span>Сбор данных</span>
+                        <span>{c.dataCollection}</span>
                       </label>
                     </div>
 
                     <div className="chat-app__profile-actions">
                       <button type="button" className="chat-app__profile-logout" onClick={handleLogout}>
-                        Выйти
+                        {c.logout}
                       </button>
                       <Link
                         to="/"
                         className="chat-app__profile-link"
                         onClick={() => setMobileSidebarOpen(false)}
                       >
-                        Главная
+                        {c.home}
                       </Link>
                     </div>
                 </div>
@@ -1302,12 +1494,12 @@ export default function AppPage() {
             {showSetup ? (
               <section className="chat-app__setup">
                 <form className="chat-app__setup-card" onSubmit={handleStart}>
-                  <h2 className="chat-app__setup-title">Новый чат</h2>
+                  <h2 className="chat-app__setup-title">{c.setupTitle}</h2>
                   <p className="chat-app__setup-lede">
-                    Вставьте код или приложите файлы — и опишите задачу.
+                    {c.setupLead}
                   </p>
                   <div className="chat-app__field">
-                    <label htmlFor="code">Код</label>
+                    <label htmlFor="code">{c.codeLabel}</label>
                     <textarea
                       id="code"
                       value={code}
@@ -1322,7 +1514,7 @@ export default function AppPage() {
                           onChange={handlePickFiles}
                           accept=".js,.jsx,.ts,.tsx,.py,.go,.rs,.java,.kt,.cs,.cpp,.c,.h,.hpp,.json,.yml,.yaml,.toml,.md,.txt,.html,.css,.scss,.sql"
                         />
-                        Прикрепить файлы к коду
+                        {c.attachFiles}
                       </label>
                       {attachError ? (
                         <div className="chat-app__attach-error" role="alert">
@@ -1338,7 +1530,7 @@ export default function AppPage() {
                                 type="button"
                                 className="chat-app__attach-remove"
                                 onClick={() => removeAttachment(f.name, f.size)}
-                                aria-label={`Удалить ${f.name}`}
+                                aria-label={c.removeFileAria.replace('{{name}}', String(f.name))}
                               >
                                 ×
                               </button>
@@ -1349,27 +1541,27 @@ export default function AppPage() {
                     </div>
                   </div>
                   <div className="chat-app__field">
-                    <label htmlFor="ctx">Задача (по желанию)</label>
+                    <label htmlFor="ctx">{c.contextLabel}</label>
                     <input
                       id="ctx"
                       value={context}
                       onChange={(e) => setContext(e.target.value)}
-                      placeholder="Например: найди уязвимости и предложи правки"
+                      placeholder={c.contextPlaceholder}
                     />
                   </div>
                   <div className="chat-app__row">
                     <div className="chat-app__field">
-                      <label htmlFor="mode">Режим</label>
+                      <label htmlFor="mode">{c.modeLabel}</label>
                       <select id="mode" value={mode} onChange={(e) => setMode(e.target.value)}>
                         {MODES.map((m) => (
                           <option key={m.value} value={m.value}>
-                            {m.label}
+                            {c.modes[m.key]}
                           </option>
                         ))}
                       </select>
                     </div>
                     <div className="chat-app__field">
-                      <label htmlFor="rounds">Раунды</label>
+                      <label htmlFor="rounds">{c.roundsLabel}</label>
                       <select
                         id="rounds"
                         value={rounds}
@@ -1382,10 +1574,10 @@ export default function AppPage() {
                     </div>
                   </div>
                   {sessionFromUrl ? (
-                    <p className="chat-app__hint">Продолжаем сохранённую сессию.</p>
+                    <p className="chat-app__hint">{c.resumeHint}</p>
                   ) : null}
                   <button type="submit" className="chat-app__submit" disabled={busy}>
-                    {busy ? 'Подключение…' : 'Запустить'}
+                    {busy ? c.status.connecting : c.connectBtn}
                   </button>
                 </form>
               </section>
@@ -1395,7 +1587,7 @@ export default function AppPage() {
               <div className="chat-app__messages-wrap">
                 {sessionLoading ? (
                   <p className="chat-app__hint" aria-live="polite">
-                    Загрузка сессии…
+                    {c.loadingSession}
                   </p>
                 ) : null}
                 {sessionLoadError ? (
@@ -1410,23 +1602,23 @@ export default function AppPage() {
 
                 <div className="chat-app__composer">
                   {waitingForAi ? (
-                    <div className="chat-app__typing" aria-live="polite" aria-label="Генерация ответа">
+                    <div className="chat-app__typing" aria-live="polite" aria-label={c.generatingAria}>
                       <span className="chat-app__typing-dot" />
                       <span className="chat-app__typing-dot" />
                       <span className="chat-app__typing-dot" />
-                      <span className="chat-app__typing-text">Генерируем ответ…</span>
+                      <span className="chat-app__typing-text">{c.generatingText}</span>
                     </div>
                   ) : null}
                   {hasFinalVerdict && (usageEvents.length > 0 || restoredSpentCredits != null) ? (
                     <div className="chat-app__spent-credits" aria-live="polite">
-                      <span className="chat-app__spent-credits-label">Кредитов потрачено</span>
+                      <span className="chat-app__spent-credits-label">{c.spentCredits}</span>
                       <strong className="chat-app__spent-credits-value">{spentCredits}</strong>
                     </div>
                   ) : null}
                   <ChatComposer
                     disabled={inputLocked || status !== 'open'}
                     placeholder={
-                      inputLocked ? 'Ожидаем ответ оркестратора…' : 'Ваш ответ оркестратору…'
+                      inputLocked ? c.placeholderLocked : c.placeholderOpen
                     }
                     onSend={handleSendMessage}
                   />

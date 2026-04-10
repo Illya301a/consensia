@@ -129,7 +129,7 @@ const COPY = {
       },
     ],
   },
-  uk: {
+  ua: {
     docTitle: 'Про нас · Consensia',
     title: 'Про нас',
     lead:
@@ -379,7 +379,7 @@ const COPY = {
 
 export default function AboutPage() {
   const { i18n } = useTranslation()
-  const lang = String(i18n.resolvedLanguage || i18n.language || 'ru').split('-')[0]
+  const lang = String(i18n.resolvedLanguage || i18n.language || 'en').split('-')[0]
   const c = COPY[lang] || COPY.ru
 
   useEffect(() => {

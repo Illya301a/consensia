@@ -1,6 +1,8 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export const ChatComposer = memo(function ChatComposer({ disabled, placeholder, onSend }) {
+  const { t } = useTranslation()
   const [text, setText] = useState('')
   const [expanded, setExpanded] = useState(false)
   const inputRef = useRef(null)
@@ -115,8 +117,8 @@ export const ChatComposer = memo(function ChatComposer({ disabled, placeholder, 
             type="button"
             className="chat-app__input-expand"
             onClick={() => setExpanded((v) => !v)}
-            aria-label={expanded ? 'Свернуть поле ввода' : 'Развернуть поле ввода'}
-            title={expanded ? 'Свернуть' : 'Развернуть'}
+            aria-label={expanded ? t('app.composer.collapse') : t('app.composer.expand')}
+            title={expanded ? t('app.composer.collapse') : t('app.composer.expand')}
           >
             {expanded ? '⤡' : '⤢'}
           </button>
@@ -125,7 +127,7 @@ export const ChatComposer = memo(function ChatComposer({ disabled, placeholder, 
           type="submit"
           className="chat-app__send"
           disabled={disabled || !text.trim()}
-          aria-label="Отправить"
+          aria-label={t('app.composer.send')}
         >
           ↑
         </button>

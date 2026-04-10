@@ -25,19 +25,19 @@ const COPY = {
     },
     experts: [
       {
-        name: 'Security Expert',
-        modelId: 'openai/o3-mini',
+        name: 'Security Sentinel',
+        modelId: 'openai/gpt-5-codex',
         role: 'Senior Security Engineer',
         task: 'Строгий аудит',
         focus: ['SQLi', 'XSS', 'Auth/Authz', 'Insecure API', 'Hardcoded Secrets', 'Unsafe Deserialization'],
         output: ['Фрагмент', 'Уязвимость', 'Эксплойт', 'Исправление'],
         constraint: 'Параноидальное мышление.',
         weight: 1.0,
-        temperature: 'auto',
+        temperature: 'none',
       },
       {
         name: 'Performance Architect',
-        modelId: 'meta-llama/llama-4-maverick',
+        modelId: 'qwen/qwen3.6-plus',
         role: 'Principal Performance Architect',
         task: 'Анализ узких мест',
         focus: ['Big-O', 'Память', 'Аллокации', 'I/O blocking', 'Масштабируемость'],
@@ -48,7 +48,7 @@ const COPY = {
       },
       {
         name: 'Clean Code Advocate',
-        modelId: 'meta-llama/llama-4-maverick',
+        modelId: 'google/gemini-3-flash-preview',
         role: 'Staff Software Engineer',
         task: 'Контроль качества',
         focus: ['SOLID', 'DRY', 'Именование', 'God-functions', 'Читаемость'],
@@ -59,19 +59,19 @@ const COPY = {
       },
       {
         name: 'Edge-Case Hunter',
-        modelId: 'x-ai/grok-4.20-multi-agent',
+        modelId: 'z-ai/glm-5-turbo',
         role: 'Lead QA (Breaking Systems)',
         task: 'Поиск edge cases',
         focus: ['Null/None', 'Пустые значения', 'Нагрузка', 'Race conditions', 'Часовые пояса', 'Границы'],
         output: ['Тестовый ввод', 'Причина сбоя', 'Защита/фикс'],
         constraint: 'Мышление злонамеренного тестировщика.',
         weight: 0.9,
-        temperature: 0.7,
+        temperature: 0.2,
       },
     ],
     arbiter: {
-      id: 'anthropic/claude-haiku-4.5,openai/gpt-4o',
-      role: 'Финальный арбитр решений',
+      id: 'google/gemini-3.1-pro-preview',
+      role: 'THE JUDGE',
       purpose:
         'Judge — это финальный арбитр между экспертами. Он собирает их выводы в единый, согласованный вердикт с понятными приоритетами исправлений.',
       workflow: [
@@ -94,13 +94,13 @@ const COPY = {
       ],
     },
     router: {
-      model: 'openai/gpt-4o-mini',
+      model: 'google/gemini-2.5-flash-lite',
       role: 'Tech Lead Router',
       mission:
         'Router подбирает состав экспертов под конкретный фрагмент кода, чтобы проверка была полезной и без воды.',
       rules: [
         {
-          title: 'Security Expert',
+          title: 'Security Sentinel',
           text: 'Подключается, когда в коде есть ввод пользователя, API, база данных, авторизация или внешние интеграции.',
         },
         {
@@ -118,7 +118,7 @@ const COPY = {
       ],
     },
   },
-  uk: {
+  ua: {
     docTitle: 'Моделі · Consensia',
     eyebrow: 'Multi-Agent Review Pipeline',
     title: 'Моделі',
@@ -136,19 +136,19 @@ const COPY = {
     },
     experts: [
       {
-        name: 'Security Expert',
-        modelId: 'openai/o3-mini',
+        name: 'Security Sentinel',
+        modelId: 'openai/gpt-5-codex',
         role: 'Senior Security Engineer',
         task: 'Суворий аудит',
         focus: ['SQLi', 'XSS', 'Auth/Authz', 'Insecure API', 'Hardcoded Secrets', 'Unsafe Deserialization'],
         output: ['Фрагмент', 'Вразливість', 'Експлойт', 'Виправлення'],
         constraint: 'Параноїдальне мислення.',
         weight: 1.0,
-        temperature: 'auto',
+        temperature: 'none',
       },
       {
         name: 'Performance Architect',
-        modelId: 'meta-llama/llama-4-maverick',
+        modelId: 'qwen/qwen3.6-plus',
         role: 'Principal Performance Architect',
         task: 'Аналіз вузьких місць',
         focus: ['Big-O', "Пам'ять", 'Алокації', 'I/O blocking', 'Масштабованість'],
@@ -159,7 +159,7 @@ const COPY = {
       },
       {
         name: 'Clean Code Advocate',
-        modelId: 'meta-llama/llama-4-maverick',
+        modelId: 'google/gemini-3-flash-preview',
         role: 'Staff Software Engineer',
         task: 'Контроль якості',
         focus: ['SOLID', 'DRY', 'Найменування', 'God-functions', 'Читабельність'],
@@ -170,19 +170,19 @@ const COPY = {
       },
       {
         name: 'Edge-Case Hunter',
-        modelId: 'x-ai/grok-4.20-multi-agent',
+        modelId: 'z-ai/glm-5-turbo',
         role: 'Lead QA (Breaking Systems)',
         task: 'Пошук edge cases',
         focus: ['Null/None', 'Порожні значення', 'Навантаження', 'Race conditions', 'Часові пояси', 'Межі'],
         output: ['Тестовий ввід', 'Причина збою', 'Захист/фікс'],
         constraint: 'Мислення зловмисного тестувальника.',
         weight: 0.9,
-        temperature: 0.7,
+        temperature: 0.2,
       },
     ],
     arbiter: {
-      id: 'anthropic/claude-haiku-4.5,openai/gpt-4o',
-      role: 'Фінальний арбітр рішень',
+      id: 'google/gemini-3.1-pro-preview',
+      role: 'THE JUDGE',
       purpose:
         'Judge — це фінальний арбітр між експертами. Він збирає їхні висновки в єдиний узгоджений вердикт із зрозумілими пріоритетами виправлень.',
       workflow: [
@@ -205,13 +205,13 @@ const COPY = {
       ],
     },
     router: {
-      model: 'openai/gpt-4o-mini',
+      model: 'google/gemini-2.5-flash-lite',
       role: 'Tech Lead Router',
       mission:
         'Router підбирає склад експертів під конкретний фрагмент коду, щоб перевірка була корисною і без води.',
       rules: [
         {
-          title: 'Security Expert',
+          title: 'Security Sentinel',
           text: 'Підключається, коли в коді є введення користувача, API, база даних, авторизація або зовнішні інтеграції.',
         },
         {
@@ -247,19 +247,19 @@ const COPY = {
     },
     experts: [
       {
-        name: 'Security Expert',
-        modelId: 'openai/o3-mini',
+        name: 'Security Sentinel',
+        modelId: 'openai/gpt-5-codex',
         role: 'Senior Security Engineer',
         task: 'Strict Audit',
         focus: ['SQLi', 'XSS', 'Auth/Authz', 'Insecure API', 'Hardcoded Secrets', 'Unsafe Deserialization'],
         output: ['Snippet', 'Vulnerability', 'Exploit', 'Fix'],
         constraint: 'Paranoid mindset.',
         weight: 1.0,
-        temperature: 'auto',
+        temperature: 'none',
       },
       {
         name: 'Performance Architect',
-        modelId: 'meta-llama/llama-4-maverick',
+        modelId: 'qwen/qwen3.6-plus',
         role: 'Principal Performance Architect',
         task: 'Bottleneck Analysis',
         focus: ['Big-O', 'Memory', 'Allocations', 'I/O blocking', 'Scalability'],
@@ -270,7 +270,7 @@ const COPY = {
       },
       {
         name: 'Clean Code Advocate',
-        modelId: 'meta-llama/llama-4-maverick',
+        modelId: 'google/gemini-3-flash-preview',
         role: 'Staff Software Engineer',
         task: 'Quality Enforcement',
         focus: ['SOLID', 'DRY', 'Naming', 'God-functions', 'Readability'],
@@ -281,19 +281,19 @@ const COPY = {
       },
       {
         name: 'Edge-Case Hunter',
-        modelId: 'x-ai/grok-4.20-multi-agent',
+        modelId: 'z-ai/glm-5-turbo',
         role: 'Lead QA (Breaking Systems)',
         task: 'Find Edge Cases',
         focus: ['Null/None', 'Empty', 'Stress', 'Race conditions', 'Timezones', 'Boundaries'],
         output: ['Test Input', 'Failure Reason', 'Guard/Fix Suggestion'],
         constraint: 'Malicious tester mindset.',
         weight: 0.9,
-        temperature: 0.7,
+        temperature: 0.2,
       },
     ],
     arbiter: {
-      id: 'anthropic/claude-haiku-4.5,openai/gpt-4o',
-      role: 'Final Decision Arbiter',
+      id: 'google/gemini-3.1-pro-preview',
+      role: 'THE JUDGE',
       purpose:
         'Judge is the final arbiter between experts. It consolidates their findings into one aligned verdict with clear fix priorities.',
       workflow: [
@@ -316,13 +316,13 @@ const COPY = {
       ],
     },
     router: {
-      model: 'openai/gpt-4o-mini',
+      model: 'google/gemini-2.5-flash-lite',
       role: 'Tech Lead Router',
       mission:
         'Router selects the expert set for each code fragment so that the review stays useful and concise.',
       rules: [
         {
-          title: 'Security Expert',
+          title: 'Security Sentinel',
           text: 'Activated when code includes user input, APIs, databases, authorization, or external integrations.',
         },
         {
@@ -346,12 +346,12 @@ function prettyModelName(modelId) {
   const id = String(modelId ?? '').trim()
   if (!id) return ''
   const map = {
-    'openai/o3-mini': 'OpenAI o3-mini',
-    'meta-llama/llama-4-maverick': 'Meta Llama 4 Maverick',
-    'x-ai/grok-4.20-multi-agent': 'xAI Grok 4.20 Multi-Agent',
-    'anthropic/claude-haiku-4.5': 'Anthropic Claude Haiku 4.5',
-    'openai/gpt-4o': 'OpenAI GPT-4o',
-    'openai/gpt-4o-mini': 'OpenAI GPT-4o mini',
+    'openai/gpt-5-codex': 'OpenAI GPT-5 Codex',
+    'qwen/qwen3.6-plus': 'Qwen 3.6 Plus',
+    'google/gemini-3-flash-preview': 'Google Gemini 3 Flash Preview',
+    'z-ai/glm-5-turbo': 'Z.AI GLM-5 Turbo',
+    'google/gemini-3.1-pro-preview': 'Google Gemini 3.1 Pro Preview',
+    'google/gemini-2.5-flash-lite': 'Google Gemini 2.5 Flash Lite',
   }
   return map[id] || id
 }
@@ -410,7 +410,7 @@ function ExpertCard({ expert, labels }) {
 
 export default function ModelsPage() {
   const { i18n } = useTranslation()
-  const lang = String(i18n.resolvedLanguage || i18n.language || 'ru').split('-')[0]
+  const lang = String(i18n.resolvedLanguage || i18n.language || 'en').split('-')[0]
   const c = COPY[lang] || COPY.ru
 
   useEffect(() => {

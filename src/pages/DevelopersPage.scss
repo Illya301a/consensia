@@ -1,5 +1,6 @@
 .developers-page {
   min-height: 100vh;
+  font-family: 'Onest', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   padding: 0 0 clamp(1.1rem, 2.6vw, 2rem);
   background:
     radial-gradient(circle at 15% 10%, rgba(251, 113, 133, 0.17), transparent 43%),
@@ -7,6 +8,13 @@
     radial-gradient(circle at 50% 120%, rgba(244, 114, 182, 0.12), transparent 48%),
     linear-gradient(165deg, #fff 0%, #fdf2f8 45%, #fce7f3 100%);
   color: #1a0a12;
+}
+
+.developers-page h1,
+.developers-page h2,
+.developers-page h3 {
+  font-family: 'Literata', Georgia, 'Times New Roman', serif;
+  font-optical-sizing: auto;
 }
 
 .developers-page__header {
