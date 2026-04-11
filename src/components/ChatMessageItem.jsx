@@ -148,7 +148,7 @@ function normalizeRenderedText(text) {
 function normalizeListItemText(value) {
   const text = value == null ? '' : String(value)
   return text
-    .replace(/^\s*\d+\s*[\.\)]\s+/u, '')
+    .replace(/^\s*\d+\s*[.)]\s+/u, '')
     .replace(/^\s*[-*•]\s+/u, '')
     .replace(/^\s*\[(.+?)\]\s*:\s+/u, '**$1:** ')
     .replace(/^\s*\[(.+?)\]\s+(?=\S)/u, '**$1:** ')
@@ -220,6 +220,8 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
     case 'task': {
       const context = msg.context || ''
       const code = msg.code || ''
+      const documentsCount = Number(msg.documentsCount) || 0
+      const safeCode = documentsCount > 0 ? '' : code
       return (
         <div className="chat-msg chat-msg--user chat-msg--task">
           <div className="chat-msg__md">
@@ -228,12 +230,26 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
                 <Markdown>{context}</Markdown>
               </div>
             ) : null}
-            {code ? (
+            {safeCode && documentsCount < 1 ? (
               <Fold title={t('app.chatMessage.codeFold')} defaultOpen={false}>
-                <Markdown>{`\`\`\`\n${code}\n\`\`\``}</Markdown>
+                <Markdown>{`\`\`\`\n${safeCode}\n\`\`\``}</Markdown>
               </Fold>
             ) : null}
           </div>
+          {documentsCount > 0 ? (
+            <div className="chat-msg__files-badge" aria-label={`Attached files: ${documentsCount}`}>
+              <svg className="chat-msg__files-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M21.44 11.05L12.95 19.54C10.8 21.69 7.31 21.69 5.16 19.54C3.01 17.39 3.01 13.9 5.16 11.75L13.64 3.27C15.02 1.89 17.25 1.89 18.63 3.27C20.01 4.64 20.01 6.88 18.63 8.26L10.15 16.74C9.54 17.36 8.54 17.36 7.92 16.74C7.3 16.13 7.3 15.13 7.92 14.51L15.7 6.73"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <span>+{documentsCount}</span>
+            </div>
+          ) : null}
         </div>
       )
     }

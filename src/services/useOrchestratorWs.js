@@ -134,6 +134,10 @@ export function useOrchestratorWs({ onSessionId } = {}) {
             (data?.state && typeof data.state === 'object' ? data.state : null) ||
             (data?.session_data && typeof data.session_data === 'object' ? data.session_data : null)
           if (!snapshot) break
+          const fileAmount = Math.max(
+            0,
+            Number(snapshot.file_amount ?? snapshot.fileAmount ?? 0) || 0
+          )
 
           const sid = snapshot.session_id ?? snapshot.sessionId
           if (sid) {
@@ -151,7 +155,24 @@ export function useOrchestratorWs({ onSessionId } = {}) {
             setInputLocked(true)
           }
 
-          const historyMessages = mapSessionHistoryToMessages(snapshot.history)
+          let historyMessages = mapSessionHistoryToMessages(snapshot.history)
+          if (fileAmount > 0 && historyMessages.length > 0) {
+            historyMessages = historyMessages.map((m) =>
+              m?.kind === 'task' ? { ...m, documentsCount: fileAmount } : m
+            )
+            if (!historyMessages.some((m) => m?.kind === 'task')) {
+              historyMessages = [
+                {
+                  id: `snapshot-task-${uid()}`,
+                  kind: 'task',
+                  context: String(snapshot.context ?? '').trim(),
+                  code: '',
+                  documentsCount: fileAmount,
+                },
+                ...historyMessages,
+              ]
+            }
+          }
           if (historyMessages.length > 0) {
             // Backend snapshots can be partial (e.g. only final verdict after completion).
             // Preserve already rendered agent/user/task messages when snapshot is reduced.
@@ -281,6 +302,7 @@ export function useOrchestratorWs({ onSessionId } = {}) {
       code,
       context,
       rounds,
+      documents,
       ui,
       resumeMessages,
       resumeUsageEvents,
@@ -300,6 +322,7 @@ export function useOrchestratorWs({ onSessionId } = {}) {
           mode: ui.mode || '',
           scenario: ui.scenario || 'CODE_REVIEW',
           rounds: ui.rounds ?? null,
+          documentsCount: Number(ui.documentsCount) || 0,
         })
       }
       if (Array.isArray(resumeUsageEvents) && resumeUsageEvents.length > 0) {
@@ -323,6 +346,7 @@ export function useOrchestratorWs({ onSessionId } = {}) {
           code: code || '',
           context: context || '',
           rounds: Number(rounds) || 3,
+          documents: Array.isArray(documents) ? documents : [],
         }
         ws.send(JSON.stringify(payload))
       }

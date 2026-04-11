@@ -274,7 +274,7 @@ $bg-deep: #fce7f3;
     letter-spacing: 0.04em;
     text-transform: uppercase;
     color: $text-muted;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.1rem;
   }
 
   input,
@@ -635,13 +635,32 @@ $bg-deep: #fce7f3;
 }
 
 .chat-msg--task {
+  position: relative;
   border-radius: 1rem 1rem 0.35rem 1rem;
+  padding-bottom: 1.55rem;
 }
 
 .chat-msg__task-meta {
   font-size: 0.82rem;
   opacity: 0.92;
   margin-bottom: 0.35rem;
+}
+
+.chat-msg__files-badge {
+  position: absolute;
+  right: 0.6rem;
+  bottom: 0.45rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.18rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.chat-msg__files-icon {
+  width: 0.78rem;
+  height: 0.78rem;
 }
 
 .chat-msg--agent {
@@ -1510,6 +1529,51 @@ $bg-deep: #fce7f3;
 
 // (moved below for centered layout)
 
+.chat-app__context-with-attach {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+
+  input {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.chat-app__attach-clip-btn {
+  position: relative;
+  width: 2.3rem;
+  min-width: 2rem;
+  height: 2.5rem;
+  border: 1px solid rgba(244, 114, 182, 0.36);
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.82);
+  color: $text-muted;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    color: $text;
+    border-color: rgba(244, 114, 182, 0.62);
+    background: rgba(255, 255, 255, 0.94);
+    transform: translateY(-1px);
+  }
+
+  input {
+    display: none;
+  }
+
+  .chat-app__attach-clip-icon {
+    width: 1.35rem;
+    height: 1.35rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
 .chat-app__attach {
   margin-top: 0.55rem;
   display: grid;
@@ -1549,6 +1613,10 @@ $bg-deep: #fce7f3;
   display: flex;
   flex-wrap: wrap;
   gap: 0.45rem;
+}
+
+.chat-app__attach-list--documents {
+  margin-top: 0.38rem;
 }
 
 .chat-app__attach-item {

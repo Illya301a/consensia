@@ -70,6 +70,7 @@ const APP_COPY = {
     setupLeadNonReview: 'Опишите задачу и при необходимости приложите файлы.',
     codeLabel: 'Код',
     attachFiles: 'Прикрепить файлы к коду',
+    attachDocuments: 'Прикрепить документы',
     removeFileAria: 'Удалить {{name}}',
     contextLabelOptional: 'Задача (по желанию)',
     contextLabelRequired: 'Задача',
@@ -131,6 +132,7 @@ const APP_COPY = {
     setupLeadNonReview: 'Опишіть задачу і за потреби додайте файли.',
     codeLabel: 'Код',
     attachFiles: 'Додати файли до коду',
+    attachDocuments: 'Додати документи',
     removeFileAria: 'Видалити {{name}}',
     contextLabelOptional: 'Задача (за бажанням)',
     contextLabelRequired: 'Задача',
@@ -192,6 +194,7 @@ const APP_COPY = {
     setupLeadNonReview: 'Describe your task and attach files if needed.',
     codeLabel: 'Code',
     attachFiles: 'Attach files to code',
+    attachDocuments: 'Attach documents',
     removeFileAria: 'Remove {{name}}',
     contextLabelOptional: 'Task (optional)',
     contextLabelRequired: 'Task',
@@ -396,6 +399,37 @@ async function readTextFile(file, maxBytes = 400_000) {
   return await file.text()
 }
 
+async function readFileAsDataUrl(file, maxBytes = 8_000_000) {
+  if (file.size > maxBytes) throw new Error('file too large')
+  return await new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result ?? ''))
+    reader.onerror = () => reject(new Error('file read failed'))
+    reader.readAsDataURL(file)
+  })
+}
+
+function countDocumentsFromHistory(history) {
+  if (!Array.isArray(history)) return 0
+  let count = 0
+  for (const item of history) {
+    if (!item || typeof item !== 'object') continue
+    const fromFileAmount = Number(item?.file_amount ?? item?.fileAmount ?? 0)
+    if (Number.isFinite(fromFileAmount) && fromFileAmount > 0) {
+      count = Math.max(count, Math.floor(fromFileAmount))
+    }
+    if (Array.isArray(item.documents)) {
+      count = Math.max(count, item.documents.length)
+      continue
+    }
+    const nested = item.content
+    if (nested && typeof nested === 'object' && Array.isArray(nested.documents)) {
+      count = Math.max(count, nested.documents.length)
+    }
+  }
+  return count
+}
+
 function statusLabel(status, copy) {
   switch (status) {
     case 'connecting':
@@ -582,6 +616,8 @@ export default function AppPage() {
 
   const [attached, setAttached] = useState([])
   const [attachError, setAttachError] = useState('')
+  const [documents, setDocuments] = useState([])
+  const [documentsError, setDocumentsError] = useState('')
 
   const [sessions, setSessions] = useState([])
   const [sessionsLoading, setSessionsLoading] = useState(false)
@@ -865,6 +901,12 @@ export default function AppPage() {
   }, [isCodeReviewScenario, attached.length, attachError])
 
   useEffect(() => {
+    if (!isCodeReviewScenario) return
+    if (documents.length) setDocuments([])
+    if (documentsError) setDocumentsError('')
+  }, [isCodeReviewScenario, documents.length, documentsError])
+
+  useEffect(() => {
     if (!sessionFromUrl) {
       suppressUrlSessionLoadRef.current = false
       urlSessionConnectRef.current = ''
@@ -920,9 +962,17 @@ export default function AppPage() {
         const detailTitle = deriveSessionTitle(d) || deriveSessionTitle(sd)
         const detailRounds = deriveSessionRounds(d) ?? deriveSessionRounds(sd)
         const detailScenario = deriveSessionScenario(d) || deriveSessionScenario(sd)
+        const resumeFileAmount = Math.max(
+          Number(sd?.file_amount ?? sd?.fileAmount ?? 0) || 0,
+          Number(d?.file_amount ?? d?.fileAmount ?? 0) || 0
+        )
         const resumeBase = buildResumeMessagesFromSessionData(sd).map((m) =>
-          m?.kind === 'task' && !m?.scenario
-            ? { ...m, scenario: detailScenario || scenarioRef.current || 'CODE_REVIEW' }
+          m?.kind === 'task'
+            ? {
+                ...m,
+                scenario: m?.scenario || detailScenario || scenarioRef.current || 'CODE_REVIEW',
+                documentsCount: Number(m?.documentsCount) || resumeFileAmount || 0,
+              }
             : m
         )
         const hasUserInHistory = resumeBase.some((m) => m?.kind === 'user' || m?.kind === 'task')
@@ -940,6 +990,8 @@ export default function AppPage() {
           ''
         if (codeBody) setCode(codeBody)
         setAttached([])
+        setDocuments([])
+        setDocumentsError('')
         const sdMode = sd.mode
         if (typeof sdMode === 'string' && MODES.some((m) => m.value === sdMode)) {
           setMode(sdMode)
@@ -954,8 +1006,15 @@ export default function AppPage() {
         const modeForWs = (typeof sdMode === 'string' && sdMode ? sdMode : null) || modeRef.current
         const scenarioForWs =
           SCENARIOS.some((s) => s.value === detailScenario) ? detailScenario : scenarioRef.current
+        const isResumeCodeReview = scenarioForWs === 'CODE_REVIEW'
         const roundsForWs =
           typeof cr === 'number' && cr >= 1 && cr <= 3 ? cr : roundsRef.current
+        const documentsCountFromHistory = Math.max(
+          Number(sd?.file_amount ?? sd?.fileAmount ?? 0) || 0,
+          Number(d?.file_amount ?? d?.fileAmount ?? 0) || 0,
+          countDocumentsFromHistory(sd?.history),
+          Number(firstTask?.documentsCount ?? 0) || 0
+        )
         const initialContext =
           (typeof sd.context === 'string' && sd.context.trim() ? sd.context.trim() : '') ||
           (typeof d.context === 'string' && d.context.trim() ? d.context.trim() : '') ||
@@ -971,14 +1030,15 @@ export default function AppPage() {
             ? firstTask.context.trim()
             : '') ||
           contextRef.current
-        const originalCode =
+        const originalCodeRaw =
           (typeof d.original_code === 'string' && d.original_code.length ? d.original_code : '') ||
           (typeof sd.original_code === 'string' && sd.original_code.length ? sd.original_code : '') ||
           (typeof firstTask?.code === 'string' && firstTask.code.length ? firstTask.code : '') ||
           codeForWs
+        const originalCode = isResumeCodeReview ? originalCodeRaw : ''
         const ctx = initialContext
         const resumeMessages =
-          !hasUserInHistory && (initialContext || originalCode)
+          !hasUserInHistory && (initialContext || originalCode || documentsCountFromHistory > 0)
             ? [
                 {
                   id: `task-${Date.now()}`,
@@ -988,6 +1048,7 @@ export default function AppPage() {
                   mode: modeForWs,
                   scenario: scenarioForWs,
                   rounds: roundsForWs,
+                  documentsCount: !isResumeCodeReview ? documentsCountFromHistory : 0,
                 },
                 ...resumeBase,
               ]
@@ -1016,10 +1077,11 @@ export default function AppPage() {
           rounds: roundsForWs,
           ui: {
             context: ctx,
-            code: codeForWs,
+            code: isResumeCodeReview ? codeForWs : '',
             mode: modeForWs,
             scenario: scenarioForWs,
             rounds: roundsForWs,
+            documentsCount: !isResumeCodeReview ? documentsCountFromHistory : 0,
           },
           resumeMessages: resumeMessages.length ? resumeMessages : undefined,
           resumeUsageEvents: resumeUsageEvents.length ? resumeUsageEvents : undefined,
@@ -1068,12 +1130,16 @@ export default function AppPage() {
         code: isCodeReviewScenario ? fullCode : '',
         context,
         rounds: canChooseRounds ? rounds : 1,
+        documents: !isCodeReviewScenario
+          ? documents.map((doc) => ({ name: doc.name, data: doc.data }))
+          : undefined,
         ui: {
           context,
           code: isCodeReviewScenario ? fullCode : '',
           mode,
           scenario,
           rounds: canChooseRounds ? rounds : 1,
+          documentsCount: !isCodeReviewScenario ? documents.length : 0,
         },
       })
       setShowSetup(false)
@@ -1087,6 +1153,7 @@ export default function AppPage() {
       fullCode,
       context,
       rounds,
+      documents,
       isCodeReviewScenario,
       canChooseRounds,
     ]
@@ -1106,6 +1173,8 @@ export default function AppPage() {
     setRestoredSpentCredits(null)
     setShowTypingHint(false)
     setSessionLoadError(null)
+    setDocuments([])
+    setDocumentsError('')
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
   }, [disconnect, navigate])
 
@@ -1213,6 +1282,39 @@ export default function AppPage() {
 
   const removeAttachment = useCallback((name, size) => {
     setAttached((prev) => prev.filter((f) => !(f.name === name && f.size === size)))
+  }, [])
+
+  const handlePickDocuments = useCallback(
+    async (e) => {
+      const files = Array.from(e.target.files || [])
+      e.target.value = ''
+      if (!files.length) return
+      setDocumentsError('')
+      try {
+        const encoded = await Promise.all(
+          files.map(async (file) => ({
+            name: file.name,
+            size: file.size,
+            data: await readFileAsDataUrl(file),
+          }))
+        )
+        setDocuments((prev) => {
+          const merged = [...prev]
+          for (const file of encoded) {
+            if (merged.some((p) => p.name === file.name && p.size === file.size)) continue
+            merged.push(file)
+          }
+          return merged.slice(0, 10)
+        })
+      } catch {
+        setDocumentsError(c.errors.fileReadFailed)
+      }
+    },
+    [c.errors.fileReadFailed]
+  )
+
+  const removeDocument = useCallback((name, size) => {
+    setDocuments((prev) => prev.filter((f) => !(f.name === name && f.size === size)))
   }, [])
 
   const openHistorySession = useCallback(
@@ -1731,13 +1833,70 @@ export default function AppPage() {
                     <label htmlFor="ctx">
                       {isCodeReviewScenario ? c.contextLabelOptional : c.contextLabelRequired}
                     </label>
-                    <input
-                      id="ctx"
-                      value={context}
-                      onChange={(e) => setContext(e.target.value)}
-                      placeholder={c.contextPlaceholder}
-                      required={!isCodeReviewScenario}
-                    />
+                    {isCodeReviewScenario ? (
+                      <input
+                        id="ctx"
+                        value={context}
+                        onChange={(e) => setContext(e.target.value)}
+                        placeholder={c.contextPlaceholder}
+                        required={false}
+                      />
+                    ) : (
+                      <>
+                        <div className="chat-app__context-with-attach">
+                          <label
+                            className="chat-app__attach-clip-btn"
+                            aria-label={c.attachDocuments}
+                            title={c.attachDocuments}
+                          >
+                            <input type="file" multiple onChange={handlePickDocuments} />
+                            <svg
+                              className="chat-app__attach-clip-icon"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              aria-hidden="true"
+                            >
+                              <path
+                                d="M21.44 11.05L12.95 19.54C10.8 21.69 7.31 21.69 5.16 19.54C3.01 17.39 3.01 13.9 5.16 11.75L13.64 3.27C15.02 1.89 17.25 1.89 18.63 3.27C20.01 4.64 20.01 6.88 18.63 8.26L10.15 16.74C9.54 17.36 8.54 17.36 7.92 16.74C7.3 16.13 7.3 15.13 7.92 14.51L15.7 6.73"
+                                stroke="currentColor"
+                                strokeWidth="1.8"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          </label>
+                          <input
+                            id="ctx"
+                            value={context}
+                            onChange={(e) => setContext(e.target.value)}
+                            placeholder={c.contextPlaceholder}
+                            required
+                          />
+                        </div>
+                        {documentsError ? (
+                          <div className="chat-app__attach-error" role="alert">
+                            {documentsError}
+                          </div>
+                        ) : null}
+                        {documents.length ? (
+                          <div className="chat-app__attach-list chat-app__attach-list--documents" role="list">
+                            {documents.map((f) => (
+                              <div key={`${f.name}:${f.size}`} className="chat-app__attach-item" role="listitem">
+                                <span className="chat-app__attach-name">{f.name}</span>
+                                <button
+                                  type="button"
+                                  className="chat-app__attach-remove"
+                                  onClick={() => removeDocument(f.name, f.size)}
+                                  aria-label={c.removeFileAria.replace('{{name}}', String(f.name))}
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        ) : null}
+                      </>
+                    )}
                   </div>
                   {sessionFromUrl ? (
                     <p className="chat-app__hint">{c.resumeHint}</p>

@@ -36,6 +36,34 @@ function pickHistoryText(item) {
   }
 }
 
+function extractDocumentsCount(item, payload) {
+  const fromFileAmount = Number(item?.file_amount ?? item?.fileAmount ?? payload?.file_amount ?? payload?.fileAmount ?? 0)
+  if (Number.isFinite(fromFileAmount) && fromFileAmount > 0) return Math.floor(fromFileAmount)
+  const direct = Array.isArray(item?.documents) ? item.documents.length : 0
+  const nested = Array.isArray(payload?.documents) ? payload.documents.length : 0
+  return Math.max(direct, nested, 0)
+}
+
+function pickInitialRequestContext(item, payload) {
+  const candidates = [
+    item?.context,
+    payload?.context,
+    item?.prompt,
+    payload?.prompt,
+    item?.query,
+    payload?.query,
+    item?.request,
+    payload?.request,
+    item?.user_message,
+    payload?.user_message,
+    item?.text,
+  ]
+  for (const value of candidates) {
+    if (typeof value === 'string' && value.trim()) return value
+  }
+  return ''
+}
+
 function parseHistoryPayload(item) {
   const raw =
     item?.verdict_data ??
@@ -179,21 +207,10 @@ export function mapSessionHistoryToMessages(history) {
     const round = Number(h?.round ?? h?.current_round ?? 0) || 0
 
     if (typeRaw === 'initial_request') {
+      const documentsCount = extractDocumentsCount(h, payload)
       const reqCode = typeof h?.code === 'string' ? h.code : ''
-      const reqText =
-        typeof h?.text === 'string'
-          ? h.text
-          : typeof h?.prompt === 'string'
-            ? h.prompt
-            : typeof h?.query === 'string'
-              ? h.query
-              : typeof h?.request === 'string'
-                ? h.request
-                : typeof h?.user_message === 'string'
-                  ? h.user_message
-          : typeof h?.content === 'string'
-            ? h.content
-            : text
+      const reqTextBase = pickInitialRequestContext(h, payload)
+      const reqText = documentsCount > 0 ? reqTextBase : (reqTextBase || text)
       return {
         id,
         kind: 'task',
@@ -205,6 +222,7 @@ export function mapSessionHistoryToMessages(history) {
           (typeof payload?.scenario === 'string' && payload.scenario) ||
           '',
         rounds: h?.max_rounds ?? h?.rounds ?? null,
+        documentsCount,
       }
     }
 
