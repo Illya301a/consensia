@@ -330,7 +330,7 @@ function interleaveUserFollowUpsBetweenRounds(messages) {
   return out
 }
 
-export function mapSessionHistoryToUsageEvents(history) {
+function mapSessionHistoryToUsageEvents(history) {
   const normalizedHistory = normalizeHistoryOrder(history)
   const out = []
   for (let i = 0; i < normalizedHistory.length; i += 1) {
@@ -470,7 +470,7 @@ export function deriveSessionRounds(session) {
   return null
 }
 
-export function mapRoundDataToAgentMessages(roundData) {
+function mapRoundDataToAgentMessages(roundData) {
   if (!roundData || typeof roundData !== 'object') return []
   const rounds = Object.entries(roundData).sort(
     ([a], [b]) => getRoundNumber(a) - getRoundNumber(b)

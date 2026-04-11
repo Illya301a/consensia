@@ -7,81 +7,6 @@ import SiteHeader from '../components/SiteHeader.jsx'
 import { Reveal } from '../components/Reveal.jsx'
 import './DevelopersPage.scss'
 
-const COPY = {
-  ru: {
-    eyebrow: 'Создатели Consensia',
-    title: 'Разработчики',
-    lead: 'Команда, которая собрала Consensia от идеи до реального продукта.',
-    contactsAria: 'Контакты разработчиков',
-    illiaContactText: 'Вопросы по продукту, предложения и баг-репорты:',
-    andriiContactText: 'Сложные технические вопросы и фидбек по качеству AI-ответов:',
-    developers: [
-      {
-        id: 'illia',
-        name: 'Илья',
-        role: 'Product / Frontend / Integration',
-        about:
-          'Отвечает за клиентскую часть сайта: визуальный интерфейс, пользовательский опыт (UX) и интеграцию всех визуальных компонентов.',
-      },
-      {
-        id: 'andrii',
-        name: 'Андрей',
-        role: 'AI / Backend / ML',
-        about:
-          'Отвечает за техническую архитектуру и бекенд. Разработал оркестратор, который синхронизирует работу 6 различных AI-моделей в единую систему.',
-      },
-    ],
-  },
-  ua: {
-    eyebrow: 'Творці Consensia',
-    title: 'Розробники',
-    lead: 'Команда, яка зібрала Consensia від ідеї до реального продукту.',
-    contactsAria: 'Контакти розробників',
-    illiaContactText: 'Питання щодо продукту, пропозиції та баг-репорти:',
-    andriiContactText: 'Складні технічні питання та фідбек щодо якості AI-відповідей:',
-    developers: [
-      {
-        id: 'illia',
-        name: 'Ілля',
-        role: 'Product / Frontend / Integration',
-        about:
-          'Відповідає за клієнтську частину сайту: візуальний інтерфейс, користувацький досвід (UX) та інтеграцію всіх візуальних компонентів.',
-      },
-      {
-        id: 'andrii',
-        name: 'Андрій',
-        role: 'AI / Backend / ML',
-        about:
-          'Відповідає за технічну архітектуру та бекенд. Розробив оркестратор, який синхронізує роботу 6 різних AI-моделей в єдину систему.',
-      },
-    ],
-  },
-  en: {
-    eyebrow: 'Builders of Consensia',
-    title: 'Developers',
-    lead: 'The team that built Consensia from idea to a real product.',
-    contactsAria: 'Developer contacts',
-    illiaContactText: 'Product questions, ideas, and bug reports:',
-    andriiContactText: 'Advanced technical questions and feedback on AI answer quality:',
-    developers: [
-      {
-        id: 'illia',
-        name: 'Illia',
-        role: 'Product / Frontend / Integration',
-        about:
-          'Responsible for the client side of the website: visual interface, user experience (UX), and integration of all visual components.',
-      },
-      {
-        id: 'andrii',
-        name: 'Andrii',
-        role: 'AI / Backend / ML',
-        about:
-          'Responsible for technical architecture and backend. Built the orchestrator that synchronizes 6 different AI models into one system.',
-      },
-    ],
-  },
-}
-
 const LINKS = [
   {
     id: 'illia',
@@ -184,9 +109,8 @@ function DevCard({ dev, side }) {
 }
 
 export default function DevelopersPage() {
-  const { i18n } = useTranslation()
-  const lang = String(i18n.resolvedLanguage || i18n.language || 'en').split('-')[0]
-  const c = COPY[lang] || COPY.ru
+  const { t } = useTranslation()
+  const c = t('developersPage', { returnObjects: true })
   const developers = c.developers.map((d) => ({
     ...d,
     ...LINKS.find((link) => link.id === d.id),

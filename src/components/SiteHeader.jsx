@@ -111,7 +111,6 @@ export default function SiteHeader() {
               {t('nav.developers')}
             </NavLink>
           </nav>
-          <LanguageSwitcher className="site-header__lang" />
         </div>
         <TopBurgerMenu
           isOpen={menuOpen}

@@ -19,6 +19,7 @@ import {
   normalizeSessionsFromApi,
 } from '../services/sessionsApi.js'
 import { useOrchestratorWs } from '../services/useOrchestratorWs.js'
+import { getCredits, getUserLabel } from '../services/profileUtils.js'
 
 const DATA_COLLECTION_KEY = 'consensia_data_collection_v1'
 const MAX_SESSION_CONNECT_ATTEMPTS = 3
@@ -365,33 +366,6 @@ function formatWhen(ts) {
   const d = new Date(ts)
   if (Number.isNaN(d.getTime())) return ''
   return d.toLocaleDateString(undefined, { month: 'short', day: '2-digit' })
-}
-
-function getUserLabel(user, fallbackLabel) {
-  if (!user || typeof user !== 'object') return fallbackLabel
-  return (
-    user.email ||
-    user.name ||
-    user.full_name ||
-    user.display_name ||
-    user.given_name ||
-    fallbackLabel
-  )
-}
-
-function getCredits(user) {
-  if (!user || typeof user !== 'object') return null
-  const candidates = [
-    user.credits,
-    user.credit_balance,
-    user.balance,
-    user.remaining_credits,
-  ]
-  for (const v of candidates) {
-    if (typeof v === 'number' && Number.isFinite(v)) return v
-    if (typeof v === 'string' && v.trim() && Number.isFinite(Number(v))) return Number(v)
-  }
-  return null
 }
 
 async function readTextFile(file, maxBytes = 400_000) {
@@ -1549,7 +1523,7 @@ export default function AppPage() {
               {profileOpen ? (
                 <div className="chat-app__profile-pop" role="menu">
                   <div className="chat-app__profile-head">
-                    <div className="chat-app__profile-title">{getUserLabel(user, c.profileLabel)}</div>
+                    <div className="chat-app__profile-title">{getUserLabel(user) || c.profileLabel}</div>
                     {getCredits(user) != null ? (
                       <div className="chat-app__profile-credits-line">
                         <div className="chat-app__profile-sub">{c.credits.replace('{{count}}', String(getCredits(user)))}</div>
@@ -1693,7 +1667,7 @@ export default function AppPage() {
               <div className="chat-app__profile chat-app__profile--mobile-drawer">
                 <div className="chat-app__profile-pop chat-app__profile-pop--mobile-inline" role="menu">
                     <div className="chat-app__profile-head">
-                      <div className="chat-app__profile-title">{getUserLabel(user, c.profileLabel)}</div>
+                      <div className="chat-app__profile-title">{getUserLabel(user) || c.profileLabel}</div>
                       {getCredits(user) != null ? (
                         <div className="chat-app__profile-credits-line">
                           <div className="chat-app__profile-sub">{c.credits.replace('{{count}}', String(getCredits(user)))}</div>
