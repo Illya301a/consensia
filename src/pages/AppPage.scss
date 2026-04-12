@@ -2041,11 +2041,17 @@ $bg-deep: #fce7f3;
 
   .chat-app__setup {
     padding: 0.9rem 0.75rem 1rem;
+    overflow: hidden;
   }
 
   .chat-app__setup-card {
     padding: 1rem 0.9rem;
     border-radius: 1rem;
+    min-height: 0;
+    max-height: calc(100dvh - 7.25rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
   }
 
   .chat-app__messages {
