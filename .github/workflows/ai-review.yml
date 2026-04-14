@@ -1,0 +1,27 @@
+name: Consensia Commit Review
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**' # Маска для отслеживания фича-веток
+
+permissions:
+  contents: read
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2 # Достаточно для сравнения текущего и предыдущего коммита
+
+      - name: Run Consensia AI Reviewer
+        uses: Ashixi/consensia_cli@main
+        with:
+          api-key: ${{ secrets.CONSENSIA_API_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          target: 'commit' # Указываем, что это прямой коммит
+          mode: 'BALANCED'
