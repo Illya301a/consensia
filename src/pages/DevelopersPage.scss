@@ -7,7 +7,7 @@
     radial-gradient(circle at 85% 2%, rgba(244, 114, 182, 0.15), transparent 35%),
     radial-gradient(circle at 50% 120%, rgba(244, 114, 182, 0.12), transparent 48%),
     linear-gradient(165deg, #fff 0%, #fdf2f8 45%, #fce7f3 100%);
-  color: #1a0a12;
+  color: #4b1632;
 }
 
 .developers-page h1,
@@ -35,7 +35,7 @@
 
 .developers-page__logo {
   text-decoration: none;
-  color: #1a0a12;
+  color: #4b1632;
   font-size: clamp(1.15rem, 2.1vw, 1.45rem);
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -54,7 +54,7 @@
 
   a {
     text-decoration: none;
-    color: #6b4a58;
+    color: #6b3750;
     font-weight: 600;
     font-size: 0.9rem;
     padding: 0.45rem 0.72rem;
@@ -65,8 +65,8 @@
 
     &:hover {
       color: #fff;
-      background: #f472b6;
-      border-color: #f472b6;
+      background: #ec4899;
+      border-color: #ec4899;
     }
   }
 }
@@ -84,7 +84,7 @@
   width: min(16rem, 42vw);
   height: 2px;
   margin-top: 0.95rem;
-  background: linear-gradient(90deg, rgba(251, 113, 133, 0.9), rgba(244, 114, 182, 0.1));
+  background: linear-gradient(90deg, rgba(244, 63, 143, 0.9), rgba(236, 72, 153, 0.1));
 }
 
 .developers-page__eyebrow {
@@ -92,7 +92,7 @@
   font-size: 0.76rem;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: #f472b6 !important;
+  color: #ec4899 !important;
   font-weight: 700;
 }
 
@@ -106,7 +106,7 @@
 .developers-page__lead {
   margin: 0.6rem 0 0;
   max-width: 44rem;
-  color: #6b4a58;
+  color: #6b3750;
   line-height: 1.55;
 }
 
@@ -237,7 +237,7 @@
   text-decoration: none;
   font-size: 0.84rem;
   font-weight: 650;
-  color: #6b4a58;
+  color: #6b3750;
   background: rgba(252, 231, 243, 0.66);
   border: 1px solid rgba(244, 114, 182, 0.24);
   padding: 0.42rem 0.68rem;
@@ -254,8 +254,8 @@
 
   &:hover {
     color: #fff;
-    background: #f472b6;
-    border-color: #f472b6;
+    background: #ec4899;
+    border-color: #ec4899;
     transform: translateY(-1px);
     box-shadow: 0 8px 18px rgba(244, 114, 182, 0.28);
   }
@@ -292,7 +292,7 @@
 
   p {
     margin: 0.2rem 0 0;
-    color: #6b4a58;
+    color: #6b3750;
     line-height: 1.5;
   }
 
