@@ -1,7 +1,7 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-export const ChatComposer = memo(function ChatComposer({ disabled, placeholder, onSend }) {
+export const ChatComposer = memo(function ChatComposer({ disabled, placeholder, onSend, statusChip }) {
   const { t } = useTranslation()
   const [text, setText] = useState('')
   const [expanded, setExpanded] = useState(false)
@@ -109,6 +109,12 @@ export const ChatComposer = memo(function ChatComposer({ disabled, placeholder, 
           disabled={disabled}
         />
       </div>
+      {statusChip ? (
+        <div className="chat-app__composer-chip" aria-live="polite">
+          <span className="chat-app__composer-chip-label">{statusChip.label}</span>
+          <strong className="chat-app__composer-chip-value">{statusChip.value}</strong>
+        </div>
+      ) : null}
       <div
         className={`chat-app__composer-actions${showExpandButton ? ' chat-app__composer-actions--with-expand' : ''}`}
       >

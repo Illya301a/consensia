@@ -17,7 +17,8 @@ export default function SiteFooter() {
             </div>
             <nav className="footer__col" aria-label={t('footer.productAria')}>
               <span className="footer__col-title">{t('footer.product')}</span>
-              <Link to="/faq">FAQ</Link>
+              <Link to="/faq">{t('footer.faq')}</Link>
+              <Link to="/github-actions">{t('footer.githubActions')}</Link>
               <Link to="/terms">{t('footer.terms')}</Link>
               <Link to="/privacy">{t('footer.privacy')}</Link>
             </nav>

@@ -547,6 +547,8 @@ export default function AppPage() {
     onSessionId: (sid) => {
       const optimisticTitle = deriveImmediateSessionTitle(context)
       const optimisticCreatedAt = new Date().toISOString()
+      // Mark URL session as already handled to prevent duplicate resume-loading cycle.
+      urlSessionConnectRef.current = sid
       setSessions((prev) => {
         const list = Array.isArray(prev) ? prev : []
         const existingIndex = list.findIndex((x) => x?.id === sid)
@@ -576,7 +578,10 @@ export default function AppPage() {
           ...list,
         ]
       })
-      navigate(`/app?session=${encodeURIComponent(sid)}`, { replace: true })
+      navigate(`/app?session=${encodeURIComponent(sid)}`, {
+        replace: true,
+        preventScrollReset: true,
+      })
     },
   })
 
@@ -656,6 +661,7 @@ export default function AppPage() {
 
   const endRef = useRef(null)
   const messagesRef = useRef(null)
+  const shouldStickToBottomRef = useRef(true)
   const prevInputLockedRef = useRef(true)
   const prevInputLockedCreditsRef = useRef(true)
 
@@ -844,9 +850,29 @@ export default function AppPage() {
     }
   }, [sessionId, isAuthenticated, hydrateSessionsFromDetails])
 
+  const updateStickToBottom = useCallback(() => {
+    const el = messagesRef.current
+    if (!el) return
+    const distanceToBottom = el.scrollHeight - (el.scrollTop + el.clientHeight)
+    shouldStickToBottomRef.current = distanceToBottom <= 80
+  }, [])
+
+  const scrollMessagesToBottom = useCallback(() => {
+    const el = messagesRef.current
+    if (!el) return
+    el.scrollTop = el.scrollHeight
+  }, [])
+
   useEffect(() => {
     const el = messagesRef.current
     if (!el) return
+    updateStickToBottom()
+  }, [showSetup, updateStickToBottom])
+
+  useEffect(() => {
+    const el = messagesRef.current
+    if (!el) return
+    if (!shouldStickToBottomRef.current) return
     el.scrollTop = el.scrollHeight
   }, [messages])
 
@@ -891,7 +917,12 @@ export default function AppPage() {
       urlSessionConnectRef.current = ''
       return
     }
-    if (sessionIdRef.current === sessionFromUrl && statusRef.current === 'open') return
+    if (
+      sessionIdRef.current === sessionFromUrl &&
+      (statusRef.current === 'connecting' || statusRef.current === 'open')
+    ) {
+      return
+    }
     if (
       (statusRef.current === 'connecting' || statusRef.current === 'open') &&
       urlSessionConnectRef.current === sessionFromUrl
@@ -1331,9 +1362,14 @@ export default function AppPage() {
       if (!value) return
       setProfileOpen(false)
       setShowTypingHint(true)
+      shouldStickToBottomRef.current = true
+      scrollMessagesToBottom()
+      window.requestAnimationFrame(() => {
+        scrollMessagesToBottom()
+      })
       sendFollowUp(value)
     },
-    [sendFollowUp]
+    [sendFollowUp, scrollMessagesToBottom]
   )
 
   const busy = status === 'connecting'
@@ -1894,30 +1930,37 @@ export default function AppPage() {
                     {sessionLoadError}
                   </p>
                 ) : null}
-                <div ref={messagesRef} className="chat-app__messages" role="log" aria-live="polite">
+                <div
+                  ref={messagesRef}
+                  className="chat-app__messages"
+                  role="log"
+                  aria-live="polite"
+                  onScroll={updateStickToBottom}
+                >
                   {renderedMessages}
                   <div ref={endRef} />
                 </div>
 
                 <div className="chat-app__composer">
                   {waitingForAi ? (
-                    <div className="chat-app__typing" aria-live="polite" aria-label={c.generatingAria}>
-                      <span className="chat-app__typing-dot" />
-                      <span className="chat-app__typing-dot" />
-                      <span className="chat-app__typing-dot" />
-                      <span className="chat-app__typing-text">{c.generatingText}</span>
-                    </div>
-                  ) : null}
-                  {hasFinalVerdict && (usageEvents.length > 0 || restoredSpentCredits != null) ? (
-                    <div className="chat-app__spent-credits" aria-live="polite">
-                      <span className="chat-app__spent-credits-label">{c.spentCredits}</span>
-                      <strong className="chat-app__spent-credits-value">{spentCredits}</strong>
+                    <div className="chat-app__status-bar">
+                      <div className="chat-app__typing" aria-live="polite" aria-label={c.generatingAria}>
+                        <span className="chat-app__typing-dot" />
+                        <span className="chat-app__typing-dot" />
+                        <span className="chat-app__typing-dot" />
+                        <span className="chat-app__typing-text">{c.generatingText}</span>
+                      </div>
                     </div>
                   ) : null}
                   <ChatComposer
                     disabled={inputLocked || status !== 'open'}
                     placeholder={
                       inputLocked ? c.placeholderLocked : c.placeholderOpen
+                    }
+                    statusChip={
+                      hasFinalVerdict && (usageEvents.length > 0 || restoredSpentCredits != null)
+                        ? { label: c.spentCredits, value: spentCredits }
+                        : null
                     }
                     onSend={handleSendMessage}
                   />

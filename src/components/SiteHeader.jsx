@@ -7,18 +7,11 @@ import MobileProfilePanel from './MobileProfilePanel.jsx'
 import { useAuth } from '../services/AuthContext.jsx'
 import { apiFetch } from '../services/http.js'
 const DATA_COLLECTION_KEY = 'consensia_data_collection_v1'
-const MOBILE_MENU_OPEN_KEY = 'consensia_site_mobile_menu_open'
 
 export default function SiteHeader() {
   const { t } = useTranslation()
   const { isAuthenticated, user, logout } = useAuth()
-  const [menuOpen, setMenuOpen] = useState(() => {
-    try {
-      return sessionStorage.getItem(MOBILE_MENU_OPEN_KEY) === 'true'
-    } catch {
-      return false
-    }
-  })
+  const [menuOpen, setMenuOpen] = useState(false)
   const [promoInfo, setPromoInfo] = useState(null)
   const [topUpAmount, setTopUpAmount] = useState('10')
   const [topUpLoading, setTopUpLoading] = useState(false)
@@ -40,14 +33,6 @@ export default function SiteHeader() {
       /* ignore */
     }
   }, [dataCollection])
-
-  useEffect(() => {
-    try {
-      sessionStorage.setItem(MOBILE_MENU_OPEN_KEY, menuOpen ? 'true' : 'false')
-    } catch {
-      /* ignore */
-    }
-  }, [menuOpen])
 
   useEffect(() => {
     if (!isAuthenticated) return
@@ -139,6 +124,18 @@ export default function SiteHeader() {
                 className={({ isActive }) => `top__menu-link${isActive ? ' top__menu-link--active' : ''}`}
               >
                 {t('nav.developers')}
+              </NavLink>
+              <NavLink
+                to="/app"
+                className={({ isActive }) => `top__menu-link${isActive ? ' top__menu-link--active' : ''}`}
+              >
+                {t('nav.app')}
+              </NavLink>
+              <NavLink
+                to="/github-actions"
+                className={({ isActive }) => `top__menu-link${isActive ? ' top__menu-link--active' : ''}`}
+              >
+                {t('nav.githubActions')}
               </NavLink>
             </nav>
           }

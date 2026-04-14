@@ -10,7 +10,9 @@
   "nav": {
     "about": "About",
     "models": "Models",
-    "developers": "Developers"
+    "developers": "Developers",
+    "app": "App",
+    "githubActions": "GitHub Actions"
   },
   "languages": {
     "ru": "Russian",
@@ -37,7 +39,7 @@
       "titleLine2": "from model consensus",
       "lede": "Several models discuss the task and converge on the best solution — you get an answer assembled and verified by Consensia.",
       "start": "Get started",
-      "howItWorks": "How it works",
+      "howItWorks": "GitHub Actions",
       "scrollHint": "Scroll down",
       "motionToggleTitle": "Only animates the background 3D layer, not the page",
       "stopBackground": "Stop background",
@@ -139,7 +141,7 @@
     },
     "quote": {
       "a11y": "Product positioning",
-      "text": "We are not chasing the most creative answer at any cost — we focus on an aligned and verifiable result."
+      "text": "We are not chasing the most creative answer at any cost — we focus on an <strong>aligned and verifiable result</strong>."
     },
     "cta": {
       "a11y": "Call to action",
@@ -153,6 +155,8 @@
     "badge": "Beta version",
     "productAria": "Product sections",
     "product": "Product",
+    "faq": "FAQ",
+    "githubActions": "GitHub Actions",
     "terms": "Terms of Service",
     "privacy": "Privacy Policy",
     "sessions": "Sessions",
@@ -207,6 +211,90 @@
   },
   "authCallback": {
     "loading": "Signing in…"
+  },
+  "githubActionsPage": {
+    "docTitle": "GitHub Actions · Consensia",
+    "title": "GitHub Actions Integration",
+    "lead": "Connect Consensia to your repository for automated code review. You can configure AI checks for both Pull Requests and regular pushes to selected branches.",
+    "quickStart": {
+      "title": "Quick start",
+      "lead": "Complete these three simple steps to set up the integration:",
+      "steps": [
+        "Add your API key to GitHub Secrets.",
+        "Grant permissions to publish comments.",
+        "Create a workflow file."
+      ]
+    },
+    "controls": {
+      "title": "Additional actions",
+      "lead": "Prepare everything needed before running the workflow.",
+      "generateButton": "Generate API key",
+      "openRouterPlaceholder": "openrouter api key",
+      "subscribeButton": "Subscription",
+      "tip": "You can paste your own OpenRouter API key into the field above and use it in your integration."
+    },
+    "steps": {
+      "secret": {
+        "title": "Step 1. Add API key to GitHub Secrets",
+        "lead": "The action needs your API key to authorize in the system.",
+        "items": [
+          "In your repository, go to Settings → Secrets and variables → Actions.",
+          "Click New repository secret.",
+          "Name: CONSENSIA_API_KEY",
+          "Value: your key generated on the GitHub Actions page in Consensia."
+        ]
+      },
+      "permissions": {
+        "title": "Step 2. Grant comment publishing permissions",
+        "lead": "To allow the bot to post review results directly in code, it needs write permissions.",
+        "items": [
+          "Go to Settings → Actions → General.",
+          "Find the Workflow permissions section.",
+          "Select Read and write permissions and save changes."
+        ]
+      },
+      "workflow": {
+        "title": "Step 3. Create a workflow file",
+        "lead": "Depending on your development flow, choose one of the two scenarios below (or use both in separate files). Create .github/workflows/ai-review.yml and add the corresponding config:",
+        "path": "Path: .github/workflows/ai-review.yml"
+      }
+    },
+    "scenarios": {
+      "pr": {
+        "title": "Scenario A: Pull Request checks (Recommended)",
+        "lead": "The bot will analyze changes when a PR is created and after each new commit pushed to it.",
+        "note": "Important: for PR checks use target: 'pr' and fetch-depth: 0.",
+        "yaml": "name: Consensia PR Review\n\non:\n  pull_request:\n    types: [opened, synchronize]\n\npermissions:\n  contents: read\n  pull-requests: write\n\njobs:\n  review:\n    runs-on: ubuntu-latest\n    steps:\n      - name: Checkout code\n        uses: actions/checkout@v4\n        with:\n          fetch-depth: 0 # Required for proper branch comparison\n\n      - name: Run Consensia AI Reviewer\n        uses: Ashixi/consensia_cli@main\n        with:\n          api-key: ${{ secrets.CONSENSIA_API_KEY }}\n          github-token: ${{ secrets.GITHUB_TOKEN }}\n          target: 'pr'     # Indicates this is a Pull Request\n          mode: 'BALANCED' # Review mode: ECONOMY, BALANCED, or MAX_POWER\n          rounds: '2'      # Number of consensus rounds"
+      },
+      "commit": {
+        "title": "Scenario B: Direct commit checks (Push)",
+        "lead": "Use this if you want the bot to analyze every push to specific branches (for example, main or feature/**) without creating a PR.",
+        "note": "Important: for push checks use target: 'commit' and fetch-depth: 2.",
+        "yaml": "name: Consensia Commit Review\n\non:\n  push:\n    branches:\n      - main\n      - 'feature/**' # Pattern for feature branches\n\npermissions:\n  contents: read\n\njobs:\n  review:\n    runs-on: ubuntu-latest\n    steps:\n      - name: Checkout code\n        uses: actions/checkout@v4\n        with:\n          fetch-depth: 2 # Enough to compare current and previous commits\n\n      - name: Run Consensia AI Reviewer\n        uses: Ashixi/consensia_cli@main\n        with:\n          api-key: ${{ secrets.CONSENSIA_API_KEY }}\n          github-token: ${{ secrets.GITHUB_TOKEN }}\n          target: 'commit' # Indicates this is a direct commit\n          mode: 'BALANCED'"
+      }
+    },
+    "result": {
+      "title": "How does the result look?",
+      "lead": "After analysis, the action automatically tries to publish the report in your repository. The output format depends on whether GitHub API accepts the changed-line coordinates:",
+      "items": [
+        "Default case (inline comments): the script tries to post findings right next to problematic lines in code (inside the PR Files changed tab).",
+        "Fallback case (single summary comment): GitHub often rejects line-level comments (422 Unprocessable Entity) if AI points to a line outside the current diff. To avoid losing results, the action catches this error and automatically posts all findings as one regular PR or commit comment."
+      ]
+    }
+  },
+  "paymentSuccessPage": {
+    "docTitle": "Payment Success · Consensia",
+    "title": "Payment successful",
+    "lead": "Your payment was completed successfully. Credits or access should appear in your account shortly.",
+    "openApp": "Open app",
+    "backHome": "Back to home"
+  },
+  "paymentCancelPage": {
+    "docTitle": "Payment Canceled · Consensia",
+    "title": "Payment canceled",
+    "lead": "The payment was canceled, and no charge was made. You can try again whenever you are ready.",
+    "tryAgain": "Try again",
+    "backHome": "Back to home"
   },
   "aboutPage": {
     "docTitle": "About · Consensia",

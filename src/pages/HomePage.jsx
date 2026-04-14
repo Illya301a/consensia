@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import '../App.scss'
 import { Reveal } from '../components/Reveal.jsx'
@@ -332,7 +332,7 @@ export default function HomePage() {
               <a className="btn btn--primary" href="/app">
                 {t('home.hero.start')}
               </a>
-              <a className="btn btn--ghost" href="#how">
+              <a className="btn btn--ghost" href="/github-actions">
                 {t('home.hero.howItWorks')}
               </a>
             </div>
@@ -461,7 +461,9 @@ export default function HomePage() {
       <aside className="quote-block" aria-label={t('home.quote.a11y')}>
         <Reveal>
           <blockquote className="quote-block__inner">
-            <p>{t('home.quote.text')}</p>
+            <p>
+              <Trans i18nKey="home.quote.text" components={{ strong: <strong /> }} />
+            </p>
           </blockquote>
         </Reveal>
       </aside>

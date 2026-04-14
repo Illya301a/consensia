@@ -9,6 +9,9 @@ import DevelopersPage from './pages/DevelopersPage.jsx'
 import FaqPage from './pages/FaqPage.jsx'
 import AboutPage from './pages/AboutPage.jsx'
 import ModelsPage from './pages/ModelsPage.jsx'
+import CliGuidePage from './pages/GithubActionsPage.jsx'
+import PaymentSuccessPage from './pages/PaymentSuccessPage.jsx'
+import PaymentCancelPage from './pages/PaymentCancelPage.jsx'
 
 const AppPage = lazy(() => import('./pages/AppPage.jsx'))
 
@@ -22,6 +25,9 @@ function AppRoutes() {
       <Route path="/faq" element={<FaqPage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/models" element={<ModelsPage />} />
+      <Route path="/github-actions" element={<CliGuidePage />} />
+      <Route path="/success" element={<PaymentSuccessPage />} />
+      <Route path="/cancel" element={<PaymentCancelPage />} />
       <Route path="/auth/callback" element={<AuthCallbackPage />} />
       <Route path="/developers" element={<DevelopersPage />} />
       <Route

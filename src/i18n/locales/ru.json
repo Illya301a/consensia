@@ -10,7 +10,9 @@
   "nav": {
     "about": "О нас",
     "models": "Модели",
-    "developers": "Разработчики"
+    "developers": "Разработчики",
+    "app": "Приложение",
+    "githubActions": "GitHub Actions"
   },
   "languages": {
     "ru": "Русский",
@@ -37,7 +39,7 @@
       "titleLine2": "из согласия нейросетей",
       "lede": "Несколько моделей обсуждают задачу и сходятся к лучшему решению — вы получаете ответ, собранный и проверенный в Consensia.",
       "start": "Начать",
-      "howItWorks": "Как это работает",
+      "howItWorks": "GitHub Actions",
       "scrollHint": "Листайте вниз",
       "motionToggleTitle": "Только анимация заднего 3D-слоя, не страница",
       "stopBackground": "Остановить фон",
@@ -139,7 +141,7 @@
     },
     "quote": {
       "a11y": "Позиционирование продукта",
-      "text": "Мы не гонимся за самым «креативным» ответом любой ценой — мы нацелены на согласованный и проверяемый результат."
+      "text": "Мы не гонимся за самым «креативным» ответом любой ценой — мы нацелены на <strong>согласованный</strong> и <strong>проверяемый</strong> результат."
     },
     "cta": {
       "a11y": "Призыв к действию",
@@ -153,6 +155,8 @@
     "badge": "Бета-версия",
     "productAria": "Разделы продукта",
     "product": "Продукт",
+    "faq": "FAQ",
+    "githubActions": "GitHub Actions",
     "terms": "Условия использования",
     "privacy": "Политика конфиденциальности",
     "sessions": "Сессии",
@@ -207,6 +211,90 @@
   },
   "authCallback": {
     "loading": "Вход…"
+  },
+  "githubActionsPage": {
+    "docTitle": "GitHub Actions · Consensia",
+    "title": "Интеграция с GitHub Actions",
+    "lead": "Подключите Consensia к своему репозиторию для автоматического код-ревью. Вы можете настроить AI-проверку как для Pull Requests, так и для обычных пушей в конкретные ветки.",
+    "quickStart": {
+      "title": "Быстрый старт",
+      "lead": "Для настройки интеграции выполните три простых шага:",
+      "steps": [
+        "Добавьте API ключ в GitHub Secrets.",
+        "Дайте права на публикацию комментариев.",
+        "Создайте Workflow-файл."
+      ]
+    },
+    "controls": {
+      "title": "Дополнительные действия",
+      "lead": "Подготовьте все необходимое перед запуском workflow.",
+      "generateButton": "Генерация API ключа",
+      "openRouterPlaceholder": "openrouter api key",
+      "subscribeButton": "Подписка",
+      "tip": "Вы можете вставить собственный API ключ OpenRouter в поле выше и использовать его в своей интеграции."
+    },
+    "steps": {
+      "secret": {
+        "title": "Шаг 1. Добавьте API ключ в GitHub Secrets",
+        "lead": "Экшену нужен ваш API-ключ для авторизации в системе.",
+        "items": [
+          "В вашем репозитории перейдите в Settings → Secrets and variables → Actions.",
+          "Нажмите New repository secret.",
+          "Name: CONSENSIA_API_KEY",
+          "Value: ваш ключ, сгенерированный на странице GitHub Actions в Consensia."
+        ]
+      },
+      "permissions": {
+        "title": "Шаг 2. Дайте права на публикацию комментариев",
+        "lead": "Чтобы бот мог оставлять результаты ревью прямо в коде, ему нужны права на запись.",
+        "items": [
+          "Перейдите в Settings → Actions → General.",
+          "Найдите раздел Workflow permissions.",
+          "Выберите Read and write permissions и сохраните изменения."
+        ]
+      },
+      "workflow": {
+        "title": "Шаг 3. Создайте Workflow-файл",
+        "lead": "В зависимости от вашего процесса разработки выберите один из двух сценариев (или используйте оба в отдельных файлах). Создайте файл .github/workflows/ai-review.yml и добавьте соответствующую конфигурацию:",
+        "path": "Путь: .github/workflows/ai-review.yml"
+      }
+    },
+    "scenarios": {
+      "pr": {
+        "title": "Сценарий А: Проверка Pull Requests (Рекомендуется)",
+        "lead": "Бот будет анализировать изменения при создании PR и при каждом новом коммите в него.",
+        "note": "Важно: для PR используйте target: 'pr' и fetch-depth: 0.",
+        "yaml": "name: Consensia PR Review\n\non:\n  pull_request:\n    types: [opened, synchronize]\n\npermissions:\n  contents: read\n  pull-requests: write\n\njobs:\n  review:\n    runs-on: ubuntu-latest\n    steps:\n      - name: Checkout code\n        uses: actions/checkout@v4\n        with:\n          fetch-depth: 0 # Необходимо для корректного сравнения веток\n\n      - name: Run Consensia AI Reviewer\n        uses: Ashixi/consensia_cli@main\n        with:\n          api-key: ${{ secrets.CONSENSIA_API_KEY }}\n          github-token: ${{ secrets.GITHUB_TOKEN }}\n          target: 'pr'     # Указываем, что это Pull Request\n          mode: 'BALANCED' # Режим проверки: ECONOMY, BALANCED или MAX_POWER\n          rounds: '2'      # Количество раундов консенсуса"
+      },
+      "commit": {
+        "title": "Сценарий Б: Проверка прямых коммитов (Push)",
+        "lead": "Если вы хотите, чтобы бот анализировал каждый push в конкретные ветки (например, main или feature/**) без создания PR.",
+        "note": "Важно: для push используйте target: 'commit' и fetch-depth: 2.",
+        "yaml": "name: Consensia Commit Review\n\non:\n  push:\n    branches:\n      - main\n      - 'feature/**' # Маска для отслеживания фича-веток\n\npermissions:\n  contents: read\n\njobs:\n  review:\n    runs-on: ubuntu-latest\n    steps:\n      - name: Checkout code\n        uses: actions/checkout@v4\n        with:\n          fetch-depth: 2 # Достаточно для сравнения текущего и предыдущего коммита\n\n      - name: Run Consensia AI Reviewer\n        uses: Ashixi/consensia_cli@main\n        with:\n          api-key: ${{ secrets.CONSENSIA_API_KEY }}\n          github-token: ${{ secrets.GITHUB_TOKEN }}\n          target: 'commit' # Указываем, что это прямой коммит\n          mode: 'BALANCED'"
+      }
+    },
+    "result": {
+      "title": "Как выглядит результат?",
+      "lead": "После завершения анализа экшен автоматически пытается опубликовать отчет в репозитории. Формат вывода зависит только от того, примет ли GitHub API координаты измененных строк:",
+      "items": [
+        "Базовый сценарий (Inline-комментарии): скрипт пытается оставить замечания прямо напротив проблемных строк кода (во вкладке Files changed для PR).",
+        "Запасной вариант (Fallback до общего комментария): GitHub часто отклоняет точечные комментарии (возвращает ошибку 422 Unprocessable Entity), если ИИ указал номер строки за пределами текущего diff. Чтобы результаты не потерялись, экшен перехватывает эту ошибку и автоматически публикует все собранные замечания единым текстовым блоком как обычный комментарий к PR или коммиту."
+      ]
+    }
+  },
+  "paymentSuccessPage": {
+    "docTitle": "Оплата успешна · Consensia",
+    "title": "Оплата прошла успешно",
+    "lead": "Платеж выполнен успешно. Кредиты или доступ появятся в вашем аккаунте в ближайшее время.",
+    "openApp": "Открыть приложение",
+    "backHome": "На главную"
+  },
+  "paymentCancelPage": {
+    "docTitle": "Оплата отменена · Consensia",
+    "title": "Оплата отменена",
+    "lead": "Платеж был отменен, списания не произошло. Вы можете повторить попытку в любой момент.",
+    "tryAgain": "Попробовать снова",
+    "backHome": "На главную"
   },
   "aboutPage": {
     "docTitle": "О нас · Consensia",
