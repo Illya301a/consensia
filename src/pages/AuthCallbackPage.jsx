@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ACCESS_TOKEN_KEY } from '../services/constants.js'
+import { ACCESS_TOKEN_KEY, POST_LOGIN_REDIRECT_KEY } from '../services/constants.js'
 import SiteHeader from '../components/SiteHeader.jsx'
 
 function extractToken() {
@@ -28,6 +28,23 @@ function extractToken() {
   return {}
 }
 
+function resolvePostLoginTarget() {
+  const fallback = '/app'
+  try {
+    const fromSession = sessionStorage.getItem(POST_LOGIN_REDIRECT_KEY)
+    sessionStorage.removeItem(POST_LOGIN_REDIRECT_KEY)
+    if (!fromSession) return fallback
+    if (fromSession.startsWith('/')) return fromSession
+    const parsed = new URL(fromSession)
+    if (parsed.origin === window.location.origin) {
+      return `${parsed.pathname}${parsed.search}${parsed.hash}` || fallback
+    }
+    return fallback
+  } catch {
+    return fallback
+  }
+}
+
 export default function AuthCallbackPage() {
   const navigate = useNavigate()
   const { t } = useTranslation()
@@ -35,13 +52,14 @@ export default function AuthCallbackPage() {
 
   useEffect(() => {
     const { token, error } = extractToken()
+    const target = resolvePostLoginTarget()
     if (token) {
       try {
         localStorage.setItem(ACCESS_TOKEN_KEY, token)
       } catch {
         /* ignore storage errors */
       }
-      window.location.replace('/app')
+      window.location.replace(target)
       return
     }
     const q = error ? `?error=${encodeURIComponent(error)}` : '?error=auth'

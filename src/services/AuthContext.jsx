@@ -8,10 +8,11 @@ import {
 } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { API_BASE_URL } from './api.js'
-import { ACCESS_TOKEN_KEY } from './constants.js'
+import { ACCESS_TOKEN_KEY, POST_LOGIN_REDIRECT_KEY } from './constants.js'
 import { fetchCurrentUser } from './userApi.js'
 
 const AuthContext = createContext(null)
+const AUTH_TOKEN_PARAM_NAMES = ['token', 'access_token', 'id_token', 'jwt']
 
 function readStoredToken() {
   try {
@@ -53,20 +54,45 @@ export function AuthProvider({ children }) {
   }, [])
 
   useEffect(() => {
-    if (location.pathname !== '/app') return
     const params = new URLSearchParams(location.search)
-    const urlToken = params.get('token')
+    let urlToken = ''
+    for (const key of AUTH_TOKEN_PARAM_NAMES) {
+      const value = params.get(key)
+      if (!urlToken && value) urlToken = value
+      params.delete(key)
+    }
+
+    let nextHash = location.hash || ''
+    if (nextHash) {
+      const hashParams = new URLSearchParams(nextHash.replace(/^#/, ''))
+      for (const key of AUTH_TOKEN_PARAM_NAMES) {
+        const value = hashParams.get(key)
+        if (!urlToken && value) urlToken = value
+        hashParams.delete(key)
+      }
+      const cleanedHash = hashParams.toString()
+      nextHash = cleanedHash ? `#${cleanedHash}` : ''
+    }
+
     if (!urlToken) return
-    params.delete('token')
+
     try {
       localStorage.setItem(ACCESS_TOKEN_KEY, urlToken)
       setTokenState(urlToken)
+      sessionStorage.removeItem(POST_LOGIN_REDIRECT_KEY)
     } catch {
       /* ignore storage errors */
     }
     const qs = params.toString()
-    navigate({ pathname: '/app', search: qs ? `?${qs}` : '', hash: '' }, { replace: true })
-  }, [location.pathname, location.search, navigate])
+    navigate(
+      {
+        pathname: location.pathname,
+        search: qs ? `?${qs}` : '',
+        hash: nextHash,
+      },
+      { replace: true }
+    )
+  }, [location.pathname, location.search, location.hash, navigate])
 
   const setToken = useCallback((next) => {
     writeToken(next)
@@ -76,7 +102,17 @@ export function AuthProvider({ children }) {
 
   const loginWithGoogle = useCallback(() => {
     const currentHost = window.location.origin
-    const targetPage = `${currentHost}/app`
+    const currentUrl = new URL(window.location.href)
+    for (const key of AUTH_TOKEN_PARAM_NAMES) {
+      currentUrl.searchParams.delete(key)
+    }
+    const targetPath = `${currentUrl.pathname}${currentUrl.search}${currentUrl.hash}`
+    const targetPage = `${currentHost}${targetPath}`
+    try {
+      sessionStorage.setItem(POST_LOGIN_REDIRECT_KEY, targetPath || '/app')
+    } catch {
+      /* ignore storage errors */
+    }
     const loginUrl = `${API_BASE_URL}/auth/google/login?front_url=${encodeURIComponent(targetPage)}`
     window.location.href = loginUrl
   }, [])

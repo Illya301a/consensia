@@ -56,6 +56,9 @@
       "credits": "Credits: {{count}}",
       "dataCollection": "Data collection",
       "logout": "Log out",
+      "deleteAccount": "Delete account",
+      "deleteConfirm": "Delete account and all related data? This action cannot be undone.",
+      "deleteError": "Failed to delete account",
       "topUp": {
         "amountAria": "Top-up amount in dollars",
         "preview": "{{count}} cr.",
@@ -229,9 +232,14 @@
       "title": "Additional actions",
       "lead": "Prepare everything needed before running the workflow.",
       "generateButton": "Generate API key",
-      "openRouterPlaceholder": "openrouter api key",
-      "subscribeButton": "Subscription",
-      "tip": "You can paste your own OpenRouter API key into the field above and use it in your integration."
+      "saveKeyButton": "Save key",
+      "generatedKeyLabel": "API key",
+      "openRouterPlaceholder": "OpenRouter API key",
+      "openRouterRequired": "OpenRouter API key is required",
+      "generateSuccess": "Save this key now, we will not be able to show it again.",
+      "saveSuccess": "Custom OpenRouter key has been securely saved.",
+      "subscribeButton": "Subscription ($5)",
+      "tip": "Buy a subscription to use your OpenRouter balance instead of our credits."
     },
     "steps": {
       "secret": {

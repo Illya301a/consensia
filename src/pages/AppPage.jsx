@@ -20,6 +20,7 @@ import {
 } from '../services/sessionsApi.js'
 import { useOrchestratorWs } from '../services/useOrchestratorWs.js'
 import { getCredits, getUserLabel } from '../services/profileUtils.js'
+import { deleteMyAccount } from '../services/githubActionsApi.js'
 
 const DATA_COLLECTION_KEY = 'consensia_data_collection_v1'
 const MAX_SESSION_CONNECT_ATTEMPTS = 3
@@ -39,6 +40,7 @@ const APP_COPY = {
       checkoutUrlMissing: 'Stripe checkout URL не получен',
       fileReadFailed: 'Не удалось прочитать файл (слишком большой или недоступен).',
       deleteSessionFailed: 'Не удалось удалить сессию',
+      deleteAccountFailed: 'Не удалось удалить аккаунт',
     },
     loading: 'Загрузка…',
     navHome: 'На главную',
@@ -56,6 +58,9 @@ const APP_COPY = {
     topUpButton: 'Пополнить',
     dataCollection: 'Сбор данных',
     logout: 'Выйти',
+    deleteAccount: 'Удалить аккаунт',
+    deleteAccountConfirm:
+      'Удалить аккаунт и все связанные данные? Это действие нельзя отменить.',
     home: 'Главная',
     historyAria: 'История чатов',
     historyTitle: 'История',
@@ -101,6 +106,7 @@ const APP_COPY = {
       checkoutUrlMissing: 'Stripe checkout URL не отримано',
       fileReadFailed: 'Не вдалося прочитати файл (завеликий або недоступний).',
       deleteSessionFailed: 'Не вдалося видалити сесію',
+      deleteAccountFailed: 'Не вдалося видалити акаунт',
     },
     loading: 'Завантаження…',
     navHome: 'На головну',
@@ -118,6 +124,9 @@ const APP_COPY = {
     topUpButton: 'Поповнити',
     dataCollection: 'Збір даних',
     logout: 'Вийти',
+    deleteAccount: 'Видалити акаунт',
+    deleteAccountConfirm:
+      'Видалити акаунт і всі повʼязані дані? Цю дію неможливо скасувати.',
     home: 'Головна',
     historyAria: 'Історія чатів',
     historyTitle: 'Історія',
@@ -163,6 +172,7 @@ const APP_COPY = {
       checkoutUrlMissing: 'Stripe checkout URL was not received',
       fileReadFailed: 'Failed to read file (too large or unavailable).',
       deleteSessionFailed: 'Failed to delete session',
+      deleteAccountFailed: 'Failed to delete account',
     },
     loading: 'Loading…',
     navHome: 'Home',
@@ -180,6 +190,9 @@ const APP_COPY = {
     topUpButton: 'Top up',
     dataCollection: 'Data collection',
     logout: 'Log out',
+    deleteAccount: 'Delete account',
+    deleteAccountConfirm:
+      'Delete account and all related data? This action cannot be undone.',
     home: 'Home',
     historyAria: 'Chat history',
     historyTitle: 'History',
@@ -613,6 +626,7 @@ export default function AppPage() {
   const [topUpAmount, setTopUpAmount] = useState('10')
   const [topUpLoading, setTopUpLoading] = useState(false)
   const [topUpError, setTopUpError] = useState('')
+  const [deletingAccount, setDeletingAccount] = useState(false)
   const [dataCollection, setDataCollection] = useState(() => {
     try {
       const raw = localStorage.getItem(DATA_COLLECTION_KEY)
@@ -1189,6 +1203,25 @@ export default function AppPage() {
     navigate('/', { replace: true })
   }, [disconnect, logout, navigate])
 
+  const handleDeleteAccount = useCallback(async () => {
+    const shouldDelete = window.confirm(c.deleteAccountConfirm)
+    if (!shouldDelete) return
+    setDeletingAccount(true)
+    try {
+      const result = await deleteMyAccount()
+      if (!result.ok) throw new Error(result.error || c.errors.deleteAccountFailed)
+      setProfileOpen(false)
+      setMobileSidebarOpen(false)
+      disconnect()
+      logout()
+      navigate('/', { replace: true })
+    } catch (e) {
+      window.alert(e?.message || String(e))
+    } finally {
+      setDeletingAccount(false)
+    }
+  }, [c.deleteAccountConfirm, c.errors.deleteAccountFailed, disconnect, logout, navigate])
+
   const handleTopUp = useCallback(async () => {
     const amount = Number(topUpAmount)
     if (!Number.isFinite(amount) || amount < 1) {
@@ -1605,9 +1638,14 @@ export default function AppPage() {
                     <button type="button" className="chat-app__profile-logout" onClick={handleLogout}>
                       {c.logout}
                     </button>
-                    <Link to="/" className="chat-app__profile-link" onClick={() => setProfileOpen(false)}>
-                      {c.home}
-                    </Link>
+                    <button
+                      type="button"
+                      className="chat-app__profile-link"
+                      onClick={handleDeleteAccount}
+                      disabled={deletingAccount}
+                    >
+                      {deletingAccount ? '...' : c.deleteAccount}
+                    </button>
                   </div>
                 </div>
               ) : null}
@@ -1749,13 +1787,14 @@ export default function AppPage() {
                       <button type="button" className="chat-app__profile-logout" onClick={handleLogout}>
                         {c.logout}
                       </button>
-                      <Link
-                        to="/"
+                      <button
+                        type="button"
                         className="chat-app__profile-link"
-                        onClick={() => setMobileSidebarOpen(false)}
+                        onClick={handleDeleteAccount}
+                        disabled={deletingAccount}
                       >
-                        {c.home}
-                      </Link>
+                        {deletingAccount ? '...' : c.deleteAccount}
+                      </button>
                     </div>
                 </div>
               </div>

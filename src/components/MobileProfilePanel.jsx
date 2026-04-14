@@ -13,6 +13,8 @@ export default function MobileProfilePanel({
   dataCollection,
   onDataCollectionChange,
   onLogout,
+  onDeleteAccount,
+  deletingAccount = false,
 }) {
   const { t } = useTranslation()
   const credits = getCredits(user)
@@ -94,6 +96,14 @@ export default function MobileProfilePanel({
       <div className="chat-app__profile-actions">
         <button type="button" className="chat-app__profile-logout" onClick={onLogout}>
           {t('home.profile.logout')}
+        </button>
+        <button
+          type="button"
+          className="chat-app__profile-logout"
+          onClick={onDeleteAccount}
+          disabled={deletingAccount}
+        >
+          {deletingAccount ? '...' : t('home.profile.deleteAccount')}
         </button>
       </div>
     </div>

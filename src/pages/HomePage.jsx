@@ -10,6 +10,7 @@ import MobileProfilePanel from '../components/MobileProfilePanel.jsx'
 import { useAuth } from '../services/AuthContext.jsx'
 import { apiFetch } from '../services/http.js'
 import { getCredits, getUserLabel } from '../services/profileUtils.js'
+import { deleteMyAccount } from '../services/githubActionsApi.js'
 
 const ConsensiaScene = lazy(() =>
   import('../components/ConsensiaScene').then((m) => ({ default: m.ConsensiaScene }))
@@ -31,6 +32,7 @@ export default function HomePage() {
   const [topUpAmount, setTopUpAmount] = useState('10')
   const [topUpLoading, setTopUpLoading] = useState(false)
   const [topUpError, setTopUpError] = useState('')
+  const [deletingAccount, setDeletingAccount] = useState(false)
   const [dataCollection, setDataCollection] = useState(() => {
     try {
       const raw = localStorage.getItem(DATA_COLLECTION_KEY)
@@ -127,6 +129,24 @@ export default function HomePage() {
   }
 
   const closeMobileMenu = () => setMobileMenuOpen(false)
+  const handleDeleteAccount = async () => {
+    const shouldDelete = window.confirm(t('home.profile.deleteConfirm'))
+    if (!shouldDelete) return
+    setDeletingAccount(true)
+    try {
+      const result = await deleteMyAccount()
+      if (!result.ok) {
+        throw new Error(result.error || t('home.profile.deleteError'))
+      }
+      setProfileOpen(false)
+      logout()
+    } catch (e) {
+      window.alert(e?.message || String(e))
+    } finally {
+      setDeletingAccount(false)
+    }
+  }
+
   const mobileProfile = isAuthenticated ? (
     <MobileProfilePanel
       user={user}
@@ -143,6 +163,11 @@ export default function HomePage() {
         logout()
         closeMobileMenu()
       }}
+      onDeleteAccount={async () => {
+        await handleDeleteAccount()
+        closeMobileMenu()
+      }}
+      deletingAccount={deletingAccount}
     />
   ) : null
 
@@ -251,6 +276,14 @@ export default function HomePage() {
                           }}
                         >
                           {t('home.profile.logout')}
+                        </button>
+                        <button
+                          type="button"
+                          className="chat-app__profile-logout"
+                          onClick={handleDeleteAccount}
+                          disabled={deletingAccount}
+                        >
+                          {deletingAccount ? '...' : t('home.profile.deleteAccount')}
                         </button>
                       </div> 
                     </div>

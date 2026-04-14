@@ -56,6 +56,9 @@
       "credits": "Кредити: {{count}}",
       "dataCollection": "Збір даних",
       "logout": "Вийти",
+      "deleteAccount": "Видалити акаунт",
+      "deleteConfirm": "Видалити акаунт і всі повʼязані дані? Цю дію неможливо скасувати.",
+      "deleteError": "Не вдалося видалити акаунт",
       "topUp": {
         "amountAria": "Сума поповнення в доларах",
         "preview": "{{count}} кр.",
@@ -229,9 +232,14 @@
       "title": "Додаткові дії",
       "lead": "Підготуйте все необхідне перед запуском workflow.",
       "generateButton": "Генерація API ключа",
-      "openRouterPlaceholder": "openrouter api key",
-      "subscribeButton": "Підписка",
-      "tip": "Ви можете вставити власний API ключ OpenRouter у поле вище та використовувати його у своїй інтеграції."
+      "saveKeyButton": "Зберегти ключ",
+      "generatedKeyLabel": "API ключ",
+      "openRouterPlaceholder": "OpenRouter API ключ",
+      "openRouterRequired": "Введіть OpenRouter API ключ",
+      "generateSuccess": "Збережіть цей ключ, ми не зможемо показати його знову.",
+      "saveSuccess": "Кастомний ключ OpenRouter надійно збережено.",
+      "subscribeButton": "Підписка (5$)",
+      "tip": "Купіть підписку, щоб використовувати свій баланс OpenRouter замість наших кредитів."
     },
     "steps": {
       "secret": {

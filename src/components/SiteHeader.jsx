@@ -6,6 +6,7 @@ import TopBurgerMenu from './TopBurgerMenu.jsx'
 import MobileProfilePanel from './MobileProfilePanel.jsx'
 import { useAuth } from '../services/AuthContext.jsx'
 import { apiFetch } from '../services/http.js'
+import { deleteMyAccount } from '../services/githubActionsApi.js'
 const DATA_COLLECTION_KEY = 'consensia_data_collection_v1'
 
 export default function SiteHeader() {
@@ -16,6 +17,7 @@ export default function SiteHeader() {
   const [topUpAmount, setTopUpAmount] = useState('10')
   const [topUpLoading, setTopUpLoading] = useState(false)
   const [topUpError, setTopUpError] = useState('')
+  const [deletingAccount, setDeletingAccount] = useState(false)
   const [dataCollection, setDataCollection] = useState(() => {
     try {
       const raw = localStorage.getItem(DATA_COLLECTION_KEY)
@@ -75,6 +77,22 @@ export default function SiteHeader() {
       setTopUpError(e?.message || String(e))
     } finally {
       setTopUpLoading(false)
+    }
+  }
+
+  const handleDeleteAccount = async () => {
+    const shouldDelete = window.confirm(t('home.profile.deleteConfirm'))
+    if (!shouldDelete) return
+    setDeletingAccount(true)
+    try {
+      const result = await deleteMyAccount()
+      if (!result.ok) throw new Error(result.error || t('home.profile.deleteError'))
+      logout()
+      setMenuOpen(false)
+    } catch (e) {
+      window.alert(e?.message || String(e))
+    } finally {
+      setDeletingAccount(false)
     }
   }
 
@@ -158,6 +176,8 @@ export default function SiteHeader() {
                   logout()
                   setMenuOpen(false)
                 }}
+                onDeleteAccount={handleDeleteAccount}
+                deletingAccount={deletingAccount}
               />
             </div>
           ) : null}

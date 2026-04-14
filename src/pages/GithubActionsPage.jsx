@@ -5,11 +5,24 @@ import './GithubActionsPage.scss'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import { Reveal } from '../components/Reveal.jsx'
+import { useAuth } from '../services/AuthContext.jsx'
+import {
+  createCliPassCheckout,
+  generateCliApiKey,
+  saveOpenRouterApiKey,
+} from '../services/githubActionsApi.js'
 
 export default function GithubActionsPage() {
   const { t } = useTranslation()
   const c = t('githubActionsPage', { returnObjects: true })
+  const { isAuthenticated, loginWithGoogle } = useAuth()
   const [openRouterKey, setOpenRouterKey] = useState('')
+  const [generatedCliKey, setGeneratedCliKey] = useState('')
+  const [savingOpenRouter, setSavingOpenRouter] = useState(false)
+  const [generatingCliKey, setGeneratingCliKey] = useState(false)
+  const [openingCheckout, setOpeningCheckout] = useState(false)
+  const [actionsError, setActionsError] = useState('')
+  const [actionsSuccess, setActionsSuccess] = useState('')
 
   useEffect(() => {
     const prev = document.title
@@ -18,6 +31,71 @@ export default function GithubActionsPage() {
       document.title = prev
     }
   }, [c.docTitle])
+
+  const requireAuth = () => {
+    if (isAuthenticated) return true
+    loginWithGoogle()
+    return false
+  }
+
+  const handleGenerateCliKey = async () => {
+    if (!requireAuth()) return
+    setActionsError('')
+    setActionsSuccess('')
+    setGeneratingCliKey(true)
+    try {
+      const result = await generateCliApiKey()
+      if (!result.ok) throw new Error(result.error || 'Failed to generate CLI key')
+      setGeneratedCliKey(result.cliApiKey || '')
+      setActionsSuccess(c.controls.generateSuccess || result.message || 'CLI key generated')
+      if (result.cliApiKey && navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(result.cliApiKey).catch(() => null)
+      }
+    } catch (e) {
+      setActionsError(e?.message || String(e))
+    } finally {
+      setGeneratingCliKey(false)
+    }
+  }
+
+  const handleSaveOpenRouterKey = async () => {
+    if (!requireAuth()) return
+    const key = String(openRouterKey || '').trim()
+    if (!key) {
+      setActionsError(c.controls.openRouterRequired || 'OpenRouter API key is required')
+      setActionsSuccess('')
+      return
+    }
+    setActionsError('')
+    setActionsSuccess('')
+    setSavingOpenRouter(true)
+    try {
+      const result = await saveOpenRouterApiKey(key)
+      if (!result.ok) throw new Error(result.error || 'Failed to save OpenRouter key')
+      setActionsSuccess(c.controls.saveSuccess || result.message || 'OpenRouter key saved')
+    } catch (e) {
+      setActionsError(e?.message || String(e))
+    } finally {
+      setSavingOpenRouter(false)
+    }
+  }
+
+  const handleSubscribeCliPass = async () => {
+    if (!requireAuth()) return
+    setActionsError('')
+    setActionsSuccess('')
+    setOpeningCheckout(true)
+    try {
+      const result = await createCliPassCheckout()
+      if (!result.ok) throw new Error(result.error || 'Failed to create checkout')
+      if (!result.checkoutUrl) throw new Error('Stripe checkout URL is missing')
+      window.location.href = result.checkoutUrl
+    } catch (e) {
+      setActionsError(e?.message || String(e))
+    } finally {
+      setOpeningCheckout(false)
+    }
+  }
 
   return (
     <div className="app cli-guide-page">
@@ -47,22 +125,55 @@ export default function GithubActionsPage() {
             <section className="cli-guide-card">
               <h2>{c.controls.title}</h2>
               <p>{c.controls.lead}</p>
-              <div className="cli-guide-cta-row">
-                <a className="cli-guide-page__btn" href="/app">
-                  {c.controls.generateButton}
-                </a>
-                <label className="cli-guide-openrouter-field" htmlFor="openrouter-key">
-                  <input
-                    id="openrouter-key"
-                    type="password"
-                    placeholder={c.controls.openRouterPlaceholder}
-                    value={openRouterKey}
-                    onChange={(e) => setOpenRouterKey(e.target.value)}
-                  />
-                </label>
-                <a className="cli-guide-page__btn cli-guide-page__btn--ghost" href="/app">
-                  {c.controls.subscribeButton}
-                </a>
+              <div className="cli-guide-actions">
+                <button
+                  type="button"
+                  className="cli-guide-page__btn"
+                  onClick={handleGenerateCliKey}
+                  disabled={generatingCliKey}
+                >
+                  {generatingCliKey ? '...' : c.controls.generateButton}
+                </button>
+                <div className="cli-guide-openrouter-inline">
+                  <label className="cli-guide-openrouter-field" htmlFor="openrouter-key">
+                    <input
+                      id="openrouter-key"
+                      type="password"
+                      placeholder={c.controls.openRouterPlaceholder}
+                      value={openRouterKey}
+                      onChange={(e) => setOpenRouterKey(e.target.value)}
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    className="cli-guide-page__btn cli-guide-page__btn--ghost cli-guide-page__btn--inline"
+                    onClick={handleSaveOpenRouterKey}
+                    disabled={savingOpenRouter}
+                  >
+                    {savingOpenRouter ? '...' : c.controls.saveKeyButton}
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  className="cli-guide-page__btn cli-guide-page__btn--ghost"
+                  onClick={handleSubscribeCliPass}
+                  disabled={openingCheckout}
+                >
+                  {openingCheckout ? '...' : c.controls.subscribeButton}
+                </button>
+              </div>
+              <div className="cli-guide-feedback">
+                {generatedCliKey ? (
+                  <p className="cli-guide-card__mono">
+                    {c.controls.generatedKeyLabel || 'CLI key'}: {generatedCliKey}
+                  </p>
+                ) : null}
+                {actionsSuccess ? (
+                  <p className="cli-guide-card__notice cli-guide-card__notice--success">{actionsSuccess}</p>
+                ) : null}
+                {actionsError ? (
+                  <p className="cli-guide-card__notice cli-guide-card__notice--error">{actionsError}</p>
+                ) : null}
               </div>
               <p className="cli-guide-card__tip">{c.controls.tip}</p>
             </section>
