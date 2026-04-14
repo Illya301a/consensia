@@ -4,10 +4,10 @@ on:
   push:
     branches:
       - main
-      - 'feature/**' # Маска для отслеживания фича-веток
+      - 'feature/**' # Pattern for feature branches
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   review:
@@ -16,12 +16,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2 # Достаточно для сравнения текущего и предыдущего коммита
+          fetch-depth: 2 # Enough to compare current and previous commits
 
       - name: Run Consensia AI Reviewer
-        uses: Ashixi/consensia_cli@main
+        uses: Ashixi/consensia-action@main
         with:
           api-key: ${{ secrets.CONSENSIA_API_KEY }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          target: 'commit' # Указываем, что это прямой коммит
+          target: 'commit' # Indicates this is a direct commit
           mode: 'BALANCED'
