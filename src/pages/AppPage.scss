@@ -637,7 +637,6 @@ $bg-deep: #fce7f3;
 .chat-msg--task {
   position: relative;
   border-radius: 1rem 1rem 0.35rem 1rem;
-  padding-bottom: 1.55rem;
 }
 
 .chat-msg__task-meta {
@@ -1812,13 +1811,23 @@ $bg-deep: #fce7f3;
 }
 
 .chat-app__profile-link {
-  color: rgba(255, 255, 255, 0.76);
-  text-decoration: none;
+  border: none;
+  background: transparent;
+  color: rgb(255, 255, 255);
+  cursor: pointer;
   font-size: 0.85rem;
   font-weight: 600;
+  padding: 0.4rem 0.55rem;
+  border-radius: 0.7rem;
 
-  &:hover {
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.08);
     color: #fff;
+  }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: progress;
   }
 }
 
