@@ -647,7 +647,7 @@ $font-logo: $font-display;
   backdrop-filter: blur(10px);
   -webkit-tap-highlight-color: transparent;
 
-  @media (max-width: 767.98px) {
+  @media (max-width: 1023.98px) {
     display: inline-flex;
   }
 }
@@ -695,7 +695,7 @@ $font-logo: $font-display;
   transform: rotate(-45deg);
 }
 
-@media (max-width: 767.98px) {
+@media (max-width: 1023.98px) {
   .top__nav--desktop,
   .motion-toggle--desktop {
     display: none;
@@ -714,7 +714,7 @@ $font-logo: $font-display;
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .top__lang--menu {
     display: none;
   }
@@ -738,7 +738,7 @@ $font-logo: $font-display;
     pointer-events: auto;
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
     display: none;
   }
 }
@@ -773,7 +773,7 @@ $font-logo: $font-display;
     pointer-events: auto;
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
     display: none;
   }
 }
@@ -867,7 +867,7 @@ $font-logo: $font-display;
   }
 }
 
-@media (max-width: 767.98px) {
+@media (max-width: 1023.98px) {
   .top .chat-app__profile {
     display: none;
   }
@@ -924,6 +924,13 @@ $font-logo: $font-display;
   flex-wrap: wrap;
   gap: 0.75rem;
   animation: fade-up 0.9s ease 0.24s backwards;
+
+  @media (max-width: 767.98px) {
+    flex-wrap: nowrap;
+    gap: 0.45rem;
+    width: 100%;
+    justify-content: space-around;
+  }
 }
 
 .hero__tags {
@@ -945,6 +952,22 @@ $font-logo: $font-display;
     background: rgba(255, 255, 255, 0.72);
     border: 1px solid rgba(244, 114, 182, 0.22);
     backdrop-filter: blur(8px);
+  }
+
+  @media (max-width: 767.98px) {
+    flex-wrap: nowrap;
+    gap: 0.4rem;
+    justify-content: center;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+
+    li {
+      flex: 0 0 auto;
+      white-space: nowrap;
+      font-size: 0.72rem;
+      padding: 0.3rem 0.58rem;
+    }
   }
 }
 
@@ -985,6 +1008,14 @@ $font-logo: $font-display;
   &--lg {
     padding: 1rem 1.85rem;
     font-size: 1rem;
+  }
+
+  @media (max-width: 767.98px) {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0.72rem 0.55rem;
+    font-size: 0.74rem;
+    white-space: nowrap;
   }
 }
 
@@ -1410,6 +1441,10 @@ $font-logo: $font-display;
   max-width: 58rem;
   margin: 0 auto;
   padding: clamp(2.75rem, 7vw, 4rem) clamp(1.25rem, 4vw, 2rem) clamp(2rem, 5vw, 2.75rem);
+
+  @media (max-width: 64rem) {
+    padding: clamp(2rem, 6vw, 2.75rem) 1rem clamp(1.35rem, 4vw, 2rem);
+  }
 }
 
 .footer__grid {
@@ -1419,11 +1454,44 @@ $font-logo: $font-display;
   text-align: left;
   align-items: start;
 
-  @media (max-width: 52rem) {
-    grid-template-columns: 1fr 1fr;
+  @media (max-width: 64rem) {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    text-align: center;
+
     .footer__brand {
-      grid-column: 1 / -1;
+      align-items: center;
     }
+
+    .footer__tagline {
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 26rem;
+    }
+
+    .footer__badge {
+      align-self: center;
+    }
+
+    .footer__col {
+      align-items: center;
+      width: 100%;
+    }
+
+    .footer__col--panel {
+      text-align: center;
+      align-items: center;
+    }
+
+    .footer__panel-text {
+      max-width: 26rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  @media (max-width: 52rem) {
+    grid-template-columns: 1fr;
   }
 
   @media (max-width: 36rem) {
@@ -1723,7 +1791,7 @@ $font-logo: $font-display;
   box-shadow: 0 8px 18px rgba(244, 114, 182, 0.25);
 }
 
-@media (max-width: 767.98px) {
+@media (max-width: 1023.98px) {
   .site-header {
     position: sticky;
     top: 0;
@@ -1755,7 +1823,7 @@ $font-logo: $font-display;
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .site-header {
     position: static;
     top: auto;

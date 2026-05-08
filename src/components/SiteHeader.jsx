@@ -144,12 +144,6 @@ export default function SiteHeader() {
                 {t('nav.developers')}
               </NavLink>
               <NavLink
-                to="/app"
-                className={({ isActive }) => `top__menu-link${isActive ? ' top__menu-link--active' : ''}`}
-              >
-                {t('nav.app')}
-              </NavLink>
-              <NavLink
                 to="/github-actions"
                 className={({ isActive }) => `top__menu-link${isActive ? ' top__menu-link--active' : ''}`}
               >

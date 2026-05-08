@@ -16,7 +16,7 @@ const ConsensiaScene = lazy(() =>
   import('../components/ConsensiaScene').then((m) => ({ default: m.ConsensiaScene }))
 )
 
-const NAV_MOBILE_MAX_PX = 768
+const NAV_MOBILE_MAX_PX = 1024
 const DATA_COLLECTION_KEY = 'consensia_data_collection_v1'
 
 export default function HomePage() {
