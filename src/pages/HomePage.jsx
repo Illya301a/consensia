@@ -18,6 +18,7 @@ const ConsensiaScene = lazy(() =>
 
 const NAV_MOBILE_MAX_PX = 1024
 const DATA_COLLECTION_KEY = 'consensia_data_collection_v1'
+const PROFILE_POP_ANIMATION_MS = 180
 
 export default function HomePage() {
   const { t } = useTranslation()
@@ -27,6 +28,8 @@ export default function HomePage() {
   const [animationsEnabled, setAnimationsEnabled] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
+  const [profilePopRendered, setProfilePopRendered] = useState(false)
+  const [profilePopClosing, setProfilePopClosing] = useState(false)
   const profileRef = useRef(null)
   const [promoInfo, setPromoInfo] = useState(null)
   const [topUpAmount, setTopUpAmount] = useState('10')
@@ -54,6 +57,26 @@ export default function HomePage() {
       mq.removeEventListener('change', closeIfDesktop)
     }
   }, [mobileMenuOpen])
+
+  useEffect(() => {
+    if (profileOpen) {
+      setProfilePopRendered(true)
+      setProfilePopClosing(false)
+      return undefined
+    }
+
+    if (!profilePopRendered) return undefined
+
+    setProfilePopClosing(true)
+    const timeout = window.setTimeout(() => {
+      setProfilePopRendered(false)
+      setProfilePopClosing(false)
+    }, PROFILE_POP_ANIMATION_MS)
+
+    return () => {
+      window.clearTimeout(timeout)
+    }
+  }, [profileOpen, profilePopRendered])
 
   useEffect(() => {
     if (!profileOpen) return
@@ -219,8 +242,11 @@ export default function HomePage() {
                       </svg>
                     </span>
                   </button>
-                  {profileOpen ? (
-                    <div className="chat-app__profile-pop" role="menu">
+                  {profilePopRendered ? (
+                    <div
+                      className={`chat-app__profile-pop${profilePopClosing ? ' chat-app__profile-pop--closing' : ''}`}
+                      role="menu"
+                    >
                       <div className="chat-app__profile-head">
                         <div className="chat-app__profile-title">{userLabel}</div>
                         {getCredits(user) != null ? (

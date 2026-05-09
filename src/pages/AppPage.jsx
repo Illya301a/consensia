@@ -24,6 +24,7 @@ import { deleteMyAccount } from '../services/githubActionsApi.js'
 
 const DATA_COLLECTION_KEY = 'consensia_data_collection_v1'
 const MAX_SESSION_CONNECT_ATTEMPTS = 3
+const PROFILE_POP_ANIMATION_MS = 180
 
 const APP_COPY = {
   ru: {
@@ -627,6 +628,8 @@ export default function AppPage() {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
 
   const [profileOpen, setProfileOpen] = useState(false)
+  const [profilePopRendered, setProfilePopRendered] = useState(false)
+  const [profilePopClosing, setProfilePopClosing] = useState(false)
   const profileRef = useRef(null)
   const [promoInfo, setPromoInfo] = useState(null)
   const [topUpAmount, setTopUpAmount] = useState('10')
@@ -1266,6 +1269,26 @@ export default function AppPage() {
   }, [dataCollection])
 
   useEffect(() => {
+    if (profileOpen) {
+      setProfilePopRendered(true)
+      setProfilePopClosing(false)
+      return undefined
+    }
+
+    if (!profilePopRendered) return undefined
+
+    setProfilePopClosing(true)
+    const timeout = window.setTimeout(() => {
+      setProfilePopRendered(false)
+      setProfilePopClosing(false)
+    }, PROFILE_POP_ANIMATION_MS)
+
+    return () => {
+      window.clearTimeout(timeout)
+    }
+  }, [profileOpen, profilePopRendered])
+
+  useEffect(() => {
     const onDown = (ev) => {
       const el = profileRef.current
       if (!el) return
@@ -1596,8 +1619,11 @@ export default function AppPage() {
                   </svg>
                 </span>
               </button>
-              {profileOpen ? (
-                <div className="chat-app__profile-pop" role="menu">
+              {profilePopRendered ? (
+                <div
+                  className={`chat-app__profile-pop${profilePopClosing ? ' chat-app__profile-pop--closing' : ''}`}
+                  role="menu"
+                >
                   <div className="chat-app__profile-head">
                     <div className="chat-app__profile-title">{getUserLabel(user) || c.profileLabel}</div>
                     {getCredits(user) != null ? (
