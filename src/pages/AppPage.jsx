@@ -44,8 +44,10 @@ const APP_COPY = {
     },
     loading: 'Загрузка…',
     navHome: 'На главную',
+    authBackHome: 'Вернуться домой',
     authTitle: 'Вход в Consensia',
     authLead: 'Чтобы пользоваться чатом, войдите через Google — так мы связываем сессии с вашим аккаунтом.',
+    authHint: 'Безопасный вход через Google. Мы не публикуем ничего без вашего действия.',
     continueGoogle: 'Продолжить с Google',
     beta: 'Beta',
     closeHistory: 'Закрыть историю',
@@ -110,8 +112,10 @@ const APP_COPY = {
     },
     loading: 'Завантаження…',
     navHome: 'На головну',
+    authBackHome: 'Повернутися на головну',
     authTitle: 'Вхід у Consensia',
     authLead: 'Щоб користуватися чатом, увійдіть через Google — так ми повʼязуємо сесії з вашим акаунтом.',
+    authHint: 'Безпечний вхід через Google. Ми нічого не публікуємо без вашої дії.',
     continueGoogle: 'Продовжити з Google',
     beta: 'Beta',
     closeHistory: 'Закрити історію',
@@ -176,8 +180,10 @@ const APP_COPY = {
     },
     loading: 'Loading…',
     navHome: 'Home',
+    authBackHome: 'Back to home',
     authTitle: 'Sign in to Consensia',
     authLead: 'To use the chat, sign in with Google — this links sessions to your account.',
+    authHint: 'Secure sign-in with Google. We do not publish anything without your action.',
     continueGoogle: 'Continue with Google',
     beta: 'Beta',
     closeHistory: 'Close history',
@@ -1478,21 +1484,18 @@ export default function AppPage() {
     return (
       <div className="chat-app">
         <div className="chat-app__shell chat-app__shell--auth">
-          <header className="chat-app__header">
-            <div className="chat-app__brand">
-              <Link to="/" className="chat-app__logo">
+          <section className="chat-app__auth chat-app__auth--elevated">
+            <div className="chat-app__auth-glow" aria-hidden="true" />
+            <div className="chat-app__auth-card">
+              <Link to="/" className="chat-app__auth-brand">
                 Consensia
               </Link>
-            </div>
-            <Link to="/" className="chat-app__link">
-              {c.navHome}
-            </Link>
-          </header>
-          <section className="chat-app__auth">
+              <span className="chat-app__auth-pill">AI Workspace</span>
             <h1 className="chat-app__auth-title">{c.authTitle}</h1>
             <p className="chat-app__auth-lede">
               {c.authLead}
             </p>
+            <p className="chat-app__auth-hint">{c.authHint}</p>
             {authGateError ? (
               <p className="chat-app__auth-error" role="alert">
                 {authGateError}
@@ -1525,6 +1528,10 @@ export default function AppPage() {
               </svg>
               {c.continueGoogle}
             </button>
+              <Link to="/" className="chat-app__auth-home-btn">
+                {c.authBackHome}
+              </Link>
+            </div>
           </section>
         </div>
       </div>

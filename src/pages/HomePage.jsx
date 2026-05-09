@@ -368,7 +368,7 @@ export default function HomePage() {
               <a className="btn btn--ghost" href="/github-actions">
                 {t('home.hero.howItWorks')}
               </a>
-              <a className="btn btn--ghost" href="/ai-agent">AI Agent</a>
+              <a className="btn btn--ghost" href="/ai-agent">{t('nav.aiAgent')}</a>
             </div>
             <ul className="hero__tags" aria-label={t('home.a11y.keyFeatures')}>
               <li>{t('home.hero.tags.models')}</li>

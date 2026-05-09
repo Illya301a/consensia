@@ -1217,38 +1217,105 @@ $bg-deep: #fce7f3;
 }
 
 .chat-app__shell--auth {
-  justify-content: flex-start;
+  justify-content: center;
+  align-items: center;
 }
 
 .chat-app__auth {
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 2rem 0 3rem;
-  max-width: 22rem;
+  width: 100%;
+  max-width: 40rem;
   margin: 0 auto;
+}
+
+.chat-app__auth--elevated {
+  position: relative;
+  padding: clamp(1rem, 3vw, 2rem);
+}
+
+.chat-app__auth-glow {
+  position: absolute;
+  inset: 12% 6% auto;
+  height: 55%;
+  pointer-events: none;
+  filter: blur(26px);
+  background:
+    radial-gradient(circle at 18% 20%, rgba(251, 113, 133, 0.23), transparent 48%),
+    radial-gradient(circle at 85% 30%, rgba(244, 114, 182, 0.22), transparent 46%);
+}
+
+.chat-app__auth-card {
+  position: relative;
+  width: min(100%, 35.5rem);
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  padding: clamp(1.6rem, 4vw, 2.45rem) clamp(1.2rem, 4vw, 2.6rem);
+  border-radius: 1.3rem;
+  background:
+    radial-gradient(110% 120% at 10% -15%, rgba(251, 113, 133, 0.16), rgba(251, 113, 133, 0) 58%),
+    radial-gradient(95% 85% at 100% 0%, rgba(244, 114, 182, 0.14), rgba(244, 114, 182, 0) 62%),
+    linear-gradient(168deg, rgba(255, 255, 255, 0.94), rgba(255, 245, 250, 0.88));
+  border: 1px solid rgba(244, 114, 182, 0.25);
+  box-shadow:
+    0 16px 44px rgba(15, 10, 12, 0.1),
+    0 8px 24px rgba(244, 114, 182, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.chat-app__auth-brand {
+  text-decoration: none;
+  font-family: 'Literata', Georgia, serif;
+  font-size: 1.75rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  color: $text;
+}
+
+.chat-app__auth-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.28rem 0.72rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #db2777;
+  background: rgba(252, 231, 243, 0.7);
+  border: 1px solid rgba(244, 114, 182, 0.28);
 }
 
 .chat-app__auth-title {
   font-family: 'Literata', Georgia, serif;
-  font-size: 1.5rem;
+  font-size: clamp(1.75rem, 3vw, 2.2rem);
   font-weight: 600;
-  margin: 0 0 0.75rem;
+  margin: 0.15rem 0 0.2rem;
   color: $text;
 }
 
 .chat-app__auth-lede {
-  margin: 0 0 1.5rem;
-  font-size: 0.95rem;
+  margin: 0;
+  font-size: 1.02rem;
   line-height: 1.55;
   color: $text-muted;
+  max-width: 28rem;
+}
+
+.chat-app__auth-hint {
+  margin: -0.1rem 0 0.45rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: rgba(107, 74, 88, 0.86);
 }
 
 .chat-app__auth-error {
-  margin: 0 0 1rem;
+  margin: 0 0 0.4rem;
   padding: 0.65rem 0.85rem;
   border-radius: 10px;
   font-size: 0.88rem;
@@ -1263,14 +1330,14 @@ $bg-deep: #fce7f3;
   justify-content: center;
   gap: 0.65rem;
   width: 100%;
-  max-width: 18rem;
-  padding: 0.75rem 1.25rem;
+  max-width: 20rem;
+  padding: 0.82rem 1.4rem;
   border-radius: 999px;
   border: 1px solid rgba(236, 72, 153, 0.24);
   background: #fff;
   color: $text-muted;
   font: inherit;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
@@ -1282,6 +1349,30 @@ $bg-deep: #fce7f3;
 
 .chat-app__google-svg {
   flex-shrink: 0;
+}
+
+.chat-app__auth-home-btn {
+  margin-top: 0.2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  width: 100%;
+  max-width: 20rem;
+  padding: 0.74rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(244, 114, 182, 0.28);
+  background: rgba(255, 255, 255, 0.82);
+  color: $text-muted;
+  font-size: 0.95rem;
+  font-weight: 650;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+
+  &:hover {
+    color: $text;
+    border-color: rgba(244, 114, 182, 0.48);
+    background: rgba(255, 255, 255, 0.95);
+  }
 }
 
 .chat-app__setup-lede {

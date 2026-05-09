@@ -12,7 +12,8 @@
     "models": "Models",
     "developers": "Developers",
     "app": "App",
-    "githubActions": "GitHub Actions"
+    "githubActions": "GitHub Actions",
+    "aiAgent": "AI Agent"
   },
   "languages": {
     "ru": "Russian",
@@ -288,6 +289,42 @@
         "Default case (inline comments): the script tries to post findings right next to problematic lines in code (inside the PR Files changed tab).",
         "Fallback case (single summary comment): GitHub often rejects line-level comments (422 Unprocessable Entity) if AI points to a line outside the current diff. To avoid losing results, the action catches this error and automatically posts all findings as one regular PR or commit comment."
       ]
+    }
+  },
+  "aiAgentPage": {
+    "docTitle": "AI Agent · Consensia",
+    "title": "Consensia Agent",
+    "lead": "Consensia Agent is a multi-layered AI system designed to transform raw social media noise into verified blockchain intelligence. Unlike standard trackers, Sentinel acts as an autonomous detective, using a cascaded architecture of fine-tuned models to identify, investigate, and confirm security incidents in real-time.",
+    "coreInnovation": {
+      "title": "Core Innovation: Fact-Checking Pipeline",
+      "lead": "Our unique edge lies in Dynamic Context Management. Our models do not just summarize data; they actively manage their own investigative cycle:",
+      "items": [
+        {
+          "title": "REQUEST_CONTEXT",
+          "text": "The agent identifies potential signals and autonomously generates precise search parameters for blockchain databases."
+        },
+        {
+          "title": "DROP_CONTEXT",
+          "text": "An advanced Negative Learning mechanism automatically discards rumors, noise, or unconfirmed FUD if on-chain data does not match the report."
+        },
+        {
+          "title": "VERIFIED ALERTS",
+          "text": "Sentinel only triggers high-priority alerts when human-reported events are backed by immutable blockchain facts."
+        }
+      ]
+    },
+    "architecture": {
+      "title": "Technical Architecture",
+      "items": [
+        "L1 Filter (1.5B Model): ultra-fast sanitization and noise reduction of incoming data streams.",
+        "L2 Analyzer (3B Model): deep reasoning engine for tool calling and data verification.",
+        "Python Orchestrator: seamless integration between AI reasoning and raw blockchain data filtering."
+      ]
+    },
+    "cta": {
+      "tagline": "Stop chasing rumors. Start monitoring facts.",
+      "downloadButton": "Download",
+      "note": "The button will be enabled in a future update."
     }
   },
   "paymentSuccessPage": {
