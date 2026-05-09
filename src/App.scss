@@ -1358,6 +1358,16 @@ $font-logo: $font-display;
   }
 }
 
+@media (max-width: 767.98px) {
+  .cta-band__inner .btn {
+    flex: 0 0 auto;
+    min-width: 9.5rem;
+    padding: 0.72rem 1rem;
+    font-size: 0.82rem;
+    white-space: nowrap;
+  }
+}
+
 .cards {
   display: grid;
   gap: 1.25rem;

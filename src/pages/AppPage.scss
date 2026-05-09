@@ -221,17 +221,21 @@ $bg-deep: #fce7f3;
   padding: 1.25rem 0 1.5rem;
   display: grid;
   justify-items: center;
-  align-content: start;
+}
+
+@media (min-width: 768px) {
+  .chat-app__setup {
+    margin-right: -10px;
+    padding-right: 10px;
+  }
 }
 
 .chat-app__setup-card {
   position: relative;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
   width: min(100%, 90rem);
-  min-height: min(78vh, 52rem);
   padding: 2.4rem 2.8rem;
   border-radius: 1.15rem;
   background:
@@ -239,10 +243,7 @@ $bg-deep: #fce7f3;
     radial-gradient(95% 70% at 102% 5%, rgba(244, 114, 182, 0.1), rgba(244, 114, 182, 0) 64%),
     linear-gradient(168deg, rgba(255, 255, 255, 0.92), rgba(255, 245, 250, 0.86));
   border: 1px solid rgba(244, 114, 182, 0.22);
-  box-shadow:
-    0 20px 52px rgba(15, 10, 12, 0.08),
-    0 6px 18px rgba(244, 114, 182, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.68);
+  
   backdrop-filter: blur(14px);
   transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.25s ease;
 
@@ -250,9 +251,7 @@ $bg-deep: #fce7f3;
     transform: translateY(-2px);
     border-color: rgba(244, 114, 182, 0.3);
     box-shadow:
-      0 26px 64px rgba(15, 10, 12, 0.1),
-      0 10px 24px rgba(244, 114, 182, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.68);
+      0 26px 64px rgba(15, 10, 12, 0.05)
   }
 }
 
@@ -1016,13 +1015,6 @@ $bg-deep: #fce7f3;
   z-index: 5;
   margin-top: -4.75rem;
   padding: 1.35rem 1.25rem 1.25rem;
-  background: linear-gradient(
-    180deg,
-    rgba(253, 242, 248, 0) 0%,
-    rgba(253, 242, 248, 0.65) 42%,
-    rgba(253, 242, 248, 0.9) 62%,
-    rgba(253, 242, 248, 0.97) 100%
-  );
   backdrop-filter: none;
 }
 
@@ -1428,7 +1420,6 @@ $bg-deep: #fce7f3;
   padding: 1rem 0 1.75rem;
   min-height: 0;
   flex: 1;
-  overflow: hidden;
 }
 
 .chat-app__main {

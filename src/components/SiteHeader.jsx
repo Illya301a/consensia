@@ -149,6 +149,12 @@ export default function SiteHeader() {
               >
                 {t('nav.githubActions')}
               </NavLink>
+              <NavLink
+                to="/ai-agent"
+                className={({ isActive }) => `top__menu-link${isActive ? ' top__menu-link--active' : ''}`}
+              >
+                {t('nav.aiAgent')}
+              </NavLink>
             </nav>
           }
         >
