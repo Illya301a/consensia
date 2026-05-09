@@ -349,12 +349,6 @@ export default function HomePage() {
                       <Link to="/developers" onClick={closeMobileMenu}>
                         {t('nav.developers')}
                       </Link>
-                      <Link to="/github-actions" onClick={closeMobileMenu}>
-                        {t('nav.githubActions')}
-                      </Link>
-                      <Link to="/ai-agent" onClick={closeMobileMenu}>
-                        {t('nav.aiAgent')}
-                      </Link>
                     </nav>
                     {!isAuthenticated ? (
                       <button

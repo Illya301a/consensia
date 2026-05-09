@@ -1435,6 +1435,7 @@ $bg-deep: #fce7f3;
 
 .chat-app__main {
   min-width: 0;
+  height: calc(100% + 5px);
   display: flex;
   flex-direction: column;
   min-height: 0;

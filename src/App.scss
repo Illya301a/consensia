@@ -959,10 +959,16 @@ $font-logo: $font-display;
   animation: fade-up 0.9s ease 0.24s backwards;
 
   @media (max-width: 767.98px) {
-    flex-wrap: nowrap;
-    gap: 0.45rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.72rem;
     width: 100%;
-    justify-content: space-around;
+    max-width: 30rem;
+    margin-inline: auto;
+
+    .btn:first-child {
+      grid-column: 1 / -1;
+    }
   }
 }
 
@@ -988,18 +994,41 @@ $font-logo: $font-display;
   }
 
   @media (max-width: 767.98px) {
-    flex-wrap: nowrap;
-    gap: 0.4rem;
+    flex-wrap: wrap;
+    gap: 0.62rem;
     justify-content: center;
     width: 100%;
+    max-width: 30rem;
     margin-left: auto;
     margin-right: auto;
 
     li {
-      flex: 0 0 auto;
+      position: relative;
+      flex: 0 1 auto;
       white-space: nowrap;
-      font-size: 0.72rem;
-      padding: 0.3rem 0.58rem;
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.28rem 0.18rem 0.28rem 0.85rem;
+      border-color: transparent;
+      background: transparent;
+      backdrop-filter: none;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0.18rem;
+        top: 50%;
+        width: 0.34rem;
+        height: 0.34rem;
+        border-radius: 50%;
+        background: rgba(236, 72, 153, 0.75);
+        transform: translateY(-50%);
+      }
+    }
+
+    li:last-child {
+      display: none;
     }
   }
 }
@@ -1049,6 +1078,15 @@ $font-logo: $font-display;
     padding: 0.72rem 0.55rem;
     font-size: 0.74rem;
     white-space: nowrap;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .hero .cta .btn {
+    min-height: 3.35rem;
+    padding: 0.9rem 1rem;
+    font-size: 0.98rem;
+    font-weight: 750;
   }
 }
 
