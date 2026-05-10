@@ -130,6 +130,11 @@
   font-size: 0.9rem;
 }
 
+.ai-agent-card__note--error {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
 @keyframes aiAgentGradientFlow {
   0% {
     background-position: 0% 30%;

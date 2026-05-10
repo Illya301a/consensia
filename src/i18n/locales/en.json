@@ -324,7 +324,9 @@
     "cta": {
       "tagline": "Stop chasing rumors. Start monitoring facts.",
       "downloadButton": "Download",
-      "note": "The button will be enabled in a future update."
+      "downloading": "Downloading…",
+      "downloadError": "Could not download the agent. Please try again later.",
+      "note": "You will get consensia-agent.zip — the Consensia CLI agent archive."
     }
   },
   "paymentSuccessPage": {

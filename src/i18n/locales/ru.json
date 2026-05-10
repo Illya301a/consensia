@@ -324,7 +324,9 @@
     "cta": {
       "tagline": "Хватит гоняться за слухами. Начните мониторить факты.",
       "downloadButton": "Скачать",
-      "note": "Кнопка будет активирована в следующем обновлении."
+      "downloading": "Скачивание…",
+      "downloadError": "Не удалось скачать агента. Попробуйте позже.",
+      "note": "Вы получите consensia-agent.zip — архив CLI-агента Consensia."
     }
   },
   "paymentSuccessPage": {
