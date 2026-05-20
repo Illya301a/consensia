@@ -293,6 +293,13 @@
   },
   "aiAgentPage": {
     "docTitle": "AI Agent · Consensia",
+    "emoticon": ".·´¯`(>▂<)´¯`·.",
+    "title": "We're sorry",
+    "lead": "This page is still under active development. We'll be back with the full AI Agent experience soon.",
+    "backHome": "Back to home"
+  },
+  "aiAgentPageBeta": {
+    "docTitle": "AI Agent · Consensia",
     "title": "Consensia Agent",
     "lead": "Consensia Agent is a multi-layered AI system designed to transform raw social media noise into verified blockchain intelligence. Unlike standard trackers, Sentinel acts as an autonomous detective, using a cascaded architecture of fine-tuned models to identify, investigate, and confirm security incidents in real-time.",
     "coreInnovation": {
