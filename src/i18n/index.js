@@ -4,18 +4,20 @@ import LanguageDetector from 'i18next-browser-languagedetector'
 import en from './locales/en.json'
 import ru from './locales/ru.json'
 import ua from './locales/ua.json'
+import de from './locales/de.json'
 import { DEFAULT_LANGUAGE } from './constants.js'
 
 const resources = {
   ru: { translation: ru },
   ua: { translation: ua },
   en: { translation: en },
+  de: { translation: de },
 }
 
 function syncDocumentLang(lng) {
   if (typeof document === 'undefined') return
   const base = String(lng || '').split('-')[0]
-  const map = { ru: 'ru', ua: 'ua', en: 'en' }
+  const map = { ru: 'ru', ua: 'ua', en: 'en', de: 'de' }
   document.documentElement.lang = map[base] ?? 'ru'
 }
 
@@ -25,7 +27,7 @@ i18n
   .init({
     resources,
     fallbackLng: DEFAULT_LANGUAGE,
-    supportedLngs: ['ru', 'ua', 'en'],
+    supportedLngs: ['ru', 'ua', 'en', 'de'],
     load: 'languageOnly',
     interpolation: { escapeValue: false },
     react: {

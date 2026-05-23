@@ -55,14 +55,14 @@ export default function LanguageSwitcher({ className = '' }) {
         aria-expanded={open ? 'true' : 'false'}
         onClick={() => setOpen((v) => !v)}
       >
-        <span>{t(activeMeta.labelKey)}</span>
+        <span>{activeMeta.label}</span>
         <span className={`lang-switcher__chevron${open ? ' lang-switcher__chevron--open' : ''}`} aria-hidden="true">
           ▼
         </span>
       </button>
       {open ? (
         <div className="lang-switcher__menu" role="menu" aria-label={t('a11y.chooseLanguage')}>
-          {SUPPORTED_LANGUAGES.map(({ code, labelKey }) => (
+          {SUPPORTED_LANGUAGES.map(({ code, label }) => (
             <button
               key={code}
               type="button"
@@ -75,7 +75,7 @@ export default function LanguageSwitcher({ className = '' }) {
                 void i18n.changeLanguage(code)
               }}
             >
-              {t(labelKey)}
+              {label}
             </button>
           ))}
         </div>

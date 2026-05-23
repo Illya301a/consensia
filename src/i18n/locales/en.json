@@ -18,7 +18,8 @@
   "languages": {
     "ru": "Russian",
     "ua": "Ukrainian",
-    "en": "English"
+    "en": "English",
+    "de": "German"
   },
   "home": {
     "a11y": {
@@ -210,7 +211,8 @@
       "showMessage": "Show message",
       "creditsSpent": "Credits spent: {{count}}",
       "raw": "Raw",
-      "snippet": "Snippet"
+      "snippet": "Snippet",
+      "attachedFiles": "Attached files: {{count}}"
     }
   },
   "authCallback": {

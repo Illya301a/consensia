@@ -94,6 +94,7 @@ const APP_COPY = {
     spentCredits: 'Кредитов потрачено',
     placeholderLocked: 'Ожидаем ответ оркестратора…',
     placeholderOpen: 'Ваш ответ оркестратору…',
+    workspacePill: 'AI Workspace',
   },
   ua: {
     profileLabel: 'Профіль',
@@ -162,6 +163,7 @@ const APP_COPY = {
     spentCredits: 'Кредитів витрачено',
     placeholderLocked: 'Очікуємо відповідь оркестратора…',
     placeholderOpen: 'Ваша відповідь оркестратору…',
+    workspacePill: 'AI Workspace',
   },
   en: {
     profileLabel: 'Profile',
@@ -230,6 +232,76 @@ const APP_COPY = {
     spentCredits: 'Credits spent',
     placeholderLocked: 'Waiting for orchestrator response…',
     placeholderOpen: 'Your response to orchestrator…',
+    workspacePill: 'AI Workspace',
+  },
+  de: {
+    profileLabel: 'Profil',
+    modes: { economy: 'Sparsam', balanced: 'Ausgewogen', maxPower: 'Maximum' },
+    status: { connecting: 'Verbindung…', open: 'Bereit', closed: 'Getrennt' },
+    errors: {
+      loginFailed: 'Anmeldung fehlgeschlagen. Bitte erneut versuchen.',
+      sessionsLoadFailed: 'Sitzungsliste konnte nicht geladen werden',
+      sessionLoadStopped: 'Verbindung gestoppt. Bitte erneut versuchen.',
+      sessionLoadFailed: 'Sitzung konnte nicht geladen werden',
+      topUpMinAmount: 'Mindestaufladebetrag ist 1 $',
+      createPaymentFailed: 'Zahlung konnte nicht erstellt werden',
+      checkoutUrlMissing: 'Stripe-Checkout-URL wurde nicht empfangen',
+      fileReadFailed: 'Datei konnte nicht gelesen werden (zu groß oder nicht verfügbar).',
+      deleteSessionFailed: 'Sitzung konnte nicht gelöscht werden',
+      deleteAccountFailed: 'Konto konnte nicht gelöscht werden',
+    },
+    loading: 'Wird geladen…',
+    navHome: 'Zur Startseite',
+    authBackHome: 'Zur Startseite',
+    authTitle: 'Bei Consensia anmelden',
+    authLead: 'Für den Chat melden Sie sich mit Google an — so verknüpfen wir Sitzungen mit Ihrem Konto.',
+    authHint: 'Sichere Anmeldung über Google. Wir veröffentlichen nichts ohne Ihre Aktion.',
+    continueGoogle: 'Mit Google fortfahren',
+    beta: 'Beta',
+    closeHistory: 'Historie schließen',
+    openHistory: 'Historie öffnen',
+    newChat: 'Neuer Chat',
+    credits: 'Credits: {{count}}',
+    topUpAmountAria: 'Aufladebetrag in US-Dollar',
+    creditsShort: '{{count}} Cr.',
+    topUpRate: 'Kurs: {{multiplier}} Credits pro 1 $',
+    topUpButton: 'Aufladen',
+    dataCollection: 'Datenerfassung',
+    logout: 'Abmelden',
+    deleteAccount: 'Konto löschen',
+    deleteAccountConfirm:
+      'Konto und alle zugehörigen Daten löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
+    home: 'Startseite',
+    historyAria: 'Chat-Verlauf',
+    historyTitle: 'Verlauf',
+    closeMenu: 'Menü schließen',
+    sessionsLoading: 'Wird geladen…',
+    roundLabel: 'Runde',
+    roundMissing: 'Runde —',
+    deleteSessionAria: 'Sitzung löschen',
+    deleteTitle: 'Löschen',
+    historyEmpty: 'Ihre Chats erscheinen hier nach dem ersten Start.',
+    setupTitle: 'Neuer Chat',
+    setupLead: 'Code einfügen oder Dateien anhängen — und die Aufgabe beschreiben.',
+    setupLeadNonReview: 'Beschreiben Sie die Aufgabe und hängen Sie bei Bedarf Dateien an.',
+    codeLabel: 'Code',
+    attachFiles: 'Dateien an Code anhängen',
+    attachDocuments: 'Dokumente anhängen',
+    removeFileAria: '{{name}} entfernen',
+    contextLabelOptional: 'Aufgabe (optional)',
+    contextLabelRequired: 'Aufgabe',
+    contextPlaceholder: 'Z. B.: Schwachstellen finden und Fixes vorschlagen',
+    modeLabel: 'Modus',
+    roundsLabel: 'Runden',
+    resumeHint: 'Gespeicherte Sitzung wird fortgesetzt.',
+    connectBtn: 'Starten',
+    loadingSession: 'Sitzung wird geladen…',
+    generatingAria: 'Antwort wird generiert',
+    generatingText: 'Antwort wird generiert…',
+    spentCredits: 'Verbrauchte Credits',
+    placeholderLocked: 'Warte auf Antwort des Orchestrators…',
+    placeholderOpen: 'Ihre Antwort an den Orchestrator…',
+    workspacePill: 'KI-Arbeitsbereich',
   },
 }
 
@@ -546,7 +618,7 @@ function extractSpentCreditsFromDetail(detail, sessionData, sessionMeta) {
 export default function AppPage() {
   const { i18n, t } = useTranslation()
   const lang = String(i18n.resolvedLanguage || i18n.language || 'en').split('-')[0]
-  const c = APP_COPY[lang] || APP_COPY.ru
+  const c = APP_COPY[lang] || APP_COPY.en
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const sessionFromUrl = searchParams.get('session') || ''
@@ -1513,7 +1585,7 @@ export default function AppPage() {
               <Link to="/" className="chat-app__auth-brand">
                 Consensia
               </Link>
-              <span className="chat-app__auth-pill">AI Workspace</span>
+              <span className="chat-app__auth-pill">{c.workspacePill}</span>
             <h1 className="chat-app__auth-title">{c.authTitle}</h1>
             <p className="chat-app__auth-lede">
               {c.authLead}
