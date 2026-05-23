@@ -5,7 +5,11 @@ import en from './locales/en.json'
 import ru from './locales/ru.json'
 import ua from './locales/ua.json'
 import de from './locales/de.json'
-import { DEFAULT_LANGUAGE } from './constants.js'
+import {
+  DEFAULT_LANGUAGE,
+  normalizeLanguageCode,
+  SUPPORTED_LANGUAGE_CODES,
+} from './constants.js'
 
 const resources = {
   ru: { translation: ru },
@@ -16,9 +20,8 @@ const resources = {
 
 function syncDocumentLang(lng) {
   if (typeof document === 'undefined') return
-  const base = String(lng || '').split('-')[0]
-  const map = { ru: 'ru', ua: 'ua', en: 'en', de: 'de' }
-  document.documentElement.lang = map[base] ?? 'ru'
+  const code = normalizeLanguageCode(lng)
+  document.documentElement.lang = code === 'ua' ? 'uk' : code
 }
 
 i18n
@@ -26,8 +29,11 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: DEFAULT_LANGUAGE,
-    supportedLngs: ['ru', 'ua', 'en', 'de'],
+    fallbackLng: {
+      uk: ['ua'],
+      default: [DEFAULT_LANGUAGE],
+    },
+    supportedLngs: SUPPORTED_LANGUAGE_CODES,
     load: 'languageOnly',
     interpolation: { escapeValue: false },
     react: {
@@ -36,11 +42,19 @@ i18n
       bindI18nStore: 'added removed',
     },
     detection: {
-      // Keep user's explicit choice across route changes and hard reloads.
       order: ['localStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage'],
       lookupLocalStorage: 'i18nextLng',
+      convertDetectedLanguage: normalizeLanguageCode,
     },
+  })
+  .then(() => {
+    const resolved = normalizeLanguageCode(
+      i18n.resolvedLanguage || i18n.language,
+    )
+    if (resolved !== (i18n.resolvedLanguage || i18n.language)) {
+      return i18n.changeLanguage(resolved)
+    }
   })
   .then(() => {
     syncDocumentLang(i18n.resolvedLanguage || i18n.language)
