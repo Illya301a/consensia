@@ -19,7 +19,8 @@
     "ru": "Russisch",
     "ua": "Ukrainisch",
     "en": "Englisch",
-    "de": "Deutsch"
+    "de": "Deutsch",
+    "es": "Spanisch"
   },
   "home": {
     "a11y": {
@@ -213,6 +214,82 @@
       "raw": "Rohdaten",
       "snippet": "Ausschnitt",
       "attachedFiles": "Angehängte Dateien: {{count}}"
+    },
+    "page": {
+      "profileLabel": "Profil",
+      "modes": {
+        "economy": "Sparsam",
+        "balanced": "Ausgewogen",
+        "maxPower": "Maximum"
+      },
+      "status": {
+        "connecting": "Verbindung…",
+        "open": "Bereit",
+        "closed": "Getrennt"
+      },
+      "errors": {
+        "loginFailed": "Anmeldung fehlgeschlagen. Bitte erneut versuchen.",
+        "sessionsLoadFailed": "Sitzungsliste konnte nicht geladen werden",
+        "sessionLoadStopped": "Verbindung gestoppt. Bitte erneut versuchen.",
+        "sessionLoadFailed": "Sitzung konnte nicht geladen werden",
+        "topUpMinAmount": "Mindestaufladebetrag ist 1 $",
+        "createPaymentFailed": "Zahlung konnte nicht erstellt werden",
+        "checkoutUrlMissing": "Stripe-Checkout-URL wurde nicht empfangen",
+        "fileReadFailed": "Datei konnte nicht gelesen werden (zu groß oder nicht verfügbar).",
+        "deleteSessionFailed": "Sitzung konnte nicht gelöscht werden",
+        "deleteAccountFailed": "Konto konnte nicht gelöscht werden"
+      },
+      "loading": "Wird geladen…",
+      "navHome": "Zur Startseite",
+      "authBackHome": "Zur Startseite",
+      "authTitle": "Bei Consensia anmelden",
+      "authLead": "Für den Chat melden Sie sich mit Google an — so verknüpfen wir Sitzungen mit Ihrem Konto.",
+      "authHint": "Sichere Anmeldung über Google. Wir veröffentlichen nichts ohne Ihre Aktion.",
+      "continueGoogle": "Mit Google fortfahren",
+      "beta": "Beta",
+      "closeHistory": "Historie schließen",
+      "openHistory": "Historie öffnen",
+      "newChat": "Neuer Chat",
+      "credits": "Credits: {{count}}",
+      "topUpAmountAria": "Aufladebetrag in US-Dollar",
+      "creditsShort": "{{count}} Cr.",
+      "topUpRate": "Kurs: {{multiplier}} Credits pro 1 $",
+      "topUpButton": "Aufladen",
+      "dataCollection": "Datenerfassung",
+      "logout": "Abmelden",
+      "deleteAccount": "Konto löschen",
+      "deleteAccountConfirm": "Konto und alle zugehörigen Daten löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "home": "Startseite",
+      "historyAria": "Chat-Verlauf",
+      "historyTitle": "Verlauf",
+      "closeMenu": "Menü schließen",
+      "sessionsLoading": "Wird geladen…",
+      "roundLabel": "Runde",
+      "roundMissing": "Runde —",
+      "deleteSessionAria": "Sitzung löschen",
+      "deleteTitle": "Löschen",
+      "historyEmpty": "Ihre Chats erscheinen hier nach dem ersten Start.",
+      "setupTitle": "Neuer Chat",
+      "setupLead": "Code einfügen oder Dateien anhängen — und die Aufgabe beschreiben.",
+      "setupLeadNonReview": "Beschreiben Sie die Aufgabe und hängen Sie bei Bedarf Dateien an.",
+      "codeLabel": "Code",
+      "attachFiles": "Dateien an Code anhängen",
+      "attachDocuments": "Dokumente anhängen",
+      "removeFileAria": "{{name}} entfernen",
+      "contextLabelOptional": "Aufgabe (optional)",
+      "contextLabelRequired": "Aufgabe",
+      "contextPlaceholder": "Z. B.: Schwachstellen finden und Fixes vorschlagen",
+      "modeLabel": "Modus",
+      "roundsLabel": "Runden",
+      "resumeHint": "Gespeicherte Sitzung wird fortgesetzt.",
+      "connectBtn": "Starten",
+      "loadingSession": "Sitzung wird geladen…",
+      "generatingAria": "Antwort wird generiert",
+      "generatingText": "Antwort wird generiert…",
+      "spentCredits": "Verbrauchte Credits",
+      "placeholderLocked": "Warte auf Antwort des Orchestrators…",
+      "placeholderOpen": "Ihre Antwort an den Orchestrator…",
+      "workspacePill": "KI-Arbeitsbereich"
     }
   },
   "authCallback": {
@@ -242,7 +319,13 @@
       "generateSuccess": "Speichern Sie diesen Schlüssel jetzt — wir können ihn später nicht erneut anzeigen.",
       "saveSuccess": "Eigener OpenRouter-Schlüssel wurde sicher gespeichert.",
       "subscribeButton": "Abo (5 $)",
-      "tip": "Mit einem Abo nutzen Sie Ihr OpenRouter-Guthaben statt unserer Credits."
+      "tip": "Mit einem Abo nutzen Sie Ihr OpenRouter-Guthaben statt unserer Credits.",
+      "generateError": "CLI-Schlüssel konnte nicht generiert werden",
+      "generateFallbackSuccess": "CLI-Schlüssel generiert",
+      "saveError": "OpenRouter-Schlüssel konnte nicht gespeichert werden",
+      "saveFallbackSuccess": "OpenRouter-Schlüssel gespeichert",
+      "checkoutError": "Zahlung konnte nicht erstellt werden",
+      "checkoutUrlMissing": "Stripe-Checkout-URL fehlt"
     },
     "steps": {
       "secret": {
@@ -357,20 +440,148 @@
     "title": "Über uns",
     "lead": "Consensia ist eine Multi-Agent-Plattform für Code-Analyse: mehrere KI-Experten prüfen die Aufgabe aus verschiedenen Blickwinkeln, anschließend erstellt ein Arbiter ein finales Urteil. Unser Ziel ist keine zufällige Antwort, sondern eine abgestimmte Lösung mit klarer Struktur und Prioritäten.",
     "sections": [
-      { "title": "Was passiert nach „Run“", "bullets": ["Sie senden Code, Aufgabenkontext, Modus und Anzahl der Diskussionsrunden (1–3).", "Der Client öffnet eine WebSocket-Verbindung zum Orchestrator und sendet Sitzungsparameter.", "Experten veröffentlichen Rundenberichte, danach entstehen finales Urteil und finaler Code.", "Nach den Runden bleibt der Chat offen: Follow-up-Fragen in derselben Sitzung sind möglich."] },
-      { "title": "Warum Multi-Agent besser ist als eine einzelne Antwort", "paragraphs": ["Eine Antwort eines Modells kann schnell sein, hängt aber oft von Prompt-Zufall und Perspektive ab. In Consensia durchläuft eine Aufgabe mehrere Rollen: Sicherheit, Performance, Lesbarkeit und Edge Cases. Das senkt das Risiko selbstsicher falscher Empfehlungen und verbessert die Endqualität."], "bullets": ["Parallele Expertise in verschiedenen Domänen.", "Schlichtung bei widersprüchlichen Empfehlungen.", "Eine finale Version mit Fix-Prioritäten."] },
-      { "title": "Rollen in der Pipeline", "paragraphs": ["Praktisch ist die Pipeline in zwei Teile geteilt: Experten und Kontrollschicht. Experten liefern fokussiertes Feedback, Judge / Arbiter fasst das finale Ergebnis zusammen, Router entscheidet, welche Experten pro Aufgabe eingebunden werden."], "link": { "before": "Details zu Rollen und Modellzusammensetzung auf der Seite", "label": "„Modelle“", "href": "/models" } },
-      { "title": "Arbeitsmodi", "paragraphs": ["Die Oberfläche bietet drei Modi: „Economy“, „Balance“ und „Maximum“. Sie wählen zwischen Kosten und Analysetiefe.", "Im Frontend wird der Modus beim Sitzungsstart gesendet; Modellauswahl und Orchestrierungsintensität legt der Server fest."] },
-      { "title": "Neue Aufgaben-Szenarien", "paragraphs": ["Das Produkt geht über klassisches Code-Review hinaus. Es unterstützt CODE_WRITER, QUICK, LEGAL, INVESTOR und SCIENCE; CODE_REVIEW bleibt der Pfad für tiefere code-fokussierte Analyse."], "bullets": ["Bei CODE_REVIEW können Sie Quelldateien anhängen und Projektfragmente in einem Lauf analysieren.", "In anderen Szenarien reichen Sie die Aufgabe mit angehängten Dokumenten ein.", "Das gewählte Szenario wird in der Sitzungshistorie gespeichert und beim erneuten Öffnen wiederhergestellt."] },
-      { "title": "Sitzungshistorie und Kontext-Wiederherstellung", "paragraphs": ["Jede Sitzung wird auf dem Server gespeichert und in der Seitenhistorie angezeigt. Beim erneuten Öffnen stellen wir die Nachrichtenreihenfolge logisch wieder her: Aufgabe → Expertenanalyse und Urteil → Follow-up-Chat."], "bullets": ["Sitzungen können geöffnet, fortgesetzt und gelöscht werden.", "Der Historientitel stammt aus Ihrer ursprünglichen Aufgabenstellung.", "Das finale Urteil bleibt an seiner Dialogposition verankert.", "Eine Sitzung lässt sich direkt über /app?session=<id> wiederherstellen."] },
-      { "title": "Credits und transparente Nutzung", "paragraphs": ["Die Nutzung wird in Credits angezeigt, grob: ca. 1000 Tokens = 1 Credit. Werte aktualisieren sich im Dialog und werden für vergangene Sitzungen korrekt wiederhergestellt."], "bullets": ["Aktuelles Guthaben im Profil sichtbar.", "Der Composer zeigt „Verbrauchte Credits“ für die aktive Sitzung.", "Aufladungen laufen über Stripe Checkout."] },
-      { "title": "Arbeit mit Code und Anhängen", "paragraphs": ["Eine Sitzung kann neben dem Hauptcode-Snippet weitere Dateien enthalten. So wird die Aufgabe im vollen Kontext analysiert."], "bullets": ["Mehrere Dateien in einem Lauf hochladbar.", "Dateitext fließt in den gemeinsamen Analysekontext ein.", "Nach dem Start ohne Kontextverlust in derselben Sitzung weitermachen."] },
-      { "title": "Ausgabequalität und Lesbarkeit", "paragraphs": ["Wir achten nicht nur auf Antwortqualität, sondern auch auf Format: lange Blöcke einklappbar, Code hervorgehoben, Markdown formatiert, Streaming-Artefakte für Lesbarkeit normalisiert."], "bullets": ["Einklappbare Abschnitte für Expertenantworten, Urteil, Diff und Code.", "Markdown mit korrekten Listen und Codeblöcken.", "Mobile Oberfläche mit ausziehbarer Historie und adaptivem Composer."] },
-      { "title": "Zugangssicherheit und Konto", "paragraphs": ["Anmeldung über Google OAuth. Nach der Autorisierung: persönliche Sitzungen, Profil und Credit-Guthaben.", "Der Client nutzt Access Token und Session-Refresh auf API-Ebene, um Unterbrechungen zu minimieren."] },
-      { "title": "Daten und Datenschutz", "paragraphs": ["In der Oberfläche gibt es den Schalter „Datenerfassung“; rechtliche Bedingungen stehen in separaten Dokumenten."], "legalLinks": { "before": "Details zu Speicherung, Verarbeitung und Rechten:", "privacyLabel": "Datenschutz", "termsLabel": "Nutzungsbedingungen" } },
-      { "title": "Unsere F&E: „Infinite Context“-Architektur", "paragraphs": ["Consensia in der jetzigen Form ist erst der Anfang. Wir bauen den nächsten Schritt — Technologie gegen das Hauptproblem moderner LLMs: Kontextfenster-Limits.", "Eigene Dynamic-Memory-Architektur für KI mit faktisch unendlichem Kontext durch semantisches Tagging.", "Statt Millionen Codezeilen in einen Prompt zu packen, teilt das System Projektkontext in Blöcke und markiert sie mit Tags.", "Das Modell liest nicht linear von Anfang bis Ende. Braucht es Infos zu einem Modul, fragt es den getaggten Speicher ab (z. B. #db_logic oder #auth_flow) und lädt nur das nötige Fragment.", "Für maximale Geschwindigkeit planen wir ein Netz spezialisierter Knoten statt Universalmodelle — Interaktion direkt im Vektorraum (Embeddings), ohne Textgeneration untereinander.", "Ziel: Daten beliebiger Größe analysieren, ohne Fokus oder Kontext zu verlieren."] },
-      { "title": "Für wen Consensia gedacht ist", "bullets": ["Entwickler mit Bedarf an schnellem Multi-Angle-Code-Review.", "Teams, denen Erklärbarkeit wichtiger ist als eine magische Antwort.", "Aufgaben, bei denen Sicherheit, Qualität und Performance zusammen zählen."] },
-      { "title": "Team", "paragraphs": ["Wir bauen das Produkt an der Schnittstelle von UX, Frontend, Backend-Orchestrierung und KI-Pipeline."], "link": { "before": "Mehr zum Team auf der Seite", "label": "„Entwickler“", "href": "/developers" } }
+      {
+        "title": "Was passiert nach „Run“",
+        "bullets": [
+          "Sie senden Code, Aufgabenkontext, Modus und Anzahl der Diskussionsrunden (1–3).",
+          "Der Client öffnet eine WebSocket-Verbindung zum Orchestrator und sendet Sitzungsparameter.",
+          "Experten veröffentlichen Rundenberichte, danach entstehen finales Urteil und finaler Code.",
+          "Nach den Runden bleibt der Chat offen: Follow-up-Fragen in derselben Sitzung sind möglich."
+        ]
+      },
+      {
+        "title": "Warum Multi-Agent besser ist als eine einzelne Antwort",
+        "paragraphs": [
+          "Eine Antwort eines Modells kann schnell sein, hängt aber oft von Prompt-Zufall und Perspektive ab. In Consensia durchläuft eine Aufgabe mehrere Rollen: Sicherheit, Performance, Lesbarkeit und Edge Cases. Das senkt das Risiko selbstsicher falscher Empfehlungen und verbessert die Endqualität."
+        ],
+        "bullets": [
+          "Parallele Expertise in verschiedenen Domänen.",
+          "Schlichtung bei widersprüchlichen Empfehlungen.",
+          "Eine finale Version mit Fix-Prioritäten."
+        ]
+      },
+      {
+        "title": "Rollen in der Pipeline",
+        "paragraphs": [
+          "Praktisch ist die Pipeline in zwei Teile geteilt: Experten und Kontrollschicht. Experten liefern fokussiertes Feedback, Judge / Arbiter fasst das finale Ergebnis zusammen, Router entscheidet, welche Experten pro Aufgabe eingebunden werden."
+        ],
+        "link": {
+          "before": "Details zu Rollen und Modellzusammensetzung auf der Seite",
+          "label": "„Modelle“",
+          "href": "/models"
+        }
+      },
+      {
+        "title": "Arbeitsmodi",
+        "paragraphs": [
+          "Die Oberfläche bietet drei Modi: „Economy“, „Balance“ und „Maximum“. Sie wählen zwischen Kosten und Analysetiefe.",
+          "Im Frontend wird der Modus beim Sitzungsstart gesendet; Modellauswahl und Orchestrierungsintensität legt der Server fest."
+        ]
+      },
+      {
+        "title": "Neue Aufgaben-Szenarien",
+        "paragraphs": [
+          "Das Produkt geht über klassisches Code-Review hinaus. Es unterstützt CODE_WRITER, QUICK, LEGAL, INVESTOR und SCIENCE; CODE_REVIEW bleibt der Pfad für tiefere code-fokussierte Analyse."
+        ],
+        "bullets": [
+          "Bei CODE_REVIEW können Sie Quelldateien anhängen und Projektfragmente in einem Lauf analysieren.",
+          "In anderen Szenarien reichen Sie die Aufgabe mit angehängten Dokumenten ein.",
+          "Das gewählte Szenario wird in der Sitzungshistorie gespeichert und beim erneuten Öffnen wiederhergestellt."
+        ]
+      },
+      {
+        "title": "Sitzungshistorie und Kontext-Wiederherstellung",
+        "paragraphs": [
+          "Jede Sitzung wird auf dem Server gespeichert und in der Seitenhistorie angezeigt. Beim erneuten Öffnen stellen wir die Nachrichtenreihenfolge logisch wieder her: Aufgabe → Expertenanalyse und Urteil → Follow-up-Chat."
+        ],
+        "bullets": [
+          "Sitzungen können geöffnet, fortgesetzt und gelöscht werden.",
+          "Der Historientitel stammt aus Ihrer ursprünglichen Aufgabenstellung.",
+          "Das finale Urteil bleibt an seiner Dialogposition verankert.",
+          "Eine Sitzung lässt sich direkt über /app?session=<id> wiederherstellen."
+        ]
+      },
+      {
+        "title": "Credits und transparente Nutzung",
+        "paragraphs": [
+          "Die Nutzung wird in Credits angezeigt, grob: ca. 1000 Tokens = 1 Credit. Werte aktualisieren sich im Dialog und werden für vergangene Sitzungen korrekt wiederhergestellt."
+        ],
+        "bullets": [
+          "Aktuelles Guthaben im Profil sichtbar.",
+          "Der Composer zeigt „Verbrauchte Credits“ für die aktive Sitzung.",
+          "Aufladungen laufen über Stripe Checkout."
+        ]
+      },
+      {
+        "title": "Arbeit mit Code und Anhängen",
+        "paragraphs": [
+          "Eine Sitzung kann neben dem Hauptcode-Snippet weitere Dateien enthalten. So wird die Aufgabe im vollen Kontext analysiert."
+        ],
+        "bullets": [
+          "Mehrere Dateien in einem Lauf hochladbar.",
+          "Dateitext fließt in den gemeinsamen Analysekontext ein.",
+          "Nach dem Start ohne Kontextverlust in derselben Sitzung weitermachen."
+        ]
+      },
+      {
+        "title": "Ausgabequalität und Lesbarkeit",
+        "paragraphs": [
+          "Wir achten nicht nur auf Antwortqualität, sondern auch auf Format: lange Blöcke einklappbar, Code hervorgehoben, Markdown formatiert, Streaming-Artefakte für Lesbarkeit normalisiert."
+        ],
+        "bullets": [
+          "Einklappbare Abschnitte für Expertenantworten, Urteil, Diff und Code.",
+          "Markdown mit korrekten Listen und Codeblöcken.",
+          "Mobile Oberfläche mit ausziehbarer Historie und adaptivem Composer."
+        ]
+      },
+      {
+        "title": "Zugangssicherheit und Konto",
+        "paragraphs": [
+          "Anmeldung über Google OAuth. Nach der Autorisierung: persönliche Sitzungen, Profil und Credit-Guthaben.",
+          "Der Client nutzt Access Token und Session-Refresh auf API-Ebene, um Unterbrechungen zu minimieren."
+        ]
+      },
+      {
+        "title": "Daten und Datenschutz",
+        "paragraphs": [
+          "In der Oberfläche gibt es den Schalter „Datenerfassung“; rechtliche Bedingungen stehen in separaten Dokumenten."
+        ],
+        "legalLinks": {
+          "before": "Details zu Speicherung, Verarbeitung und Rechten:",
+          "privacyLabel": "Datenschutz",
+          "termsLabel": "Nutzungsbedingungen"
+        }
+      },
+      {
+        "title": "Unsere F&E: „Infinite Context“-Architektur",
+        "paragraphs": [
+          "Consensia in der jetzigen Form ist erst der Anfang. Wir bauen den nächsten Schritt — Technologie gegen das Hauptproblem moderner LLMs: Kontextfenster-Limits.",
+          "Eigene Dynamic-Memory-Architektur für KI mit faktisch unendlichem Kontext durch semantisches Tagging.",
+          "Statt Millionen Codezeilen in einen Prompt zu packen, teilt das System Projektkontext in Blöcke und markiert sie mit Tags.",
+          "Das Modell liest nicht linear von Anfang bis Ende. Braucht es Infos zu einem Modul, fragt es den getaggten Speicher ab (z. B. #db_logic oder #auth_flow) und lädt nur das nötige Fragment.",
+          "Für maximale Geschwindigkeit planen wir ein Netz spezialisierter Knoten statt Universalmodelle — Interaktion direkt im Vektorraum (Embeddings), ohne Textgeneration untereinander.",
+          "Ziel: Daten beliebiger Größe analysieren, ohne Fokus oder Kontext zu verlieren."
+        ]
+      },
+      {
+        "title": "Für wen Consensia gedacht ist",
+        "bullets": [
+          "Entwickler mit Bedarf an schnellem Multi-Angle-Code-Review.",
+          "Teams, denen Erklärbarkeit wichtiger ist als eine magische Antwort.",
+          "Aufgaben, bei denen Sicherheit, Qualität und Performance zusammen zählen."
+        ]
+      },
+      {
+        "title": "Team",
+        "paragraphs": [
+          "Wir bauen das Produkt an der Schnittstelle von UX, Frontend, Backend-Orchestrierung und KI-Pipeline."
+        ],
+        "link": {
+          "before": "Mehr zum Team auf der Seite",
+          "label": "„Entwickler“",
+          "href": "/developers"
+        }
+      }
     ]
   },
   "developersPage": {
@@ -381,8 +592,18 @@
     "illiaContactText": "Fragen zum Produkt, Ideen und Fehlermeldungen:",
     "andriiContactText": "Fortgeschrittene technische Fragen und Feedback zur KI-Antwortqualität:",
     "developers": [
-      { "id": "illia", "name": "Illia", "role": "Product / Frontend / Integration", "about": "Verantwortlich für die Client-Seite der Website: visuelle Oberfläche, User Experience (UX) und Integration aller UI-Komponenten." },
-      { "id": "andrii", "name": "Andrii", "role": "AI / Backend / ML", "about": "Verantwortlich für technische Architektur und Backend. Hat den Orchestrator gebaut, der 6 verschiedene KI-Modelle zu einem System synchronisiert." }
+      {
+        "id": "illia",
+        "name": "Illia",
+        "role": "Product / Frontend / Integration",
+        "about": "Verantwortlich für die Client-Seite der Website: visuelle Oberfläche, User Experience (UX) und Integration aller UI-Komponenten."
+      },
+      {
+        "id": "andrii",
+        "name": "Andrii",
+        "role": "AI / Backend / ML",
+        "about": "Verantwortlich für technische Architektur und Backend. Hat den Orchestrator gebaut, der 6 verschiedene KI-Modelle zu einem System synchronisiert."
+      }
     ]
   },
   "faqPage": {
@@ -392,11 +613,26 @@
     "updated": "Zuletzt aktualisiert: 7. April 2026",
     "lead": "Kurze Antworten auf häufige Fragen zu Consensia, Sitzungen und Credits.",
     "items": [
-      { "q": "1. Was macht Consensia?", "a": "Consensia startet mehrere Modelle, bündelt ihre Argumente und liefert eine abgestimmte Antwort." },
-      { "q": "2. Werden meine Chats gespeichert?", "a": "Ja. Die Sitzungshistorie liegt auf dem Server in Ihrem Konto und ist im Historienbereich verfügbar." },
-      { "q": "3. Kann ich einen alten Chat fortsetzen?", "a": "Ja. Öffnen Sie die Sitzung in der Historie — Kontext wird wiederhergestellt und der Dialog kann weitergehen." },
-      { "q": "4. Wie funktionieren Credits?", "a": "Credits werden nach tatsächlicher Modellnutzung berechnet (Ein-/Ausgabevolumen, Schritte, Aufgabenkomplexität)." },
-      { "q": "5. Was bewirkt der Schalter „Datenerfassung“?", "a": "Er speichert Ihre Präferenz in der Oberfläche. Details zur Datenverarbeitung: Nutzungsbedingungen und Datenschutz." }
+      {
+        "q": "1. Was macht Consensia?",
+        "a": "Consensia startet mehrere Modelle, bündelt ihre Argumente und liefert eine abgestimmte Antwort."
+      },
+      {
+        "q": "2. Werden meine Chats gespeichert?",
+        "a": "Ja. Die Sitzungshistorie liegt auf dem Server in Ihrem Konto und ist im Historienbereich verfügbar."
+      },
+      {
+        "q": "3. Kann ich einen alten Chat fortsetzen?",
+        "a": "Ja. Öffnen Sie die Sitzung in der Historie — Kontext wird wiederhergestellt und der Dialog kann weitergehen."
+      },
+      {
+        "q": "4. Wie funktionieren Credits?",
+        "a": "Credits werden nach tatsächlicher Modellnutzung berechnet (Ein-/Ausgabevolumen, Schritte, Aufgabenkomplexität)."
+      },
+      {
+        "q": "5. Was bewirkt der Schalter „Datenerfassung“?",
+        "a": "Er speichert Ihre Präferenz in der Oberfläche. Details zur Datenverarbeitung: Nutzungsbedingungen und Datenschutz."
+      }
     ]
   },
   "modelsPage": {
@@ -406,21 +642,130 @@
     "lead": "Jedes Modell in diesem Chat hat eine klare Spezialisierung. Unten sehen Sie, wer was prüft und wie das finale Urteil entsteht.",
     "expertsAria": "Experten-Karten",
     "systemAria": "Judge und Router",
-    "panel": { "judgeTitle": "Judge / Arbiter", "routerTitle": "Router" },
-    "labels": { "role": "Rolle", "task": "Aufgabe", "weight": "Gewicht", "temperature": "Temperatur", "focus": "Fokus auf", "output": "Ausgabeformat", "mindset": "Mindset" },
+    "panel": {
+      "judgeTitle": "Judge / Arbiter",
+      "routerTitle": "Router"
+    },
+    "labels": {
+      "role": "Rolle",
+      "task": "Aufgabe",
+      "weight": "Gewicht",
+      "temperature": "Temperatur",
+      "focus": "Fokus auf",
+      "output": "Ausgabeformat",
+      "mindset": "Mindset"
+    },
     "experts": [
-      { "name": "Security Sentinel", "modelId": "openai/gpt-5-codex", "role": "Senior Security Engineer", "task": "Strenges Audit", "focus": ["SQLi", "XSS", "Auth/Authz", "Unsichere API", "Hardcodierte Secrets", "Unsichere Deserialisierung"], "output": ["Snippet", "Schwachstelle", "Exploit", "Fix"], "constraint": "Paranoides Mindset.", "weight": 1, "temperature": "none" },
-      { "name": "Performance Architect", "modelId": "qwen/qwen3.6-plus", "role": "Principal Performance Architect", "task": "Engpass-Analyse", "focus": ["Big-O", "Speicher", "Allokationen", "I/O-Blockierung", "Skalierbarkeit"], "output": ["Code", "Komplexität", "Ineffizienz", "Optimierung"], "constraint": "Mathematische Präzision. Keine generischen Ratschläge.", "weight": 0.8, "temperature": 0.1 },
-      { "name": "Clean Code Advocate", "modelId": "google/gemini-3-flash-preview", "role": "Staff Software Engineer", "task": "Qualitätssicherung", "focus": ["SOLID", "DRY", "Benennung", "God-Funktionen", "Lesbarkeit"], "output": ["Problematischer Code", "Verletztes Prinzip", "Refaktorierter Code"], "constraint": "Strenge Kritik. Keine Komplimente.", "weight": 0.7, "temperature": 0.2 },
-      { "name": "Edge-Case Hunter", "modelId": "z-ai/glm-5-turbo", "role": "Lead QA (Breaking Systems)", "task": "Edge Cases finden", "focus": ["Null/None", "Leer", "Stress", "Race Conditions", "Zeitzonen", "Grenzen"], "output": ["Test-Input", "Fehlergrund", "Guard/Fix-Vorschlag"], "constraint": "Mindset eines bösartigen Testers.", "weight": 0.9, "temperature": 0.2 }
+      {
+        "name": "Security Sentinel",
+        "modelId": "openai/gpt-5-codex",
+        "role": "Senior Security Engineer",
+        "task": "Strenges Audit",
+        "focus": [
+          "SQLi",
+          "XSS",
+          "Auth/Authz",
+          "Unsichere API",
+          "Hardcodierte Secrets",
+          "Unsichere Deserialisierung"
+        ],
+        "output": [
+          "Snippet",
+          "Schwachstelle",
+          "Exploit",
+          "Fix"
+        ],
+        "constraint": "Paranoides Mindset.",
+        "weight": 1,
+        "temperature": "none"
+      },
+      {
+        "name": "Performance Architect",
+        "modelId": "qwen/qwen3.6-plus",
+        "role": "Principal Performance Architect",
+        "task": "Engpass-Analyse",
+        "focus": [
+          "Big-O",
+          "Speicher",
+          "Allokationen",
+          "I/O-Blockierung",
+          "Skalierbarkeit"
+        ],
+        "output": [
+          "Code",
+          "Komplexität",
+          "Ineffizienz",
+          "Optimierung"
+        ],
+        "constraint": "Mathematische Präzision. Keine generischen Ratschläge.",
+        "weight": 0.8,
+        "temperature": 0.1
+      },
+      {
+        "name": "Clean Code Advocate",
+        "modelId": "google/gemini-3-flash-preview",
+        "role": "Staff Software Engineer",
+        "task": "Qualitätssicherung",
+        "focus": [
+          "SOLID",
+          "DRY",
+          "Benennung",
+          "God-Funktionen",
+          "Lesbarkeit"
+        ],
+        "output": [
+          "Problematischer Code",
+          "Verletztes Prinzip",
+          "Refaktorierter Code"
+        ],
+        "constraint": "Strenge Kritik. Keine Komplimente.",
+        "weight": 0.7,
+        "temperature": 0.2
+      },
+      {
+        "name": "Edge-Case Hunter",
+        "modelId": "z-ai/glm-5-turbo",
+        "role": "Lead QA (Breaking Systems)",
+        "task": "Edge Cases finden",
+        "focus": [
+          "Null/None",
+          "Leer",
+          "Stress",
+          "Race Conditions",
+          "Zeitzonen",
+          "Grenzen"
+        ],
+        "output": [
+          "Test-Input",
+          "Fehlergrund",
+          "Guard/Fix-Vorschlag"
+        ],
+        "constraint": "Mindset eines bösartigen Testers.",
+        "weight": 0.9,
+        "temperature": 0.2
+      }
     ],
     "arbiter": {
       "id": "google/gemini-3.1-pro-preview",
       "role": "THE JUDGE",
       "purpose": "Judge ist der finale Schiedsrichter zwischen den Experten. Er bündelt die Befunde zu einem abgestimmten Urteil mit klaren Fix-Prioritäten.",
       "workflow": [
-        { "title": "Wie er analysiert", "points": ["Vergleicht Befunde aller Experten und prüft, wo Argumente wirklich vom Code gestützt sind.", "Filtert Duplikate, schwache Hypothesen und Ratschläge mit geringem Praxiswert.", "Löst Konflikte zwischen Empfehlungen und wählt den sichersten und wirksamsten Weg."] },
-        { "title": "Was er zurückgibt", "points": ["Priorisierte Liste kritischer Fixes.", "Liste von Qualitätsverbesserungen.", "Ein einheitliches finales Urteil."] }
+        {
+          "title": "Wie er analysiert",
+          "points": [
+            "Vergleicht Befunde aller Experten und prüft, wo Argumente wirklich vom Code gestützt sind.",
+            "Filtert Duplikate, schwache Hypothesen und Ratschläge mit geringem Praxiswert.",
+            "Löst Konflikte zwischen Empfehlungen und wählt den sichersten und wirksamsten Weg."
+          ]
+        },
+        {
+          "title": "Was er zurückgibt",
+          "points": [
+            "Priorisierte Liste kritischer Fixes.",
+            "Liste von Qualitätsverbesserungen.",
+            "Ein einheitliches finales Urteil."
+          ]
+        }
       ]
     },
     "router": {
@@ -428,10 +773,22 @@
       "role": "Tech Lead Router",
       "mission": "Router wählt das Expertenset pro Code-Fragment, damit das Review nützlich und kompakt bleibt.",
       "rules": [
-        { "title": "Security Sentinel", "text": "Aktiv bei User-Input, APIs, Datenbanken, Autorisierung oder externen Integrationen." },
-        { "title": "Performance Architect", "text": "Aktiv bei Schleifen, Rekursion, großen Datenmengen oder Skalierungsrisiken." },
-        { "title": "Clean Code Advocate", "text": "Aktiv bei überladenem, schwer lesbarem Code oder Bedarf an besserer Struktur und Benennung." },
-        { "title": "Edge-Case Hunter", "text": "Aktiv bei unüblichen Inputs, komplexer Verzweigung oder Nebenläufigkeit." }
+        {
+          "title": "Security Sentinel",
+          "text": "Aktiv bei User-Input, APIs, Datenbanken, Autorisierung oder externen Integrationen."
+        },
+        {
+          "title": "Performance Architect",
+          "text": "Aktiv bei Schleifen, Rekursion, großen Datenmengen oder Skalierungsrisiken."
+        },
+        {
+          "title": "Clean Code Advocate",
+          "text": "Aktiv bei überladenem, schwer lesbarem Code oder Bedarf an besserer Struktur und Benennung."
+        },
+        {
+          "title": "Edge-Case Hunter",
+          "text": "Aktiv bei unüblichen Inputs, komplexer Verzweigung oder Nebenläufigkeit."
+        }
       ]
     }
   },
@@ -446,16 +803,80 @@
     "partTitle": "Datenschutz",
     "partIntro": "Wir nehmen Ihre Privatsphäre ernst. Dieser Abschnitt erklärt, welche Daten wir erheben, wie wir sie nutzen und welche Rechte Sie haben.",
     "sections": [
-      { "title": "1. Daten, die wir erheben", "paragraphs": ["Profildaten (über Google OAuth): E-Mail-Adresse und Name. Ausschließlich zur Kontoidentifikation und Authentifizierung.", "Nutzungsdaten: Chat-Verlauf, eingereichte Code-Snippets und Systemlogs für stabile Sitzungen.", "Zahlungsinformationen: Abostatus und Customer ID (sicher über Stripe verarbeitet)."] },
-      { "title": "2. Verarbeitung durch KI-APIs Dritter", "paragraphs": ["Da wir externe KI-Modelle zur Code-Analyse nutzen, werden Texte Ihrer Anfragen (Prompts und Code-Snippets) per API an Partner (z. B. OpenRouter, Google) übermittelt. Diese verarbeiten Daten nur zur Antwortgenerierung. Wir wählen Partner mit hohen Sicherheitsstandards, kontrollieren aber nicht ihre internen Algorithmen."] },
-      { "title": "3. Datenerhebung für Training und Opt-out", "paragraphs": ["Neben API-Anfragen für den Live-Betrieb speichern wir Chat-Verläufe auf unseren Servern — zur möglichen Verbesserung künftiger Orchestrierungsalgorithmen und Modelle.", "Strikte Anonymisierung: Daten für Analyse oder Training werden anonymisiert und von Name, E-Mail und Zahlungsdaten getrennt.", "Opt-out: Sie können diese Nutzung jederzeit in den Kontoeinstellungen über die entsprechende Datenschutz-Option verbieten."] },
-      { "title": "4. Weitergabe an Dritte", "intro": "Wir verkaufen keine personenbezogenen Daten an Werbetreibende. Wir teilen nur nötige Daten mit vertrauenswürdigen Anbietern für den Betrieb:", "bullets": ["KI-API-Anbieter: zur Beantwortung Ihrer Anfragen.", "Infrastruktur-Anbieter: Hosting von Plattform und Datenbanken.", "Zahlungsdienstleister: Stripe zur Transaktionsabwicklung."] },
-      { "title": "5. Cookies und Tracking", "paragraphs": ["Wir nutzen nur essenzielle Cookies für Kernfunktionen (z. B. Login und sichere Sitzung). Keine Marketing-Tracker für gezielte Werbung ohne Ihre ausdrückliche Einwilligung."] },
-      { "title": "6. Ihre Rechte (DSGVO und CCPA)", "intro": "Je nach Standort können Sie folgende Rechte haben:", "bullets": ["Auskunft: Kopie der bei uns gespeicherten personenbezogenen Daten.", "Berichtigung: Korrektur unrichtiger Daten.", "Löschung („Recht auf Vergessenwerden“): vollständige Löschung von Konto und zugehörigen Daten."], "paragraphs": ["Zur Ausübung: E-Mail unten oder Kontolöschung in den Profileinstellungen."] },
-      { "title": "7. Aufbewahrung", "paragraphs": ["Wir speichern Informationen nur, solange das Konto aktiv ist oder zur Bereitstellung des Dienstes und gesetzlicher Pflichten nötig. Bei Kontolöschung werden personenbezogene Daten in aktiven Datenbanken in der Regel innerhalb von 30 Tagen entfernt."] },
-      { "title": "8. Datenschutz von Kindern", "paragraphs": ["Der Dienst richtet sich nicht an Personen unter 16 Jahren. Wir erheben wissentlich keine Daten von Kindern. Werden solche Daten ohne elterliche Einwilligung entdeckt, löschen wir sie."] },
-      { "title": "9. Änderungen dieser Richtlinie", "paragraphs": ["Wir können dieses Dokument periodisch aktualisieren. Bei wesentlichen Änderungen (z. B. Datenregeln oder Preismodelle) informieren wir per E-Mail oder Hinweis im Dienst."], "hasPrivacyLink": true },
-      { "title": "10. Kontakt", "paragraphs": ["Fragen zu dieser Datenschutzerklärung: support@faby.world"] }
+      {
+        "title": "1. Daten, die wir erheben",
+        "paragraphs": [
+          "Profildaten (über Google OAuth): E-Mail-Adresse und Name. Ausschließlich zur Kontoidentifikation und Authentifizierung.",
+          "Nutzungsdaten: Chat-Verlauf, eingereichte Code-Snippets und Systemlogs für stabile Sitzungen.",
+          "Zahlungsinformationen: Abostatus und Customer ID (sicher über Stripe verarbeitet)."
+        ]
+      },
+      {
+        "title": "2. Verarbeitung durch KI-APIs Dritter",
+        "paragraphs": [
+          "Da wir externe KI-Modelle zur Code-Analyse nutzen, werden Texte Ihrer Anfragen (Prompts und Code-Snippets) per API an Partner (z. B. OpenRouter, Google) übermittelt. Diese verarbeiten Daten nur zur Antwortgenerierung. Wir wählen Partner mit hohen Sicherheitsstandards, kontrollieren aber nicht ihre internen Algorithmen."
+        ]
+      },
+      {
+        "title": "3. Datenerhebung für Training und Opt-out",
+        "paragraphs": [
+          "Neben API-Anfragen für den Live-Betrieb speichern wir Chat-Verläufe auf unseren Servern — zur möglichen Verbesserung künftiger Orchestrierungsalgorithmen und Modelle.",
+          "Strikte Anonymisierung: Daten für Analyse oder Training werden anonymisiert und von Name, E-Mail und Zahlungsdaten getrennt.",
+          "Opt-out: Sie können diese Nutzung jederzeit in den Kontoeinstellungen über die entsprechende Datenschutz-Option verbieten."
+        ]
+      },
+      {
+        "title": "4. Weitergabe an Dritte",
+        "intro": "Wir verkaufen keine personenbezogenen Daten an Werbetreibende. Wir teilen nur nötige Daten mit vertrauenswürdigen Anbietern für den Betrieb:",
+        "bullets": [
+          "KI-API-Anbieter: zur Beantwortung Ihrer Anfragen.",
+          "Infrastruktur-Anbieter: Hosting von Plattform und Datenbanken.",
+          "Zahlungsdienstleister: Stripe zur Transaktionsabwicklung."
+        ]
+      },
+      {
+        "title": "5. Cookies und Tracking",
+        "paragraphs": [
+          "Wir nutzen nur essenzielle Cookies für Kernfunktionen (z. B. Login und sichere Sitzung). Keine Marketing-Tracker für gezielte Werbung ohne Ihre ausdrückliche Einwilligung."
+        ]
+      },
+      {
+        "title": "6. Ihre Rechte (DSGVO und CCPA)",
+        "intro": "Je nach Standort können Sie folgende Rechte haben:",
+        "bullets": [
+          "Auskunft: Kopie der bei uns gespeicherten personenbezogenen Daten.",
+          "Berichtigung: Korrektur unrichtiger Daten.",
+          "Löschung („Recht auf Vergessenwerden“): vollständige Löschung von Konto und zugehörigen Daten."
+        ],
+        "paragraphs": [
+          "Zur Ausübung: E-Mail unten oder Kontolöschung in den Profileinstellungen."
+        ]
+      },
+      {
+        "title": "7. Aufbewahrung",
+        "paragraphs": [
+          "Wir speichern Informationen nur, solange das Konto aktiv ist oder zur Bereitstellung des Dienstes und gesetzlicher Pflichten nötig. Bei Kontolöschung werden personenbezogene Daten in aktiven Datenbanken in der Regel innerhalb von 30 Tagen entfernt."
+        ]
+      },
+      {
+        "title": "8. Datenschutz von Kindern",
+        "paragraphs": [
+          "Der Dienst richtet sich nicht an Personen unter 16 Jahren. Wir erheben wissentlich keine Daten von Kindern. Werden solche Daten ohne elterliche Einwilligung entdeckt, löschen wir sie."
+        ]
+      },
+      {
+        "title": "9. Änderungen dieser Richtlinie",
+        "paragraphs": [
+          "Wir können dieses Dokument periodisch aktualisieren. Bei wesentlichen Änderungen (z. B. Datenregeln oder Preismodelle) informieren wir per E-Mail oder Hinweis im Dienst."
+        ],
+        "hasPrivacyLink": true
+      },
+      {
+        "title": "10. Kontakt",
+        "paragraphs": [
+          "Fragen zu dieser Datenschutzerklärung: support@faby.world"
+        ]
+      }
     ]
   },
   "termsOfServicePage": {
@@ -467,13 +888,64 @@
     "noticeText": "Diese Seite ist veröffentlicht, solange das Produkt experimentell ist. Vor dem öffentlichen Start den Text für Ihre Rechtsordnung prüfen lassen. Keine Rechtsberatung.",
     "lead": "Mit dem Zugriff auf oder der Nutzung von Consensia stimmen Sie diesen Nutzungsbedingungen zu. Wenn Sie nicht einverstanden sind, nutzen Sie den Dienst bitte nicht.",
     "sections": [
-      { "title": "1. Registrierung und Konto", "paragraphs": ["Pflichtregistrierung: zur Nutzung des Dienstes (einschließlich kostenloser Stufe) ist ein Konto erforderlich.", "Authentifizierung: sichere Drittanbieter-Authentifizierung (Google OAuth). Sie verpflichten sich zu korrekten Angaben und sind für die Kontosicherheit verantwortlich."] },
-      { "title": "2. Preise, Credits und Zahlungen", "paragraphs": ["Neue Nutzer können begrenzte Gratis-Credits erhalten. Limits und Preise können sich ändern.", "Credits werden nach tatsächlicher Modellnutzung verbraucht (Ein-/Ausgabe-Tokens und Komplexität). Guthaben im Konto einsehbar.", "Gekaufte Credits sind nach teilweiser Nutzung in der Regel nicht erstattungsfähig, soweit gesetzlich nicht anders vorgeschrieben.", "Zahlungen über Stripe. Wir speichern keine vollständigen Kartendaten auf unseren Servern."] },
-      { "title": "3. Zulässige Nutzung", "intro": "Sie verpflichten sich, den Dienst nicht zu nutzen, um:", "bullets": ["Gesetze, Urheberrechte oder Lizenzen zu verletzen.", "Plattformsysteme zu hacken, DDoS auszuführen oder zu reverse-engineeren.", "Malware, Exploits zu erzeugen oder illegale Cyberangriffe durchzuführen."] },
-      { "title": "4. Haftungsausschluss und Haftungsbeschränkung", "paragraphs": ["Der Dienst nutzt KI-APIs Dritter und garantiert keine unterbrechungsfreie Verfügbarkeit oder absolute Genauigkeit.", "Sie sind verantwortlich für Prüfung und Tests der Ausgaben vor Produktiveinsatz.", "Der Dienst wird „WIE BESEHEN“ und „WIE VERFÜGBAR“ ohne Gewähr bereitgestellt. Keine Haftung für direkte oder indirekte Schäden aus der Nutzung."] },
-      { "title": "5. Geistiges Eigentum", "paragraphs": ["Ihr Code: Sie behalten die Rechte am eingereichten Code.", "Unsere Plattform: Oberfläche, Orchestrierungslogik, Marke und Infrastruktur gehören Consensia."] },
-      { "title": "6. Kontokündigung", "paragraphs": ["Wir können Konten bei Verstößen gegen diese Bedingungen sperren oder kündigen, einschließlich Missbrauch, Umgehung von Limits, Spam oder Zahlungsbetrug."] },
-      { "title": "7. Kontakt", "paragraphs": ["Fragen zu diesen Bedingungen: support@faby.world"] }
+      {
+        "title": "1. Registrierung und Konto",
+        "paragraphs": [
+          "Pflichtregistrierung: zur Nutzung des Dienstes (einschließlich kostenloser Stufe) ist ein Konto erforderlich.",
+          "Authentifizierung: sichere Drittanbieter-Authentifizierung (Google OAuth). Sie verpflichten sich zu korrekten Angaben und sind für die Kontosicherheit verantwortlich."
+        ]
+      },
+      {
+        "title": "2. Preise, Credits und Zahlungen",
+        "paragraphs": [
+          "Neue Nutzer können begrenzte Gratis-Credits erhalten. Limits und Preise können sich ändern.",
+          "Credits werden nach tatsächlicher Modellnutzung verbraucht (Ein-/Ausgabe-Tokens und Komplexität). Guthaben im Konto einsehbar.",
+          "Gekaufte Credits sind nach teilweiser Nutzung in der Regel nicht erstattungsfähig, soweit gesetzlich nicht anders vorgeschrieben.",
+          "Zahlungen über Stripe. Wir speichern keine vollständigen Kartendaten auf unseren Servern."
+        ]
+      },
+      {
+        "title": "3. Zulässige Nutzung",
+        "intro": "Sie verpflichten sich, den Dienst nicht zu nutzen, um:",
+        "bullets": [
+          "Gesetze, Urheberrechte oder Lizenzen zu verletzen.",
+          "Plattformsysteme zu hacken, DDoS auszuführen oder zu reverse-engineeren.",
+          "Malware, Exploits zu erzeugen oder illegale Cyberangriffe durchzuführen."
+        ]
+      },
+      {
+        "title": "4. Haftungsausschluss und Haftungsbeschränkung",
+        "paragraphs": [
+          "Der Dienst nutzt KI-APIs Dritter und garantiert keine unterbrechungsfreie Verfügbarkeit oder absolute Genauigkeit.",
+          "Sie sind verantwortlich für Prüfung und Tests der Ausgaben vor Produktiveinsatz.",
+          "Der Dienst wird „WIE BESEHEN“ und „WIE VERFÜGBAR“ ohne Gewähr bereitgestellt. Keine Haftung für direkte oder indirekte Schäden aus der Nutzung."
+        ]
+      },
+      {
+        "title": "5. Geistiges Eigentum",
+        "paragraphs": [
+          "Ihr Code: Sie behalten die Rechte am eingereichten Code.",
+          "Unsere Plattform: Oberfläche, Orchestrierungslogik, Marke und Infrastruktur gehören Consensia."
+        ]
+      },
+      {
+        "title": "6. Kontokündigung",
+        "paragraphs": [
+          "Wir können Konten bei Verstößen gegen diese Bedingungen sperren oder kündigen, einschließlich Missbrauch, Umgehung von Limits, Spam oder Zahlungsbetrug."
+        ]
+      },
+      {
+        "title": "7. Anwendbares Recht",
+        "paragraphs": [
+          "Diese Bedingungen unterliegen dem Recht der Tschechischen Republik. Alle Streitigkeiten, die im Zusammenhang mit der Nutzung des Dienstes entstehen, werden von den zuständigen Gerichten am Sitz des Diensteigentümers geprüft."
+        ]
+      },
+      {
+        "title": "8. Kontakt",
+        "paragraphs": [
+          "Fragen zu diesen Bedingungen: support@faby.world"
+        ]
+      }
     ]
   }
 }

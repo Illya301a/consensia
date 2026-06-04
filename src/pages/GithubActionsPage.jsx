@@ -45,9 +45,9 @@ export default function GithubActionsPage() {
     setGeneratingCliKey(true)
     try {
       const result = await generateCliApiKey()
-      if (!result.ok) throw new Error(result.error || 'Failed to generate CLI key')
+      if (!result.ok) throw new Error(result.error || c.controls.generateError)
       setGeneratedCliKey(result.cliApiKey || '')
-      setActionsSuccess(c.controls.generateSuccess || result.message || 'CLI key generated')
+      setActionsSuccess(c.controls.generateSuccess || result.message || c.controls.generateFallbackSuccess)
       if (result.cliApiKey && navigator?.clipboard?.writeText) {
         await navigator.clipboard.writeText(result.cliApiKey).catch(() => null)
       }
@@ -71,8 +71,8 @@ export default function GithubActionsPage() {
     setSavingOpenRouter(true)
     try {
       const result = await saveOpenRouterApiKey(key)
-      if (!result.ok) throw new Error(result.error || 'Failed to save OpenRouter key')
-      setActionsSuccess(c.controls.saveSuccess || result.message || 'OpenRouter key saved')
+      if (!result.ok) throw new Error(result.error || c.controls.saveError)
+      setActionsSuccess(c.controls.saveSuccess || result.message || c.controls.saveFallbackSuccess)
     } catch (e) {
       setActionsError(e?.message || String(e))
     } finally {
@@ -87,8 +87,8 @@ export default function GithubActionsPage() {
     setOpeningCheckout(true)
     try {
       const result = await createCliPassCheckout()
-      if (!result.ok) throw new Error(result.error || 'Failed to create checkout')
-      if (!result.checkoutUrl) throw new Error('Stripe checkout URL is missing')
+      if (!result.ok) throw new Error(result.error || c.controls.checkoutError)
+      if (!result.checkoutUrl) throw new Error(c.controls.checkoutUrlMissing)
       window.location.href = result.checkoutUrl
     } catch (e) {
       setActionsError(e?.message || String(e))
