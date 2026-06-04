@@ -1,6 +1,6 @@
 export const DEFAULT_LANGUAGE = 'en'
 
-export const SUPPORTED_LANGUAGE_CODES = ['ru', 'ua', 'en', 'de']
+export const SUPPORTED_LANGUAGE_CODES = ['ru', 'ua', 'en', 'de', 'es']
 
 export function normalizeLanguageCode(lng) {
   const base = String(lng || '').split('-')[0].toLowerCase()
@@ -10,8 +10,9 @@ export function normalizeLanguageCode(lng) {
 }
 
 export const SUPPORTED_LANGUAGES = [
+  { code: 'en', label: 'English' },
   { code: 'ru', label: 'Русский' },
   { code: 'ua', label: 'Українська' },
-  { code: 'en', label: 'English' },
   { code: 'de', label: 'Deutsch' },
+  { code: 'es', label: 'Español' },
 ]

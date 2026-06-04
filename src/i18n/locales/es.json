@@ -1,0 +1,945 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "brand": "Consensia"
+  },
+  "a11y": {
+    "mainNav": "Navegación principal",
+    "chooseLanguage": "Idioma de la interfaz"
+  },
+  "nav": {
+    "about": "Acerca de",
+    "models": "Modelos",
+    "developers": "Desarrolladores",
+    "app": "Aplicación",
+    "githubActions": "GitHub Actions",
+    "aiAgent": "Agente de IA"
+  },
+  "languages": {
+    "ru": "Ruso",
+    "ua": "Ucraniano",
+    "en": "Inglés",
+    "de": "Alemán",
+    "es": "Español"
+  },
+  "home": {
+    "a11y": {
+      "hero": "Pantalla principal",
+      "pageNav": "Navegación de la página",
+      "keyFeatures": "Funciones clave"
+    },
+    "auth": {
+      "login": "Iniciar sesión"
+    },
+    "menu": {
+      "open": "Abrir menú",
+      "close": "Cerrar menú",
+      "label": "Menú"
+    },
+    "hero": {
+      "eyebrow": "Inteligencia multimodelo",
+      "titleLine1": "Una respuesta",
+      "titleLine2": "basada en consenso de modelos",
+      "lede": "Varios modelos analizan la tarea y convergen en la mejor solución: recibes una respuesta ensamblada y verificada por Consensia.",
+      "start": "Empezar",
+      "howItWorks": "GitHub Actions",
+      "scrollHint": "Desplázate hacia abajo",
+      "motionToggleTitle": "Solo anima la capa 3D de fondo, no la página",
+      "stopBackground": "Detener fondo",
+      "animateBackground": "Animar fondo",
+      "tags": {
+        "models": "Varios modelos",
+        "dialog": "Diálogo interno",
+        "consensus": "Una respuesta alineada"
+      }
+    },
+    "profile": {
+      "label": "Perfil",
+      "open": "Abrir perfil",
+      "credits": "Créditos: {{count}}",
+      "dataCollection": "Recopilación de datos",
+      "logout": "Cerrar sesión",
+      "deleteAccount": "Eliminar cuenta",
+      "deleteConfirm": "¿Eliminar la cuenta y todos los datos relacionados? Esta acción no se puede deshacer.",
+      "deleteError": "No se pudo eliminar la cuenta",
+      "topUp": {
+        "amountAria": "Importe de recarga en dólares",
+        "preview": "{{count}} cr.",
+        "button": "Recargar",
+        "rateTitle": "Tarifa: {{multiplier}} créditos por 1 $",
+        "minAmount": "El importe mínimo de recarga es 1 $",
+        "createPaymentError": "No se pudo crear el pago",
+        "checkoutUrlError": "No se recibió la URL de pago de Stripe"
+      }
+    },
+    "strip": {
+      "a11y": "En resumen",
+      "idea": {
+        "label": "Idea",
+        "text": "Una tarea, distintos puntos de vista de modelos y luego una conclusión común."
+      },
+      "difference": {
+        "label": "Diferencia",
+        "text": "No es una votación por botones, sino un intercambio de argumentos y aclaraciones entre modelos."
+      },
+      "result": {
+        "label": "Resultado",
+        "text": "Menos errores aleatorios y menos imprecisiones dichas con seguridad por un único modelo."
+      }
+    },
+    "how": {
+      "title": "Cómo funciona",
+      "lead": "Tres pasos desde la solicitud hasta una respuesta que pasó una revisión interna.",
+      "steps": {
+        "request": {
+          "title": "Solicitud",
+          "text": "Describes la tarea como lo harías con un asistente normal."
+        },
+        "dialog": {
+          "title": "Diálogo entre modelos",
+          "text": "Varias redes neuronales intercambian conclusiones y se refinan entre sí."
+        },
+        "result": {
+          "title": "Resultado",
+          "text": "Consensia devuelve una única respuesta alineada y verificada."
+        }
+      }
+    },
+    "features": {
+      "title": "Capacidades",
+      "lead": "Todo lo que necesitas para confiar en la respuesta: no solo el texto, sino también el camino hasta él.",
+      "cards": {
+        "depth": {
+          "title": "Profundidad",
+          "text": "Los puntos débiles de un modelo se compensan con las fortalezas de otro."
+        },
+        "transparency": {
+          "title": "Transparencia",
+          "text": "Puedes ver cómo se llegó al resultado final: no es una caja negra, sino un razonamiento colaborativo."
+        },
+        "quality": {
+          "title": "Calidad",
+          "text": "Enfocado en una mejor respuesta, no en una serie de versiones contradictorias."
+        }
+      }
+    },
+    "cases": {
+      "title": "Dónde ayuda",
+      "lead": "En cualquier tarea donde importen la precisión, varios puntos de vista y una redacción cuidadosa.",
+      "items": {
+        "code": {
+          "title": "Código y arquitectura",
+          "text": "Revisar ideas, encontrar casos límite, alinear estilo y tener en cuenta las restricciones del stack."
+        },
+        "writing": {
+          "title": "Redacción y comunicación",
+          "text": "Correos, documentos y tono de voz cuando los matices importan."
+        },
+        "analytics": {
+          "title": "Análisis y decisiones",
+          "text": "Comparar opciones, validar supuestos y llegar a una conclusión más estable y fundamentada."
+        },
+        "learning": {
+          "title": "Aprendizaje e ideación",
+          "text": "Desglosar temas, detectar lagunas y construir una visión coherente del conjunto."
+        }
+      }
+    },
+    "quote": {
+      "a11y": "Posicionamiento del producto",
+      "text": "No buscamos la respuesta más creativa a cualquier precio: nos centramos en un <strong>resultado alineado y verificable</strong>."
+    },
+    "cta": {
+      "a11y": "Llamada a la acción",
+      "title": "¿Listo para Consensia?",
+      "sub": "Pega tu código o tu prompt: es la forma más rápida de ver el resultado en la práctica.",
+      "openApp": "Abrir aplicación"
+    }
+  },
+  "footer": {
+    "tagline": "Inteligencia colectiva de modelos en una sola interfaz.",
+    "badge": "Versión beta",
+    "productAria": "Secciones del producto",
+    "product": "Producto",
+    "faq": "FAQ",
+    "githubActions": "GitHub Actions",
+    "terms": "Términos de servicio",
+    "privacy": "Política de privacidad",
+    "sessions": "Sesiones",
+    "sessionsText": "Puedes continuar análisis más tarde: el historial se guarda en tu cuenta.",
+    "rights": "Todos los derechos reservados"
+  },
+  "app": {
+    "ws": {
+      "invalidJson": "JSON no válido del servidor",
+      "waitingReply": "Esperando tu respuesta...",
+      "wsError": "Error de WebSocket",
+      "wsConnectionError": "Error de conexión WebSocket",
+      "notConnected": "Sin conexión"
+    },
+    "composer": {
+      "collapse": "Contraer campo de entrada",
+      "expand": "Expandir campo de entrada",
+      "send": "Enviar"
+    },
+    "scenario": {
+      "label": "Escenario",
+      "options": {
+        "codeReview": "Revisión de código",
+        "codeWriter": "Generación de código",
+        "quick": "Chat simple",
+        "legal": "Legal",
+        "investor": "Inversor",
+        "science": "Ciencia"
+      }
+    },
+    "chatMessage": {
+      "codeFold": "Código (contraer/expandir)",
+      "thoughts": "Ideas",
+      "summary": "Resumen",
+      "description": "Descripción",
+      "showResponse": "Mostrar respuesta",
+      "round": "Ronda",
+      "criticalFixes": "Correcciones críticas",
+      "improvements": "Mejoras",
+      "finalVerdict": "Veredicto final",
+      "showHide": "Mostrar/ocultar",
+      "show": "Mostrar",
+      "hide": "Ocultar",
+      "finalCode": "Código final",
+      "diff": "Diff",
+      "showDiff": "Mostrar diff",
+      "showMessage": "Mostrar mensaje",
+      "creditsSpent": "Créditos usados: {{count}}",
+      "raw": "Datos sin procesar",
+      "snippet": "Fragmento",
+      "attachedFiles": "Archivos adjuntos: {{count}}"
+    },
+    "page": {
+      "profileLabel": "Perfil",
+      "modes": {
+        "economy": "Económico",
+        "balanced": "Equilibrado",
+        "maxPower": "Máximo"
+      },
+      "status": {
+        "connecting": "Conectando...",
+        "open": "Listo",
+        "closed": "Desconectado"
+      },
+      "errors": {
+        "loginFailed": "No se pudo iniciar sesión. Inténtalo de nuevo.",
+        "sessionsLoadFailed": "No se pudo cargar la lista de sesiones",
+        "sessionLoadStopped": "La conexión se detuvo. Inténtalo de nuevo.",
+        "sessionLoadFailed": "No se pudo cargar la sesión",
+        "topUpMinAmount": "El importe mínimo de recarga es 1 $",
+        "createPaymentFailed": "No se pudo crear el pago",
+        "checkoutUrlMissing": "No se recibió la URL de pago de Stripe",
+        "fileReadFailed": "No se pudo leer el archivo; puede ser demasiado grande o no estar disponible.",
+        "deleteSessionFailed": "No se pudo eliminar la sesión",
+        "deleteAccountFailed": "No se pudo eliminar la cuenta"
+      },
+      "loading": "Cargando...",
+      "navHome": "Inicio",
+      "authBackHome": "Volver al inicio",
+      "authTitle": "Iniciar sesión en Consensia",
+      "authLead": "Para usar el chat, inicia sesión con Google. Así vinculamos las sesiones con tu cuenta.",
+      "authHint": "Inicio de sesión seguro con Google. No publicamos nada sin una acción tuya.",
+      "continueGoogle": "Continuar con Google",
+      "beta": "Beta",
+      "closeHistory": "Cerrar historial",
+      "openHistory": "Abrir historial",
+      "newChat": "Nuevo chat",
+      "credits": "Créditos: {{count}}",
+      "topUpAmountAria": "Importe de recarga en dólares",
+      "creditsShort": "{{count}} cr.",
+      "topUpRate": "Tarifa: {{multiplier}} créditos por 1 $",
+      "topUpButton": "Recargar",
+      "dataCollection": "Recopilación de datos",
+      "logout": "Cerrar sesión",
+      "deleteAccount": "Eliminar cuenta",
+      "deleteAccountConfirm": "¿Eliminar la cuenta y todos los datos relacionados? Esta acción no se puede deshacer.",
+      "home": "Inicio",
+      "historyAria": "Historial de chats",
+      "historyTitle": "Historial",
+      "closeMenu": "Cerrar menú",
+      "sessionsLoading": "Cargando...",
+      "roundLabel": "Ronda",
+      "roundMissing": "Ronda —",
+      "deleteSessionAria": "Eliminar sesión",
+      "deleteTitle": "Eliminar",
+      "historyEmpty": "Tus chats aparecerán aquí después de la primera ejecución.",
+      "setupTitle": "Nuevo chat",
+      "setupLead": "Pega código o adjunta archivos y describe la tarea.",
+      "setupLeadNonReview": "Describe la tarea y adjunta archivos si hace falta.",
+      "codeLabel": "Código",
+      "attachFiles": "Adjuntar archivos al código",
+      "attachDocuments": "Adjuntar documentos",
+      "removeFileAria": "Eliminar {{name}}",
+      "contextLabelOptional": "Tarea (opcional)",
+      "contextLabelRequired": "Tarea",
+      "contextPlaceholder": "Por ejemplo: encuentra vulnerabilidades y sugiere correcciones",
+      "modeLabel": "Modo",
+      "roundsLabel": "Rondas",
+      "resumeHint": "Continuando la sesión guardada.",
+      "connectBtn": "Iniciar",
+      "loadingSession": "Cargando sesión...",
+      "generatingAria": "Generando respuesta",
+      "generatingText": "Generando respuesta...",
+      "spentCredits": "Créditos usados",
+      "placeholderLocked": "Esperando respuesta del orquestador...",
+      "placeholderOpen": "Tu respuesta al orquestador...",
+      "workspacePill": "Espacio de trabajo de IA"
+    }
+  },
+  "authCallback": {
+    "loading": "Iniciando sesión..."
+  },
+  "githubActionsPage": {
+    "docTitle": "GitHub Actions · Consensia",
+    "title": "Integración con GitHub Actions",
+    "lead": "Conecta Consensia a tu repositorio para revisión automática de código. Puedes configurar comprobaciones de IA tanto para Pull Requests como para pushes normales a ramas seleccionadas.",
+    "quickStart": {
+      "title": "Inicio rápido",
+      "lead": "Completa estos tres pasos sencillos para configurar la integración:",
+      "steps": [
+        "Añade tu clave de API a GitHub Secrets.",
+        "Concede permisos para publicar comentarios.",
+        "Crea un archivo de workflow."
+      ]
+    },
+    "controls": {
+      "title": "Acciones adicionales",
+      "lead": "Prepara todo lo necesario antes de ejecutar el workflow.",
+      "generateButton": "Generar clave de API",
+      "saveKeyButton": "Guardar clave",
+      "generatedKeyLabel": "Clave de API",
+      "openRouterPlaceholder": "Clave de API de OpenRouter",
+      "openRouterRequired": "La clave de API de OpenRouter es obligatoria",
+      "generateSuccess": "Guarda esta clave ahora; no podremos volver a mostrarla.",
+      "saveSuccess": "La clave personalizada de OpenRouter se guardó de forma segura.",
+      "subscribeButton": "Suscripción (5 $)",
+      "tip": "Compra una suscripción para usar tu saldo de OpenRouter en lugar de nuestros créditos.",
+      "generateError": "No se pudo generar la clave de CLI",
+      "generateFallbackSuccess": "Clave de CLI generada",
+      "saveError": "No se pudo guardar la clave de OpenRouter",
+      "saveFallbackSuccess": "Clave de OpenRouter guardada",
+      "checkoutError": "No se pudo crear el pago",
+      "checkoutUrlMissing": "Falta la URL de pago de Stripe"
+    },
+    "steps": {
+      "secret": {
+        "title": "Paso 1. Añade la clave de API a GitHub Secrets",
+        "lead": "La acción necesita tu clave de API para autorizarse en el sistema.",
+        "items": [
+          "En tu repositorio, ve a Settings → Secrets and variables → Actions.",
+          "Haz clic en New repository secret.",
+          "Name: CONSENSIA_API_KEY",
+          "Value: tu clave generada en la página de GitHub Actions de Consensia."
+        ]
+      },
+      "permissions": {
+        "title": "Paso 2. Concede permisos para publicar comentarios",
+        "lead": "Para que el bot pueda publicar resultados de revisión directamente en el código, necesita permisos de escritura.",
+        "items": [
+          "Ve a Settings → Actions → General.",
+          "Busca la sección Workflow permissions.",
+          "Selecciona Read and write permissions y guarda los cambios."
+        ]
+      },
+      "workflow": {
+        "title": "Paso 3. Crea un archivo de workflow",
+        "lead": "Según tu flujo de desarrollo, elige uno de los dos escenarios siguientes o usa ambos en archivos separados. Crea .github/workflows/ai-review.yml y añade la configuración correspondiente:",
+        "path": "Ruta: .github/workflows/ai-review.yml"
+      }
+    },
+    "scenarios": {
+      "pr": {
+        "title": "Escenario A: comprobaciones de Pull Request (recomendado)",
+        "lead": "El bot analizará los cambios cuando se cree un PR y después de cada nuevo commit enviado a él.",
+        "note": "Importante: para comprobaciones de PR usa target: 'pr' y fetch-depth: 0.",
+        "yaml": "name: Consensia PR Review\n\non:\n  pull_request:\n    types: [opened, synchronize]\n\npermissions:\n  contents: read\n  pull-requests: write\n\njobs:\n  review:\n    runs-on: ubuntu-latest\n    steps:\n      - name: Checkout code\n        uses: actions/checkout@v4\n        with:\n          fetch-depth: 0 # Required for proper branch comparison\n\n      - name: Run Consensia AI Reviewer\n        uses: Ashixi/consensia-action@main\n        with:\n          api-key: ${{ secrets.CONSENSIA_API_KEY }}\n          github-token: ${{ secrets.GITHUB_TOKEN }}\n          target: 'pr'     # Indicates this is a Pull Request\n          mode: 'BALANCED' # Review mode: ECONOMY, BALANCED, or MAX_POWER\n          rounds: '2'      # Number of consensus rounds"
+      },
+      "commit": {
+        "title": "Escenario B: comprobaciones de commits directos (push)",
+        "lead": "Úsalo si quieres que el bot analice cada push a ramas específicas, por ejemplo main o feature/**, sin crear un PR.",
+        "note": "Importante: para comprobaciones de push usa target: 'commit' y fetch-depth: 2.",
+        "yaml": "name: Consensia Commit Review\n\non:\n  push:\n    branches:\n      - main\n      - 'feature/**' # Pattern for feature branches\n\npermissions:\n  contents: write\n\njobs:\n  review:\n    runs-on: ubuntu-latest\n    steps:\n      - name: Checkout code\n        uses: actions/checkout@v4\n        with:\n          fetch-depth: 2 # Enough to compare current and previous commits\n\n      - name: Run Consensia AI Reviewer\n        uses: Ashixi/consensia-action@main\n        with:\n          api-key: ${{ secrets.CONSENSIA_API_KEY }}\n          github-token: ${{ secrets.GITHUB_TOKEN }}\n          target: 'commit' # Indicates this is a direct commit\n          mode: 'BALANCED'"
+      }
+    },
+    "result": {
+      "title": "¿Cómo se ve el resultado?",
+      "lead": "Después del análisis, la acción intenta publicar automáticamente el informe en tu repositorio. El formato de salida depende de si la API de GitHub acepta las coordenadas de las líneas modificadas:",
+      "items": [
+        "Caso predeterminado (comentarios en línea): el script intenta publicar los hallazgos junto a las líneas problemáticas del código, dentro de la pestaña Files changed del PR.",
+        "Caso de respaldo (un único comentario de resumen): GitHub a menudo rechaza comentarios por línea (422 Unprocessable Entity) si la IA apunta a una línea fuera del diff actual. Para no perder resultados, la acción captura este error y publica todos los hallazgos en un único comentario normal de PR o commit."
+      ]
+    }
+  },
+  "aiAgentPage": {
+    "docTitle": "Agente de IA · Consensia",
+    "emoticon": ".·´¯`(>▂<)´¯`·.",
+    "title": "Lo sentimos",
+    "lead": "Esta página sigue en desarrollo activo. Volveremos pronto con la experiencia completa del Agente de IA.",
+    "backHome": "Volver al inicio"
+  },
+  "aiAgentPageBeta": {
+    "docTitle": "Agente de IA · Consensia",
+    "title": "Agente Consensia",
+    "lead": "Consensia Agent es un sistema de IA multicapa diseñado para convertir el ruido bruto de redes sociales en inteligencia blockchain verificada. A diferencia de los rastreadores estándar, Sentinel actúa como un detective autónomo y usa una arquitectura en cascada de modelos ajustados para identificar, investigar y confirmar incidentes de seguridad en tiempo real.",
+    "coreInnovation": {
+      "title": "Innovación principal: pipeline de verificación de hechos",
+      "lead": "Nuestra ventaja única está en la gestión dinámica del contexto. Nuestros modelos no solo resumen datos; gestionan activamente su propio ciclo de investigación:",
+      "items": [
+        {
+          "title": "REQUEST_CONTEXT",
+          "text": "El agente identifica señales potenciales y genera de forma autónoma parámetros de búsqueda precisos para bases de datos blockchain."
+        },
+        {
+          "title": "DROP_CONTEXT",
+          "text": "Un mecanismo avanzado de aprendizaje negativo descarta automáticamente rumores, ruido o FUD no confirmado si los datos on-chain no coinciden con el informe."
+        },
+        {
+          "title": "VERIFIED ALERTS",
+          "text": "Sentinel solo activa alertas de alta prioridad cuando los eventos reportados por humanos están respaldados por hechos inmutables de blockchain."
+        }
+      ]
+    },
+    "architecture": {
+      "title": "Arquitectura técnica",
+      "items": [
+        "Filtro L1 (modelo de 1,5B): saneamiento ultrarrápido y reducción de ruido en flujos de datos entrantes.",
+        "Analizador L2 (modelo de 3B): motor de razonamiento profundo para llamadas a herramientas y verificación de datos.",
+        "Orquestador Python: integración fluida entre el razonamiento de IA y el filtrado de datos blockchain sin procesar."
+      ]
+    },
+    "cta": {
+      "tagline": "Deja de perseguir rumores. Empieza a monitorizar hechos.",
+      "downloadButton": "Descargar",
+      "downloading": "Descargando...",
+      "downloadError": "No se pudo descargar el agente. Inténtalo de nuevo más tarde.",
+      "note": "Recibirás consensia-agent.zip: el archivo del agente CLI de Consensia."
+    }
+  },
+  "developersPage": {
+    "eyebrow": "Creadores de Consensia",
+    "title": "Desarrolladores",
+    "lead": "El equipo que construyó Consensia desde la idea hasta un producto real.",
+    "contactsAria": "Contactos de desarrolladores",
+    "illiaContactText": "Preguntas sobre el producto, ideas y reportes de errores:",
+    "andriiContactText": "Preguntas técnicas avanzadas y feedback sobre la calidad de respuestas de IA:",
+    "developers": [
+      {
+        "id": "illia",
+        "name": "Illia",
+        "role": "Product / Frontend / Integration",
+        "about": "Responsable del lado cliente del sitio web: interfaz visual, experiencia de usuario (UX) e integración de todos los componentes visuales."
+      },
+      {
+        "id": "andrii",
+        "name": "Andrii",
+        "role": "AI / Backend / ML",
+        "about": "Responsable de la arquitectura técnica y el backend. Construyó el orquestador que sincroniza 6 modelos de IA diferentes en un solo sistema."
+      }
+    ]
+  },
+  "faqPage": {
+    "docTitle": "FAQ · Consensia",
+    "skip": "Saltar al contenido",
+    "title": "FAQ",
+    "updated": "Última actualización: 7 de abril de 2026",
+    "lead": "Respuestas breves a preguntas comunes sobre Consensia, sesiones y créditos.",
+    "items": [
+      {
+        "q": "1. ¿Qué hace Consensia?",
+        "a": "Consensia ejecuta varios modelos, agrega sus argumentos y devuelve una respuesta alineada."
+      },
+      {
+        "q": "2. ¿Se guardan mis chats?",
+        "a": "Sí. El historial de sesiones se guarda en el servidor dentro de tu cuenta y está disponible en la sección de historial."
+      },
+      {
+        "q": "3. ¿Puedo continuar un chat antiguo?",
+        "a": "Sí. Abre la sesión que necesites desde el historial: el contexto se restaura y la conversación puede continuar."
+      },
+      {
+        "q": "4. ¿Cómo funcionan los créditos?",
+        "a": "Los créditos se cobran según el uso real de modelos: volumen de entrada/salida, número de pasos y complejidad de la tarea."
+      },
+      {
+        "q": "5. ¿Qué hace el interruptor de \"Recopilación de datos\"?",
+        "a": "Guarda tu preferencia en la interfaz. Para detalles sobre el tratamiento de datos, consulta los términos y la política de privacidad."
+      }
+    ]
+  },
+  "modelsPage": {
+    "docTitle": "Modelos · Consensia",
+    "eyebrow": "Pipeline de revisión multiagente",
+    "title": "Modelos",
+    "lead": "Cada modelo de este chat tiene una especialización clara. Abajo puedes ver quién revisa qué y cómo se forma el veredicto final.",
+    "expertsAria": "Tarjetas de expertos",
+    "systemAria": "Judge y Router",
+    "panel": {
+      "judgeTitle": "Judge / Arbiter",
+      "routerTitle": "Router"
+    },
+    "labels": {
+      "role": "Rol",
+      "task": "Tarea",
+      "weight": "Peso",
+      "temperature": "Temperatura",
+      "focus": "Se centra en",
+      "output": "Formato de salida",
+      "mindset": "Enfoque"
+    },
+    "experts": [
+      {
+        "name": "Centinela de seguridad",
+        "modelId": "openai/gpt-5-codex",
+        "role": "Senior Security Engineer",
+        "task": "Auditoría estricta",
+        "focus": [
+          "SQLi",
+          "XSS",
+          "Auth/Authz",
+          "API insegura",
+          "Secretos hardcodeados",
+          "Deserialización insegura"
+        ],
+        "output": [
+          "Fragmento",
+          "Vulnerabilidad",
+          "Exploit",
+          "Corrección"
+        ],
+        "constraint": "Mentalidad paranoica.",
+        "weight": 1,
+        "temperature": "ninguna"
+      },
+      {
+        "name": "Arquitecto de rendimiento",
+        "modelId": "qwen/qwen3.6-plus",
+        "role": "Principal Performance Architect",
+        "task": "Análisis de cuellos de botella",
+        "focus": [
+          "Big-O",
+          "Memoria",
+          "Asignaciones",
+          "Bloqueo de I/O",
+          "Escalabilidad"
+        ],
+        "output": [
+          "Código",
+          "Complejidad",
+          "Ineficiencia",
+          "Optimización"
+        ],
+        "constraint": "Precisión matemática. Sin consejos genéricos.",
+        "weight": 0.8,
+        "temperature": 0.1
+      },
+      {
+        "name": "Defensor del código limpio",
+        "modelId": "google/gemini-3-flash-preview",
+        "role": "Staff Software Engineer",
+        "task": "Control de calidad",
+        "focus": [
+          "SOLID",
+          "DRY",
+          "Nombres",
+          "Funciones enormes",
+          "Legibilidad"
+        ],
+        "output": [
+          "Código problemático",
+          "Principio violado",
+          "Código refactorizado"
+        ],
+        "constraint": "Crítica estricta. Sin elogios.",
+        "weight": 0.7,
+        "temperature": 0.2
+      },
+      {
+        "name": "Cazador de casos límite",
+        "modelId": "z-ai/glm-5-turbo",
+        "role": "Lead QA (Breaking Systems)",
+        "task": "Encontrar casos límite",
+        "focus": [
+          "Null/None",
+          "Vacío",
+          "Estrés",
+          "Condiciones de carrera",
+          "Zonas horarias",
+          "Límites"
+        ],
+        "output": [
+          "Entrada de prueba",
+          "Motivo del fallo",
+          "Sugerencia de guardia/corrección"
+        ],
+        "constraint": "Mentalidad de tester malicioso.",
+        "weight": 0.9,
+        "temperature": 0.2
+      }
+    ],
+    "arbiter": {
+      "id": "google/gemini-3.1-pro-preview",
+      "role": "THE JUDGE",
+      "purpose": "Judge es el árbitro final entre expertos. Consolida sus hallazgos en un veredicto alineado con prioridades de corrección claras.",
+      "workflow": [
+        {
+          "title": "Cómo analiza",
+          "points": [
+            "Compara hallazgos de todos los expertos y verifica qué argumentos están realmente respaldados por el código.",
+            "Filtra duplicados, hipótesis débiles y consejos con poco valor práctico.",
+            "Resuelve conflictos entre recomendaciones y elige el camino más seguro y eficaz."
+          ]
+        },
+        {
+          "title": "Qué devuelve",
+          "points": [
+            "Una lista priorizada de correcciones críticas.",
+            "Una lista de mejoras de calidad.",
+            "Un veredicto final unificado."
+          ]
+        }
+      ]
+    },
+    "router": {
+      "model": "google/gemini-2.5-flash-lite",
+      "role": "Tech Lead Router",
+      "mission": "Router selecciona el conjunto de expertos para cada fragmento de código, de modo que la revisión siga siendo útil y concisa.",
+      "rules": [
+        {
+          "title": "Centinela de seguridad",
+          "text": "Se activa cuando el código incluye entradas de usuario, APIs, bases de datos, autorización o integraciones externas."
+        },
+        {
+          "title": "Arquitecto de rendimiento",
+          "text": "Se activa cuando hay bucles, recursión, grandes volúmenes de datos o riesgos de escalabilidad."
+        },
+        {
+          "title": "Defensor del código limpio",
+          "text": "Se activa cuando el código está sobrecargado, es difícil de leer o necesita mejor estructura y nombres."
+        },
+        {
+          "title": "Cazador de casos límite",
+          "text": "Se activa para entradas no estándar, ramificaciones complejas o escenarios concurrentes."
+        }
+      ]
+    }
+  },
+  "aboutPage": {
+    "docTitle": "Acerca de · Consensia",
+    "title": "Acerca de",
+    "lead": "Consensia es una plataforma multiagente para análisis de código: varios expertos de IA revisan la tarea desde distintos ángulos y luego un árbitro produce un veredicto final único. Nuestro objetivo no es dar una respuesta aleatoria, sino una solución alineada con estructura y prioridades claras.",
+    "sections": [
+      {
+        "title": "Qué ocurre después de pulsar \"Ejecutar\"",
+        "bullets": [
+          "Envías código, contexto de la tarea, modo y número de rondas de discusión (1-3).",
+          "El cliente abre una conexión WebSocket con el orquestador y envía los parámetros de sesión.",
+          "Los expertos publican informes por ronda; después se generan un veredicto final y código final.",
+          "Cuando terminan las rondas, el chat queda abierto: puedes hacer preguntas de seguimiento en la misma sesión."
+        ]
+      },
+      {
+        "title": "Por qué un enfoque multiagente es mejor que una sola respuesta",
+        "paragraphs": [
+          "Una respuesta de un único modelo puede ser rápida, pero a menudo depende de la aleatoriedad del prompt y de una sola perspectiva. En Consensia, una tarea pasa por varios roles: seguridad, rendimiento, legibilidad y casos límite. Esto reduce el riesgo de recomendaciones equivocadas dichas con seguridad y mejora la calidad final."
+        ],
+        "bullets": [
+          "Experiencia paralela en distintos dominios.",
+          "Arbitraje de recomendaciones contradictorias.",
+          "Una versión final con prioridades de corrección."
+        ]
+      },
+      {
+        "title": "Roles del pipeline",
+        "paragraphs": [
+          "En la práctica, el pipeline se divide en dos partes: expertos y capa de control. Los expertos aportan feedback enfocado, Judge / Arbiter sintetiza la conclusión final y Router decide qué expertos deben participar en cada tarea."
+        ],
+        "link": {
+          "before": "La composición detallada de roles y modelos está disponible en la página",
+          "label": "“Modelos”",
+          "href": "/models"
+        }
+      },
+      {
+        "title": "Modos de trabajo",
+        "paragraphs": [
+          "La interfaz ofrece tres modos: \"Económico\", \"Equilibrado\" y \"Máximo\". Permiten elegir entre coste y profundidad de análisis.",
+          "En el frontend, el modo se envía como parámetro de inicio de sesión; la estrategia real de selección de modelos y la intensidad de la orquestación se definen en el servidor."
+        ]
+      },
+      {
+        "title": "Nuevos escenarios de tarea",
+        "paragraphs": [
+          "El producto se ha expandido más allá de la revisión clásica de código. Ahora admite los escenarios CODE_WRITER, QUICK, LEGAL, INVESTOR y SCIENCE, mientras que CODE_REVIEW sigue siendo una ruta dedicada para análisis más profundo de código."
+        ],
+        "bullets": [
+          "En CODE_REVIEW puedes adjuntar archivos fuente y analizar fragmentos del proyecto en una sola ejecución.",
+          "En otros escenarios puedes enviar una tarea junto con documentos adjuntos.",
+          "El escenario seleccionado se guarda en el historial de sesión y se restaura al reabrirlo."
+        ]
+      },
+      {
+        "title": "Historial de sesiones y restauración de contexto",
+        "paragraphs": [
+          "Cada sesión se guarda en el servidor y está disponible en el historial lateral. Al reabrirla, restauramos el orden de los mensajes para que siga siendo lógico: planteamiento de la tarea -> análisis de expertos y veredicto final -> chat de seguimiento."
+        ],
+        "bullets": [
+          "Las sesiones se pueden abrir, continuar y eliminar.",
+          "El título del historial se toma del planteamiento original de la tarea.",
+          "El veredicto final se mantiene anclado en su posición original del diálogo.",
+          "Una sesión concreta puede restaurarse directamente con enlaces /app?session=<id>."
+        ]
+      },
+      {
+        "title": "Créditos y uso transparente",
+        "paragraphs": [
+          "El uso se muestra en créditos con una fórmula sencilla: aproximadamente 1000 tokens = 1 crédito. Los valores se actualizan durante el diálogo y se restauran correctamente para sesiones anteriores."
+        ],
+        "bullets": [
+          "El saldo actual es visible en el perfil.",
+          "El compositor muestra \"Créditos usados\" para la sesión activa.",
+          "Las recargas se procesan mediante Stripe Checkout."
+        ]
+      },
+      {
+        "title": "Trabajo con código y archivos adjuntos",
+        "paragraphs": [
+          "Una sesión puede incluir no solo el fragmento principal de código, sino también archivos adicionales. Esto ayuda a analizar la tarea con todo el contexto."
+        ],
+        "bullets": [
+          "Se pueden subir varios archivos en una sola ejecución.",
+          "El texto de los archivos se añade al contexto compartido de análisis.",
+          "Después de iniciar, puedes continuar en la misma sesión sin perder contexto."
+        ]
+      },
+      {
+        "title": "Calidad de salida y legibilidad",
+        "paragraphs": [
+          "Nos centramos no solo en la calidad de la respuesta, sino también en el formato: los bloques largos se pueden contraer, el código se resalta, el markdown se formatea y los artefactos de streaming se normalizan para mejorar la lectura."
+        ],
+        "bullets": [
+          "Secciones plegables para respuestas de expertos, veredicto, diff y código.",
+          "Soporte de Markdown con listas y bloques de código bien renderizados.",
+          "Interfaz móvil con historial lateral y compositor adaptable."
+        ]
+      },
+      {
+        "title": "Seguridad de acceso y cuenta",
+        "paragraphs": [
+          "El inicio de sesión del producto se implementa mediante Google OAuth. Tras autorizarte, obtienes acceso a sesiones personales, perfil y saldo de créditos.",
+          "El cliente usa un token de acceso y mecanismos de actualización de sesión a nivel de API para minimizar interrupciones de autorización."
+        ]
+      },
+      {
+        "title": "Datos y privacidad",
+        "paragraphs": [
+          "La interfaz incluye un interruptor de \"Recopilación de datos\", mientras que las condiciones legales de tratamiento de datos se publican en documentos separados."
+        ],
+        "legalLinks": {
+          "before": "Para detalles sobre almacenamiento, tratamiento y derechos del usuario, consulta",
+          "privacyLabel": "Política de privacidad",
+          "termsLabel": "Términos de servicio"
+        }
+      },
+      {
+        "title": "Nuestro I+D: arquitectura de \"Contexto infinito\"",
+        "paragraphs": [
+          "Consensia en su forma actual es solo el comienzo. Hemos empezado a construir el siguiente paso: una tecnología diseñada para resolver el principal dolor de los LLM modernos, los límites de ventana de contexto.",
+          "Estamos diseñando nuestra propia arquitectura de memoria dinámica para IA, con el objetivo de dar a los modelos un contexto prácticamente infinito mediante etiquetado semántico.",
+          "En lugar de intentar meter millones de líneas de código en un único prompt, el sistema futuro dividirá el contexto del proyecto en bloques y los etiquetará.",
+          "El modelo no leerá el código de principio a fin. Cuando el sistema necesite información sobre un módulo específico, consultará esta memoria etiquetada, por ejemplo con etiquetas como #db_logic o #auth_flow, y extraerá al instante solo el fragmento necesario al área de trabajo.",
+          "Para procesar contexto a máxima velocidad, planeamos reemplazar modelos universales por una red de nodos estrechamente especializados. Interactuarán directamente mediante espacio vectorial (embeddings), sin gastar tiempo adicional generando texto entre sí.",
+          "Nuestro objetivo es construir un sistema capaz de analizar datos de cualquier tamaño sin perder el foco ni olvidar el contexto."
+        ]
+      },
+      {
+        "title": "Para quién es Consensia",
+        "bullets": [
+          "Desarrolladores que necesitan revisión de código rápida desde varios ángulos.",
+          "Equipos que valoran la explicabilidad por encima de una respuesta mágica.",
+          "Tareas que requieren equilibrar seguridad, calidad y rendimiento."
+        ]
+      },
+      {
+        "title": "Equipo",
+        "paragraphs": [
+          "Construimos el producto en la intersección de UX, ingeniería frontend, orquestación backend y diseño de pipelines de IA."
+        ],
+        "link": {
+          "before": "Más información sobre el equipo está en la página",
+          "label": "“Desarrolladores”",
+          "href": "/developers"
+        }
+      }
+    ]
+  },
+  "privacyPolicyPage": {
+    "docTitle": "Política de privacidad · Consensia",
+    "skip": "Saltar al contenido",
+    "title": "Política de privacidad",
+    "updated": "Última actualización: 5 de abril de 2026",
+    "noticeTitle": "Borrador / despliegue de prueba.",
+    "noticeText": "Esta página describe el producto previsto y se publica mientras el sitio está en fase experimental. Antes del lanzamiento público, revisa el texto con un especialista legal de tu jurisdicción. Nada de lo aquí escrito constituye asesoramiento jurídico.",
+    "lead": "Esta Política de privacidad explica qué datos recopilamos, cómo los usamos y qué derechos tienes respecto a tus datos al usar Consensia.",
+    "partTitle": "Política de privacidad",
+    "partIntro": "Nos tomamos tu privacidad en serio. Esta sección explica qué datos recopilamos, cómo los usamos y tus derechos.",
+    "sections": [
+      {
+        "title": "1. Datos que recopilamos",
+        "paragraphs": [
+          "Datos de perfil (mediante Google OAuth): tu dirección de correo electrónico y nombre. Se usan exclusivamente para identificación de cuenta y autenticación.",
+          "Datos de uso: historial de chats, fragmentos de código enviados y registros del sistema necesarios para mantener la estabilidad de las sesiones.",
+          "Información de pago: estado de suscripción y Customer ID, procesados de forma segura por Stripe."
+        ]
+      },
+      {
+        "title": "2. Procesamiento mediante APIs de IA de terceros",
+        "paragraphs": [
+          "Como usamos modelos de IA externos para analizar tu código, el texto de tus consultas (prompts y fragmentos de código) se transmite por API a nuestros socios, por ejemplo OpenRouter o Google. Estos proveedores procesan tus datos únicamente para generar una respuesta. Seleccionamos socios con altos estándares de seguridad, pero no controlamos sus algoritmos internos."
+        ]
+      },
+      {
+        "title": "3. Recopilación de datos para entrenamiento y opción de exclusión",
+        "paragraphs": [
+          "Además de enviar solicitudes a APIs para el funcionamiento en tiempo real, almacenamos tus historiales de chat en nuestros servidores. Esto puede utilizarse para mejorar nuestros futuros algoritmos de orquestación y modelos propios.",
+          "Anonimización estricta: cualquier dato que usemos para análisis o entrenamiento futuro se anonimiza y se desvincula de tu nombre, correo electrónico o datos de pago.",
+          "Cómo excluirte: puedes prohibir este uso en cualquier momento desactivando la opción correspondiente de uso compartido de datos en la configuración de tu cuenta."
+        ]
+      },
+      {
+        "title": "4. Compartición de datos con terceros",
+        "intro": "No vendemos tus datos personales a anunciantes. Solo compartimos los datos necesarios con proveedores de confianza para operar la plataforma:",
+        "bullets": [
+          "Proveedores de APIs de IA: para generar respuestas a tus consultas.",
+          "Proveedores de infraestructura: para alojar servicios de la plataforma y bases de datos.",
+          "Pasarelas de pago: Stripe, para procesar transacciones."
+        ]
+      },
+      {
+        "title": "5. Cookies y tecnologías de seguimiento",
+        "paragraphs": [
+          "Usamos cookies esenciales estrictamente para la funcionalidad básica de la plataforma, como mantener la sesión iniciada y protegerla. No usamos rastreadores de marketing de terceros para publicidad dirigida sin tu consentimiento explícito."
+        ]
+      },
+      {
+        "title": "6. Tus derechos sobre los datos (GDPR y CCPA)",
+        "intro": "Según tu ubicación, puedes tener derecho a:",
+        "bullets": [
+          "Acceso: solicitar una copia de los datos personales que conservamos sobre ti.",
+          "Rectificación: solicitar la corrección de datos inexactos.",
+          "Eliminación (\"derecho al olvido\"): solicitar la eliminación completa de tu cuenta y datos asociados."
+        ],
+        "paragraphs": [
+          "Para ejercer estos derechos, contáctanos en el correo indicado abajo o usa la opción de eliminación de cuenta en la configuración de tu perfil."
+        ]
+      },
+      {
+        "title": "7. Conservación de datos",
+        "paragraphs": [
+          "Conservamos tu información solo mientras tu cuenta esté activa o mientras sea necesario para prestar el Servicio y cumplir obligaciones legales. Si eliminas tu cuenta, los datos personales se eliminan de las bases activas normalmente en un plazo de 30 días."
+        ]
+      },
+      {
+        "title": "8. Privacidad de menores",
+        "paragraphs": [
+          "Nuestro Servicio no está destinado a menores de 16 años. No recopilamos conscientemente datos personales de menores. Si descubrimos datos de este tipo sin consentimiento parental, los eliminamos."
+        ]
+      },
+      {
+        "title": "9. Cambios en esta política",
+        "paragraphs": [
+          "Podemos actualizar este documento periódicamente. Si realizamos cambios importantes, como actualizaciones en las reglas de uso de datos o en el modelo de precios, te avisaremos por correo electrónico o mediante un aviso visible dentro del servicio."
+        ],
+        "hasPrivacyLink": true
+      },
+      {
+        "title": "10. Contacto",
+        "paragraphs": [
+          "Si tienes preguntas sobre esta Política de privacidad, contáctanos en: support@faby.world"
+        ]
+      }
+    ]
+  },
+  "termsOfServicePage": {
+    "docTitle": "Términos de servicio · Consensia",
+    "skip": "Saltar al contenido",
+    "title": "Términos de servicio",
+    "updated": "Última actualización: 5 de abril de 2026",
+    "noticeTitle": "Borrador / despliegue de prueba.",
+    "noticeText": "Esta página se publica mientras el producto está en fase experimental. Antes del lanzamiento público, revisa este texto con un especialista legal de tu jurisdicción. El contenido no constituye asesoramiento jurídico.",
+    "lead": "Al acceder a Consensia o usarlo, aceptas estos Términos de servicio. Si no estás de acuerdo, no uses el Servicio.",
+    "sections": [
+      {
+        "title": "1. Registro y cuenta",
+        "paragraphs": [
+          "Registro obligatorio: para usar el Servicio, incluido el plan gratuito, debes crear una cuenta.",
+          "Autenticación: usamos autenticación segura de terceros mediante Google OAuth. Aceptas proporcionar información precisa y eres responsable de la seguridad de tu cuenta."
+        ]
+      },
+      {
+        "title": "2. Precios, créditos y pagos",
+        "paragraphs": [
+          "Los nuevos usuarios pueden recibir una cantidad limitada de créditos de cortesía. Los límites y precios pueden cambiar.",
+          "Los créditos se consumen según el uso real de modelos: tokens de entrada/salida y complejidad. Puedes consultar el saldo en tu cuenta.",
+          "Los créditos comprados generalmente no son reembolsables una vez usados parcialmente, salvo cuando la ley lo exija.",
+          "Los pagos se procesan mediante Stripe. No almacenamos datos completos de tarjetas en nuestros servidores."
+        ]
+      },
+      {
+        "title": "3. Uso aceptable",
+        "intro": "Aceptas no usar el Servicio para:",
+        "bullets": [
+          "Violar leyes, derechos de autor o licencias.",
+          "Intentar hackear, hacer DDoS o aplicar ingeniería inversa a sistemas de la plataforma.",
+          "Generar malware, exploits o realizar ciberataques ilegales."
+        ]
+      },
+      {
+        "title": "4. Exención de garantías y limitación de responsabilidad",
+        "paragraphs": [
+          "El Servicio depende de APIs de IA de terceros y no garantiza disponibilidad ininterrumpida ni precisión absoluta.",
+          "Eres responsable de revisar y probar los resultados generados antes de usarlos en producción.",
+          "El Servicio se ofrece \"TAL CUAL\" y \"SEGÚN DISPONIBILIDAD\", sin garantías. No somos responsables de daños directos o indirectos derivados de su uso."
+        ]
+      },
+      {
+        "title": "5. Propiedad intelectual",
+        "paragraphs": [
+          "Tu código: conservas la propiedad del código que envías.",
+          "Nuestra plataforma: la interfaz, la lógica de orquestación, la marca y la infraestructura pertenecen a Consensia."
+        ]
+      },
+      {
+        "title": "6. Terminación de cuenta",
+        "paragraphs": [
+          "Podemos suspender o cancelar cuentas por infracciones de estos Términos, incluido abuso, intentos de eludir límites, spam o fraude de pagos."
+        ]
+      },
+      {
+        "title": "7. Contacto",
+        "paragraphs": [
+          "Preguntas sobre estos Términos: support@faby.world"
+        ]
+      }
+    ]
+  },
+  "paymentSuccessPage": {
+    "docTitle": "Pago correcto · Consensia",
+    "title": "Pago realizado correctamente",
+    "lead": "Tu pago se completó correctamente. Los créditos o el acceso deberían aparecer en tu cuenta en breve.",
+    "openApp": "Abrir aplicación",
+    "backHome": "Volver al inicio"
+  },
+  "paymentCancelPage": {
+    "docTitle": "Pago cancelado · Consensia",
+    "title": "Pago cancelado",
+    "lead": "El pago se canceló y no se realizó ningún cargo. Puedes intentarlo de nuevo cuando quieras.",
+    "tryAgain": "Intentar de nuevo",
+    "backHome": "Volver al inicio"
+  }
+}

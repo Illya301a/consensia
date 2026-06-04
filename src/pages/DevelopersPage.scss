@@ -142,39 +142,40 @@
 
 .developers__photo-wrap {
   position: relative;
-  height: clamp(22rem, 50vw, 38rem);
+  aspect-ratio: 1 / 1.08;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(253, 242, 248, 0.92));
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding: 1rem 1rem 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 .developers__photo {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: center bottom;
+  object-fit: cover;
+  object-position: center center;
   display: block;
   filter: drop-shadow(0 10px 24px rgba(26, 10, 18, 0.18));
   transition: transform 0.28s ease, filter 0.28s ease;
-  transform-origin: center bottom;
+  transform-origin: center center;
 }
 
 .developers__card--left .developers__photo {
-  transform: scale(1.08);
+  object-position: center 58%;
 }
 
 .developers__card--left:hover .developers__photo {
-  transform: scale(1.1);
-}
-
-.developers__card--right .developers__photo {
   transform: scale(1.03);
 }
 
+.developers__card--right .developers__photo {
+  object-position: center 42%;
+}
+
 .developers__card--right:hover .developers__photo {
-  transform: scale(1.06);
+  transform: scale(1.03);
 }
 
 .developers__photo-wrap::before {
@@ -316,19 +317,19 @@
   }
 
   .developers__photo-wrap {
-    height: min(82vw, 36rem);
+    aspect-ratio: 1 / 1.08;
   }
 
   .developers__card--left .developers__photo {
-    transform: scale(0.98);
+    object-position: center 58%;
   }
 
   .developers__card--right .developers__photo {
-    transform: scale(1.01);
+    object-position: center 42%;
   }
 
   .developers__card--left:hover .developers__photo {
-    transform: scale(1);
+    transform: scale(1.03);
   }
 
   .developers__card--right:hover .developers__photo {

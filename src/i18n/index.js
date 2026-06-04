@@ -5,6 +5,7 @@ import en from './locales/en.json'
 import ru from './locales/ru.json'
 import ua from './locales/ua.json'
 import de from './locales/de.json'
+import es from './locales/es.json'
 import {
   DEFAULT_LANGUAGE,
   normalizeLanguageCode,
@@ -16,6 +17,7 @@ const resources = {
   ua: { translation: ua },
   en: { translation: en },
   de: { translation: de },
+  es: { translation: es },
 }
 
 function syncDocumentLang(lng) {

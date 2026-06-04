@@ -618,7 +618,8 @@ function extractSpentCreditsFromDetail(detail, sessionData, sessionMeta) {
 export default function AppPage() {
   const { i18n, t } = useTranslation()
   const lang = String(i18n.resolvedLanguage || i18n.language || 'en').split('-')[0]
-  const c = APP_COPY[lang] || APP_COPY.en
+  const localeCopy = t('app.page', { returnObjects: true })
+  const c = localeCopy && typeof localeCopy === 'object' ? localeCopy : APP_COPY[lang] || APP_COPY.en
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const sessionFromUrl = searchParams.get('session') || ''
