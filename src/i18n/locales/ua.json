@@ -5,7 +5,12 @@
   },
   "a11y": {
     "mainNav": "Основна навігація",
-    "chooseLanguage": "Мова інтерфейсу"
+    "chooseLanguage": "Мова інтерфейсу",
+    "toggleTheme": "Перемкнути колірну тему"
+  },
+  "theme": {
+    "light": "Світла",
+    "dark": "Темна"
   },
   "nav": {
     "about": "Про нас",

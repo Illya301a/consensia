@@ -1,9 +1,28 @@
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { useTheme } from '../services/ThemeContext.jsx'
+
+function useCodeSyntaxProps() {
+  const { isDark } = useTheme()
+  return {
+    style: isDark ? oneDark : oneLight,
+    customStyle: {
+      background: isDark ? 'rgba(30, 15, 25, 0.96)' : 'rgba(255, 255, 255, 0.92)',
+      border: isDark
+        ? '1px solid rgba(244, 114, 182, 0.32)'
+        : '1px solid rgba(244, 114, 182, 0.22)',
+      borderRadius: '10px',
+      fontSize: '0.78rem',
+      marginTop: '0.5rem',
+      overflowX: 'hidden',
+    },
+  }
+}
 
 function shouldFold(text, threshold = 420) {
   if (!text) return false
@@ -30,6 +49,7 @@ function Fold({ title, defaultOpen, children, closedTitle, openTitle }) {
 }
 
 function Markdown({ children }) {
+  const codeSyntax = useCodeSyntaxProps()
   let text = children == null ? '' : String(children)
   // If backend double-escaped newlines, make Markdown readable.
   if (text.includes('\\n') && !text.includes('\n')) {
@@ -92,18 +112,11 @@ function Markdown({ children }) {
           return (
             <SyntaxHighlighter
               language={lang || 'text'}
-              style={oneLight}
+              style={codeSyntax.style}
               showLineNumbers={false}
               wrapLongLines
               PreTag="div"
-              customStyle={{
-                background: 'rgba(255, 255, 255, 0.92)',
-                border: '1px solid rgba(244, 114, 182, 0.22)',
-                borderRadius: '10px',
-                fontSize: '0.78rem',
-                marginTop: '0.5rem',
-                overflowX: 'hidden',
-              }}
+              customStyle={codeSyntax.customStyle}
             >
               {code}
             </SyntaxHighlighter>
@@ -164,22 +177,16 @@ function extractFencedCode(value) {
 }
 
 function CodeBlock({ value, defaultLanguage = 'text' }) {
+  const codeSyntax = useCodeSyntaxProps()
   const { lang, code } = extractFencedCode(value)
   return (
     <SyntaxHighlighter
       language={lang || defaultLanguage}
-      style={oneLight}
+      style={codeSyntax.style}
       showLineNumbers={false}
       wrapLongLines
       PreTag="div"
-      customStyle={{
-        background: 'rgba(255, 255, 255, 0.92)',
-        border: '1px solid rgba(244, 114, 182, 0.22)',
-        borderRadius: '10px',
-        fontSize: '0.78rem',
-        marginTop: '0.5rem',
-        overflowX: 'hidden',
-      }}
+      customStyle={codeSyntax.customStyle}
     >
       {String(code ?? '')}
     </SyntaxHighlighter>
@@ -206,6 +213,7 @@ function creditsFromTokens(tokens) {
 
 export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
   const { t } = useTranslation()
+  const codeSyntax = useCodeSyntaxProps()
   switch (msg.kind) {
     case 'system':
       return null
@@ -316,18 +324,11 @@ export const ChatMessageItem = memo(function ChatMessageItem({ msg }) {
                     <Fold title={t('app.chatMessage.snippet')} defaultOpen={!shouldFold(issue.snippet, 240)}>
                       <SyntaxHighlighter
                         language="javascript"
-                        style={oneLight}
+                        style={codeSyntax.style}
                         showLineNumbers={false}
                         wrapLongLines
                         PreTag="div"
-                        customStyle={{
-                          background: 'rgba(255, 255, 255, 0.92)',
-                          border: '1px solid rgba(244, 114, 182, 0.22)',
-                          borderRadius: '10px',
-                          fontSize: '0.78rem',
-                          marginTop: '0.5rem',
-                          overflowX: 'hidden',
-                        }}
+                        customStyle={codeSyntax.customStyle}
                       >
                         {String(issue.snippet)}
                       </SyntaxHighlighter>

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import '../App.scss'
 import { Reveal } from '../components/Reveal.jsx'
 import LanguageSwitcher from '../components/LanguageSwitcher.jsx'
+import ThemeSwitcher from '../components/ThemeSwitcher.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import TopBurgerMenu from '../components/TopBurgerMenu.jsx'
 import MobileProfilePanel from '../components/MobileProfilePanel.jsx'
@@ -25,7 +26,6 @@ export default function HomePage() {
   const { isAuthenticated, user, loginWithGoogle, logout } = useAuth()
   const profileLabel = t('home.profile.label')
   const userLabel = getUserLabel(user) || profileLabel
-  const [animationsEnabled, setAnimationsEnabled] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const [profilePopRendered, setProfilePopRendered] = useState(false)
@@ -199,7 +199,7 @@ export default function HomePage() {
       <section className="hero" aria-label={t('home.a11y.hero')}>
         <div className="hero__canvas" aria-hidden="true">
           <Suspense fallback={null}>
-            <ConsensiaScene animationsEnabled={animationsEnabled} />
+            <ConsensiaScene />
           </Suspense>
         </div>
         <div className="hero__gradient" aria-hidden="true" />
@@ -212,6 +212,7 @@ export default function HomePage() {
                 <Link to="/models">{t('nav.models')}</Link>
                 <Link to="/developers">{t('nav.developers')}</Link>
               </nav>
+              <ThemeSwitcher className="top__theme top__theme--desktop" />
               <LanguageSwitcher className="top__lang top__lang--desktop" />
               {isAuthenticated ? (
                 <div className="chat-app__profile" ref={profileRef}>
@@ -320,15 +321,6 @@ export default function HomePage() {
                   {t('home.auth.login')}
                 </button>
               )}
-              <button
-                type="button"
-                className="motion-toggle motion-toggle--desktop"
-                aria-pressed={animationsEnabled}
-                title={t('home.hero.motionToggleTitle')}
-                onClick={() => setAnimationsEnabled((v) => !v)}
-              >
-                {animationsEnabled ? t('home.hero.stopBackground') : t('home.hero.animateBackground')}
-              </button>
               <TopBurgerMenu
                 isOpen={mobileMenuOpen}
                 onToggle={() => setMobileMenuOpen((o) => !o)}
@@ -353,7 +345,7 @@ export default function HomePage() {
                     {!isAuthenticated ? (
                       <button
                         type="button"
-                        className="motion-toggle motion-toggle--menu"
+                        className="top__cta top__cta--menu"
                         onClick={() => {
                           loginWithGoogle()
                           closeMobileMenu()
@@ -365,16 +357,8 @@ export default function HomePage() {
                   </>
                 }
               >
+                <ThemeSwitcher className="top__theme top__theme--menu" />
                 <LanguageSwitcher className="top__lang top__lang--menu" />
-                <button
-                  type="button"
-                  className={`motion-toggle motion-toggle--menu${isAuthenticated ? ' motion-toggle--menu-with-profile' : ''}`}
-                  aria-pressed={animationsEnabled}
-                  title={t('home.hero.motionToggleTitle')}
-                  onClick={() => setAnimationsEnabled((v) => !v)}
-                >
-                  {animationsEnabled ? t('home.hero.stopBackground') : t('home.hero.animateBackground')}
-                </button>
                 {isAuthenticated ? <div className="top__menu-profile">{mobileProfile}</div> : null}
               </TopBurgerMenu>
             </div>

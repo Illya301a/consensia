@@ -34,6 +34,16 @@
     href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,600;7..72,700&family=Onest:wght@400;500;600;700&display=swap"
     rel="stylesheet" />
   <title>Consensia | Multi-Agent AI Workspace & Code Review</title>
+  <script>
+    (function () {
+      try {
+        var theme = localStorage.getItem('consensia_theme_v1');
+        document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",

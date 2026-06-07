@@ -2,10 +2,10 @@
   min-height: 100vh;
   font-family: 'Onest', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   background:
-    radial-gradient(circle at 12% 8%, rgba(251, 113, 133, 0.16), transparent 42%),
-    radial-gradient(circle at 88% 4%, rgba(244, 114, 182, 0.14), transparent 35%),
-    linear-gradient(165deg, #fff 0%, #fdf2f8 45%, #fce7f3 100%);
-  color: #4b1632;
+    radial-gradient(circle at 12% 8%, var(--color-red-glow-16), transparent 42%),
+    radial-gradient(circle at 88% 4%, var(--color-rose-glow-16), transparent 35%),
+    linear-gradient(165deg, var(--color-bg-top) 0%, var(--color-bg-mid) 45%, var(--color-bg-deep) 100%);
+  color: var(--color-text);
 }
 
 .experts-page h1,
@@ -23,21 +23,21 @@
   justify-content: space-between;
   gap: 1rem;
   padding: clamp(0.9rem, 2.2vw, 1.2rem) clamp(1rem, 2.6vw, 2rem);
-  border-bottom: 1px solid rgba(244, 114, 182, 0.2);
-  background: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid var(--color-border-rose-20);
+  background: var(--color-surface-strong);
   backdrop-filter: blur(10px);
 }
 
 .experts-page__logo {
   text-decoration: none;
-  color: #4b1632;
+  color: var(--color-text);
   font-size: clamp(1.15rem, 2.1vw, 1.45rem);
   font-weight: 700;
   letter-spacing: -0.02em;
   transition: color 0.22s ease;
 
   &:hover {
-    color: #db2777;
+    color: var(--color-rose-600);
   }
 }
 
@@ -48,18 +48,18 @@
 
   a {
     text-decoration: none;
-    color: #6b3750;
+    color: var(--color-text-muted);
     font-weight: 600;
     font-size: 0.88rem;
     padding: 0.42rem 0.7rem;
     border-radius: 999px;
-    border: 1px solid rgba(244, 114, 182, 0.2);
-    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid var(--color-border-rose-20);
+    background: var(--color-surface-72);
     transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease,
       transform 0.2s ease;
 
     &:hover {
-      color: #fff;
+      color: var(--color-bg-top);
       background: #ec4899;
       border-color: #ec4899;
       transform: translateY(-1px);
@@ -84,7 +84,7 @@
     margin: 0.6rem 0 0;
     max-width: 44rem;
     line-height: 1.55;
-    color: #6b3750;
+    color: var(--color-text-muted);
   }
 }
 
@@ -118,7 +118,7 @@
 .experts-page__card {
   border-radius: 1rem;
   border: 1px solid rgba(244, 114, 182, 0.22);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 251, 253, 0.72));
+  background: linear-gradient(180deg, var(--color-card-bg-start), var(--color-card-bg-end));
   box-shadow: 0 14px 36px rgba(244, 114, 182, 0.12);
   padding: 0.95rem 0.95rem 1rem;
   display: grid;
@@ -146,8 +146,8 @@
 
   code {
     font-size: 0.73rem;
-    color: #6b3750;
-    background: rgba(252, 231, 243, 0.66);
+    color: var(--color-text-muted);
+    background: var(--color-code-bg);
     border: 1px solid rgba(244, 114, 182, 0.22);
     border-radius: 0.55rem;
     padding: 0.24rem 0.38rem;
@@ -157,7 +157,7 @@
 
 .experts-page__meta {
   margin: 0;
-  color: #5b3b49;
+  color: var(--color-meta-on-card);
   font-size: 0.88rem;
 }
 
@@ -165,7 +165,7 @@
   h3 {
     margin: 0;
     font-size: 0.82rem;
-    color: #db2777;
+    color: var(--color-rose-600);
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
@@ -173,7 +173,7 @@
   ol {
     margin: 0.38rem 0 0;
     padding-left: 1.1rem;
-    color: #5b3b49;
+    color: var(--color-meta-on-card);
     font-size: 0.88rem;
     line-height: 1.5;
   }
@@ -187,16 +187,16 @@
 
   span {
     font-size: 0.78rem;
-    color: #6b3750;
+    color: var(--color-text-muted);
     border: 1px solid rgba(244, 114, 182, 0.23);
-    background: rgba(252, 231, 243, 0.62);
+    background: var(--color-chip-bg);
     border-radius: 999px;
     padding: 0.2rem 0.5rem;
     transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
 
     &:hover {
       transform: translateY(-1px);
-      background: rgba(252, 231, 243, 0.78);
+      background: var(--color-chip-bg-hover);
       border-color: rgba(244, 114, 182, 0.34);
     }
   }
@@ -204,7 +204,7 @@
 
 .experts-page__constraint {
   margin: 0.2rem 0 0;
-  color: #4a2d39;
+  color: var(--color-meta-on-card);
   font-size: 0.86rem;
   line-height: 1.5;
 }
@@ -221,7 +221,7 @@
 .experts-page__panel {
   border-radius: 1rem;
   border: 1px solid rgba(244, 114, 182, 0.22);
-  background: rgba(255, 255, 255, 0.78);
+  background: var(--color-card-bg-start);
   box-shadow: 0 12px 30px rgba(244, 114, 182, 0.1);
   padding: 0.95rem 1rem;
   transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
@@ -229,7 +229,7 @@
   &:hover {
     transform: translateY(-2px);
     border-color: rgba(244, 114, 182, 0.32);
-    box-shadow: 0 16px 38px rgba(244, 114, 182, 0.14);
+    box-shadow: 0 16px 38px var(--color-rose-glow-16);
   }
 
   h2 {
@@ -240,14 +240,14 @@
   p,
   li {
     margin: 0.35rem 0 0;
-    color: #5b3b49;
+    color: var(--color-meta-on-card);
     line-height: 1.5;
     font-size: 0.9rem;
   }
 
   code {
     font-size: 0.8rem;
-    color: #6b3750;
+    color: var(--color-text-muted);
   }
 
   ul {
@@ -269,8 +269,8 @@
 
   code {
     font-size: 0.73rem;
-    color: #6b3750;
-    background: rgba(252, 231, 243, 0.66);
+    color: var(--color-text-muted);
+    background: var(--color-code-bg);
     border: 1px solid rgba(244, 114, 182, 0.22);
     border-radius: 0.55rem;
     padding: 0.24rem 0.38rem;
@@ -296,7 +296,7 @@
 .experts-page__arbiter-block {
   border-radius: 0.75rem;
   border: 1px solid rgba(244, 114, 182, 0.16);
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--color-surface-72);
   padding: 0.6rem 0.7rem;
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 
@@ -309,7 +309,7 @@
   h3 {
     margin: 0;
     font-size: 0.78rem;
-    color: #db2777;
+    color: var(--color-rose-600);
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
@@ -323,7 +323,7 @@
     margin-top: 0.25rem;
     line-height: 1.45;
     font-size: 0.86rem;
-    color: #5b3b49;
+    color: var(--color-meta-on-card);
   }
 }
 
@@ -344,7 +344,7 @@
 .experts-page__router-rule {
   border-radius: 0.75rem;
   border: 1px solid rgba(244, 114, 182, 0.16);
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--color-surface-72);
   padding: 0.6rem 0.7rem;
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 
@@ -357,7 +357,7 @@
   h3 {
     margin: 0;
     font-size: 0.78rem;
-    color: #db2777;
+    color: var(--color-rose-600);
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
@@ -366,7 +366,7 @@
     margin: 0.42rem 0 0;
     line-height: 1.45;
     font-size: 0.86rem;
-    color: #5b3b49;
+    color: var(--color-meta-on-card);
   }
 }
 

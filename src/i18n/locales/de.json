@@ -5,7 +5,12 @@
   },
   "a11y": {
     "mainNav": "Hauptnavigation",
-    "chooseLanguage": "Sprache der Oberfläche"
+    "chooseLanguage": "Sprache der Oberfläche",
+    "toggleTheme": "Farbschema umschalten"
+  },
+  "theme": {
+    "light": "Hell",
+    "dark": "Dunkel"
   },
   "nav": {
     "about": "Über uns",

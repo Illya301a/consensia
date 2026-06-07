@@ -1,6 +1,6 @@
 .ai-agent-page {
   min-height: 100dvh;
-  background: linear-gradient(162deg, #fff9fc 0%, #fdf2f8 44%, #ffe6f2 100%);
+  background: linear-gradient(162deg, var(--color-bg-gradient-accent) 0%, var(--color-bg-mid) 44%, var(--color-bg-gradient-rose) 100%);
   background-size: 140% 140%;
   animation: aiAgentGradientFlow 22s ease-in-out infinite;
 }
@@ -22,7 +22,11 @@
   padding: clamp(1rem, 2.4vw, 1.4rem);
   border-radius: 1rem;
   border: 1px solid rgba(244, 114, 182, 0.28);
-  background: linear-gradient(140deg, rgba(255, 255, 255, 0.9), rgba(255, 240, 248, 0.88));
+  background: linear-gradient(
+    140deg,
+    var(--color-panel-gradient-start),
+    var(--color-panel-gradient-end)
+  );
   box-shadow: 0 14px 34px rgba(236, 72, 153, 0.12);
   animation: aiAgentHeroRise 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -30,12 +34,12 @@
 .ai-agent-page__title {
   margin: 0;
   font-size: clamp(1.75rem, 3.2vw, 2.35rem);
-  color: #4b1632;
+  color: var(--color-text);
 }
 
 .ai-agent-page__lead {
   margin: 0;
-  color: #6b3750;
+  color: var(--color-text-muted);
   line-height: 1.55;
 }
 
@@ -50,7 +54,7 @@
   font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: 0.01em;
-  color: #fff;
+  color: var(--color-bg-top);
   background: linear-gradient(135deg, #f43f8f, #ec4899 52%, #db2777);
   box-shadow: 0 10px 18px rgba(236, 72, 153, 0.24);
   transition:
@@ -70,7 +74,11 @@
 .ai-agent-card {
   border: 1px solid rgba(236, 72, 153, 0.2);
   border-radius: 1rem;
-  background: linear-gradient(155deg, rgba(255, 255, 255, 0.94), rgba(255, 245, 250, 0.9));
+  background: linear-gradient(
+    155deg,
+    var(--color-card-panel-start),
+    var(--color-card-panel-end)
+  );
   box-shadow: 0 12px 28px rgba(219, 39, 119, 0.08);
   padding: 1.05rem 1.1rem;
   display: grid;
@@ -85,18 +93,18 @@
 }
 
 .ai-agent-card h2 {
-  color: #4b1632;
+  color: var(--color-text);
   font-size: clamp(1.05rem, 2.2vw, 1.22rem);
 }
 
 .ai-agent-card h3 {
-  color: #5a1e3a;
+  color: var(--color-accent-heading);
   font-size: 1rem;
 }
 
 .ai-agent-card p,
 .ai-agent-card li {
-  color: #6b3750;
+  color: var(--color-text-muted);
   line-height: 1.55;
 }
 
@@ -121,7 +129,7 @@
 }
 
 .ai-agent-card__tagline {
-  color: #7d3a5d;
+  color: var(--color-tip-text);
   font-weight: 700;
 }
 

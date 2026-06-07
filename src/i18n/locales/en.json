@@ -5,7 +5,12 @@
   },
   "a11y": {
     "mainNav": "Main navigation",
-    "chooseLanguage": "Interface language"
+    "chooseLanguage": "Interface language",
+    "toggleTheme": "Toggle color theme"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark"
   },
   "nav": {
     "about": "About",

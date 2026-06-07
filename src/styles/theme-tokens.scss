@@ -1,0 +1,331 @@
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+
+  --color-bg-top: #ffffff;
+  --color-bg-mid: #fdf2f8;
+  --color-bg-deep: #fce7f3;
+  --color-text: #4b1632;
+  --color-text-muted: #6b3750;
+  --color-rose-500: #ec4899;
+  --color-rose-400: #f43f8f;
+  --color-rose-600: #db2777;
+  --color-pink-400: #f472b6;
+  --color-pink-200: #fbcfe8;
+  --color-pink-mist: #fce7f3;
+  --color-surface: rgba(255, 255, 255, 0.85);
+  --color-surface-solid: rgba(255, 255, 255, 0.96);
+  --color-surface-muted: rgba(255, 255, 255, 0.95);
+  --color-border-rose: rgba(244, 114, 182, 0.35);
+  --color-border-rose-soft: rgba(244, 114, 182, 0.26);
+  --color-shadow-rose: rgba(244, 114, 182, 0.16);
+  --color-rose-glow-12: rgba(244, 114, 182, 0.12);
+  --color-rose-glow-16: rgba(244, 114, 182, 0.16);
+  --color-rose-glow-18: rgba(244, 114, 182, 0.18);
+  --color-rose-glow-42: rgba(244, 114, 182, 0.42);
+  --color-rose-glow-44: rgba(244, 114, 182, 0.44);
+  --color-red-glow-15: rgba(251, 113, 133, 0.15);
+  --color-red-glow-16: rgba(251, 113, 133, 0.16);
+  --color-bg-gradient-soft: #fff8fb;
+  --color-bg-gradient-mid: #ffffff;
+  --color-bg-gradient-deep: #fef5f9;
+  --color-bg-gradient-accent: #fff9fc;
+  --color-bg-gradient-rose: #ffe6f2;
+  --color-bg-gradient-soft-alt: #fff8fc;
+  --color-accent-text: #c94b8c;
+  --color-scrollbar-track: rgba(255, 255, 255, 0.95);
+  --color-hero-overlay-light: rgba(255, 255, 255, 0.15);
+  --color-hero-overlay-top: rgba(255, 255, 255, 0.65);
+  --color-hero-overlay-mid: rgba(253, 242, 248, 0.2);
+  --color-hero-overlay-bottom: rgba(252, 231, 243, 0.85);
+  --color-surface-strong: rgba(255, 255, 255, 0.9);
+  --color-border-rose-hover: rgba(244, 114, 182, 0.55);
+  --color-border-rose-active: rgba(244, 114, 182, 0.5);
+  --color-border-rose-focus: rgba(244, 114, 182, 0.58);
+  --color-rose-glow-56: rgba(244, 114, 182, 0.56);
+  --color-rose-glow-11: rgba(244, 114, 182, 0.11);
+  --color-red-glow-14: rgba(251, 113, 133, 0.14);
+  --color-hero-gradient: rgba(252, 231, 243, 0.55);
+  --color-surface-72: rgba(255, 255, 255, 0.72);
+  --color-surface-75: rgba(255, 255, 255, 0.75);
+  --color-surface-55: rgba(255, 255, 255, 0.55);
+  --color-surface-65: rgba(255, 255, 255, 0.65);
+  --color-surface-60: rgba(255, 255, 255, 0.6);
+  --color-surface-70: rgba(255, 255, 255, 0.7);
+  --color-surface-82: rgba(255, 255, 255, 0.82);
+  --color-surface-84: rgba(255, 255, 255, 0.84);
+  --color-surface-94: rgba(255, 255, 255, 0.94);
+  --color-surface-warm: rgba(255, 253, 252, 0.97);
+  --color-surface-blush: rgba(255, 245, 250, 0.86);
+  --color-surface-blush-soft: rgba(255, 245, 250, 0.88);
+  --color-surface-fade: rgba(255, 255, 255, 0.4);
+  --color-surface-fade-25: rgba(255, 255, 255, 0.25);
+  --color-inset-highlight: rgba(255, 255, 255, 0.7);
+  --color-glass-border: rgba(255, 255, 255, 0.2);
+  --color-glass-border-mid: rgba(255, 255, 255, 0.22);
+  --color-glass-border-strong: rgba(255, 255, 255, 0.25);
+  --color-glass-border-soft: rgba(255, 255, 255, 0.08);
+  --color-glass-border-hover: rgba(255, 255, 255, 0.45);
+  --color-glass-text: rgba(255, 255, 255, 0.62);
+  --color-glass-text-strong: rgba(255, 255, 255, 0.98);
+  --color-glass-surface: rgba(255, 255, 255, 0.14);
+  --color-glass-surface-mid: rgba(255, 255, 255, 0.16);
+  --color-glass-surface-soft: rgba(255, 255, 255, 0.1);
+  --color-glass-surface-hover: rgba(255, 255, 255, 0.24);
+  --color-glass-surface-muted: rgba(255, 255, 255, 0.08);
+  --color-glass-surface-strong: rgba(255, 255, 255, 0.18);
+  --color-border-rose-20: rgba(244, 114, 182, 0.2);
+  --color-border-rose-40: rgba(244, 114, 182, 0.4);
+  --color-lede-text: #372828;
+  --color-scroll-hint: rgba(107, 74, 88, 0.55);
+  --color-card-bg-start: rgba(255, 255, 255, 0.82);
+  --color-card-bg-end: rgba(255, 251, 253, 0.72);
+  --color-chip-bg: rgba(252, 231, 243, 0.62);
+  --color-chip-bg-hover: rgba(252, 231, 243, 0.78);
+  --color-code-bg: rgba(252, 231, 243, 0.66);
+  --color-meta-on-card: #5b3b49;
+  --color-sidebar-meta: rgba(107, 74, 88, 0.88);
+  --color-photo-wrap-start: rgba(255, 255, 255, 0.76);
+  --color-photo-wrap-end: rgba(253, 242, 248, 0.92);
+  --color-dev-card-start: rgba(255, 255, 255, 0.83);
+  --color-dev-card-end: rgba(255, 251, 253, 0.75);
+  --color-profile-pop-bg-start: rgba(246, 166, 200, 0.96);
+  --color-profile-pop-bg-end: rgba(236, 123, 172, 0.96);
+  --color-profile-pop-text: rgba(255, 255, 255, 0.9);
+  --color-profile-pop-text-muted: rgba(255, 255, 255, 0.62);
+  --color-profile-pop-input-text: rgba(255, 255, 255, 0.95);
+  --color-profile-pop-shadow: rgba(0, 0, 0, 0.18);
+  --color-panel-shadow: rgba(15, 10, 12, 0.08);
+  --color-panel-gradient-start: rgba(255, 255, 255, 0.9);
+  --color-panel-gradient-end: rgba(255, 240, 248, 0.88);
+  --color-card-panel-start: rgba(255, 255, 255, 0.94);
+  --color-card-panel-end: rgba(255, 245, 250, 0.9);
+  --color-input-bg-start: rgba(255, 242, 248, 0.95);
+  --color-input-bg-end: rgba(255, 232, 244, 0.95);
+  --color-input-bg-focus-start: rgba(255, 236, 246, 0.98);
+  --color-input-bg-focus-end: rgba(255, 224, 240, 0.98);
+  --color-input-text: #4e1935;
+  --color-input-placeholder: #9d5475;
+  --color-tip-bg: rgba(255, 235, 246, 0.75);
+  --color-tip-text: #7d3a5d;
+  --color-mono-bg: rgba(255, 240, 248, 0.72);
+  --color-mono-text: #5b2540;
+  --color-code-text: #56243d;
+  --color-accent-heading: #5a1e3a;
+  --color-photo-shine: rgba(255, 255, 255, 0.42);
+  --color-footer-gradient-end: #fbcfe8;
+  --color-footer-bar-end: rgba(252, 231, 243, 0.65);
+  --color-footer-copy: rgba(107, 74, 88, 0.62);
+  --color-cta-band-text: #ffffff;
+  --color-cta-band-btn-bg: #ffffff;
+  --color-cta-band-btn-text: #9d174d;
+  --color-cta-band-btn-shadow: rgba(0, 0, 0, 0.12);
+  --color-cta-band-bg-start: #db2777;
+  --color-cta-band-bg-mid: #be185d;
+  --color-cta-band-bg-end: #9d174d;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-bg-top: #120810;
+  --color-bg-mid: #1f0d18;
+  --color-bg-deep: #2a1220;
+  --color-text: #fce7f3;
+  --color-text-muted: #d4a5bc;
+  --color-rose-500: #f472b6;
+  --color-rose-400: #f43f8f;
+  --color-rose-600: #ec4899;
+  --color-pink-400: #f472b6;
+  --color-pink-200: #831843;
+  --color-pink-mist: #2a1220;
+  --color-surface: rgba(26, 12, 20, 0.88);
+  --color-surface-solid: rgba(30, 15, 25, 0.96);
+  --color-surface-muted: rgba(22, 10, 16, 0.95);
+  --color-border-rose: rgba(244, 114, 182, 0.45);
+  --color-border-rose-soft: rgba(244, 114, 182, 0.32);
+  --color-shadow-rose: rgba(0, 0, 0, 0.4);
+  --color-rose-glow-12: rgba(244, 114, 182, 0.14);
+  --color-rose-glow-16: rgba(244, 114, 182, 0.18);
+  --color-rose-glow-18: rgba(244, 114, 182, 0.2);
+  --color-rose-glow-42: rgba(244, 114, 182, 0.5);
+  --color-rose-glow-44: rgba(244, 114, 182, 0.52);
+  --color-red-glow-15: rgba(251, 113, 133, 0.18);
+  --color-red-glow-16: rgba(251, 113, 133, 0.2);
+  --color-bg-gradient-soft: #1a0a12;
+  --color-bg-gradient-mid: #120810;
+  --color-bg-gradient-deep: #2a1220;
+  --color-bg-gradient-accent: #1a0a12;
+  --color-bg-gradient-rose: #2a1220;
+  --color-bg-gradient-soft-alt: #1f0d18;
+  --color-accent-text: #f472b6;
+  --color-scrollbar-track: rgba(22, 10, 16, 0.95);
+  --color-hero-gradient: rgba(42, 18, 32, 0.75);
+  --color-hero-overlay-light: rgba(244, 114, 182, 0.1);
+  --color-hero-overlay-top: rgba(18, 8, 16, 0.28);
+  --color-hero-overlay-mid: rgba(42, 18, 32, 0.22);
+  --color-hero-overlay-bottom: rgba(42, 18, 32, 0.62);
+  --color-surface-strong: rgba(30, 15, 25, 0.92);
+  --color-border-rose-hover: rgba(244, 114, 182, 0.6);
+  --color-border-rose-active: rgba(244, 114, 182, 0.55);
+  --color-border-rose-focus: rgba(244, 114, 182, 0.65);
+  --color-rose-glow-56: rgba(244, 114, 182, 0.62);
+  --color-rose-glow-11: rgba(244, 114, 182, 0.16);
+  --color-red-glow-14: rgba(251, 113, 133, 0.18);
+  --color-surface-72: rgba(34, 16, 26, 0.82);
+  --color-surface-75: rgba(32, 14, 24, 0.85);
+  --color-surface-55: rgba(28, 12, 20, 0.72);
+  --color-surface-65: rgba(30, 14, 22, 0.78);
+  --color-surface-60: rgba(30, 14, 22, 0.74);
+  --color-surface-70: rgba(32, 14, 24, 0.8);
+  --color-surface-82: rgba(36, 16, 28, 0.88);
+  --color-surface-84: rgba(36, 16, 28, 0.9);
+  --color-surface-94: rgba(38, 18, 30, 0.94);
+  --color-surface-warm: rgba(34, 16, 26, 0.96);
+  --color-surface-blush: rgba(42, 18, 32, 0.88);
+  --color-surface-blush-soft: rgba(42, 18, 32, 0.9);
+  --color-surface-fade: rgba(18, 8, 16, 0.55);
+  --color-surface-fade-25: rgba(18, 8, 16, 0.35);
+  --color-inset-highlight: rgba(244, 114, 182, 0.12);
+  --color-glass-border: rgba(244, 114, 182, 0.22);
+  --color-glass-border-mid: rgba(244, 114, 182, 0.28);
+  --color-glass-border-strong: rgba(244, 114, 182, 0.32);
+  --color-glass-border-soft: rgba(244, 114, 182, 0.12);
+  --color-glass-border-hover: rgba(244, 114, 182, 0.5);
+  --color-glass-text: rgba(252, 231, 243, 0.72);
+  --color-glass-text-strong: rgba(252, 231, 243, 0.98);
+  --color-glass-surface: rgba(244, 114, 182, 0.1);
+  --color-glass-surface-mid: rgba(244, 114, 182, 0.12);
+  --color-glass-surface-soft: rgba(244, 114, 182, 0.08);
+  --color-glass-surface-hover: rgba(244, 114, 182, 0.18);
+  --color-glass-surface-muted: rgba(244, 114, 182, 0.08);
+  --color-glass-surface-strong: rgba(244, 114, 182, 0.14);
+  --color-border-rose-20: rgba(244, 114, 182, 0.28);
+  --color-border-rose-40: rgba(244, 114, 182, 0.42);
+  --color-lede-text: #e8c4d6;
+  --color-scroll-hint: rgba(212, 165, 188, 0.78);
+  --color-card-bg-start: rgba(36, 16, 28, 0.94);
+  --color-card-bg-end: rgba(24, 10, 18, 0.88);
+  --color-chip-bg: rgba(244, 114, 182, 0.14);
+  --color-chip-bg-hover: rgba(244, 114, 182, 0.22);
+  --color-code-bg: rgba(244, 114, 182, 0.12);
+  --color-meta-on-card: #d4a5bc;
+  --color-sidebar-meta: rgba(212, 165, 188, 0.88);
+  --color-photo-wrap-start: rgba(36, 16, 28, 0.55);
+  --color-photo-wrap-end: rgba(24, 10, 18, 0.82);
+  --color-dev-card-start: rgba(34, 16, 26, 0.94);
+  --color-dev-card-end: rgba(24, 10, 18, 0.9);
+  --color-profile-pop-bg-start: rgba(34, 16, 26, 0.98);
+  --color-profile-pop-bg-end: rgba(22, 10, 16, 0.98);
+  --color-profile-pop-text: #fce7f3;
+  --color-profile-pop-text-muted: rgba(252, 231, 243, 0.72);
+  --color-profile-pop-input-text: #fce7f3;
+  --color-profile-pop-shadow: rgba(0, 0, 0, 0.55);
+  --color-panel-shadow: rgba(0, 0, 0, 0.35);
+  --color-panel-gradient-start: rgba(34, 16, 26, 0.96);
+  --color-panel-gradient-end: rgba(22, 10, 16, 0.92);
+  --color-card-panel-start: rgba(36, 16, 28, 0.94);
+  --color-card-panel-end: rgba(24, 10, 18, 0.9);
+  --color-input-bg-start: rgba(30, 14, 22, 0.96);
+  --color-input-bg-end: rgba(22, 10, 16, 0.96);
+  --color-input-bg-focus-start: rgba(36, 16, 28, 0.98);
+  --color-input-bg-focus-end: rgba(28, 12, 20, 0.98);
+  --color-input-text: #fce7f3;
+  --color-input-placeholder: rgba(212, 165, 188, 0.72);
+  --color-tip-bg: rgba(244, 114, 182, 0.12);
+  --color-tip-text: #d4a5bc;
+  --color-mono-bg: rgba(244, 114, 182, 0.1);
+  --color-mono-text: #e8c4d6;
+  --color-code-text: #d4a5bc;
+  --color-accent-heading: #f472b6;
+  --color-photo-shine: rgba(244, 114, 182, 0.08);
+  --color-footer-gradient-end: #1f0d18;
+  --color-footer-bar-end: rgba(18, 8, 16, 0.95);
+  --color-footer-copy: rgba(212, 165, 188, 0.78);
+  --color-cta-band-text: #fce7f3;
+  --color-cta-band-btn-bg: #fce7f3;
+  --color-cta-band-btn-text: #831843;
+  --color-cta-band-btn-shadow: rgba(0, 0, 0, 0.28);
+  --color-cta-band-bg-start: #701a3a;
+  --color-cta-band-bg-mid: #831843;
+  --color-cta-band-bg-end: #4a0d25;
+}
+
+html.theme-switching {
+  pointer-events: none;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html.theme-switching,
+  html.theme-switching * {
+    transition: scrollbar-color 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  html.theme-switching *::-webkit-scrollbar-track {
+    transition: background 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  html.theme-switching *::-webkit-scrollbar-thumb {
+    transition:
+      background 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+#theme-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483646;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  background: rgba(12, 6, 10, 0.48);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  transition: opacity 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#theme-veil.is-active {
+  visibility: visible;
+  pointer-events: all;
+}
+
+#theme-veil.is-dimmed {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.38s;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-old(root) {
+    animation-name: theme-vt-out;
+  }
+
+  ::view-transition-new(root) {
+    animation-name: theme-vt-in;
+  }
+
+  @keyframes theme-vt-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes theme-vt-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}

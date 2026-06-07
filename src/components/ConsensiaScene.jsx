@@ -9,10 +9,36 @@ import {
   Sparkles,
 } from '@react-three/drei'
 import * as THREE from 'three'
+import { useTheme } from '../services/ThemeContext.jsx'
 
-const PINK = '#f472b6'
-const PINK_SOFT = '#fbcfe8'
-const PINK_MIST = '#fce7f3'
+const SCENE_PALETTE = {
+  light: {
+    pink: '#f472b6',
+    soft: '#fbcfe8',
+    mist: '#fce7f3',
+    blush: '#fdf2f8',
+    particleA: '#f472b6',
+    particleB: '#fbcfe8',
+    particleLerpMin: 0.08,
+    particleLerpSpan: 0.22,
+    keyLight: '#ffffff',
+    lineOpacity: 0.35,
+    nodeEmissive: 0.35,
+    particleSize: 0.045,
+  },
+  dark: {
+    pink: '#f472b6',
+    soft: '#f9a8d4',
+    mist: '#4a1830',
+    blush: '#fb7185',
+    particleA: '#f472b6',
+    particleB: '#fbcfe8',
+    keyLight: '#fce7f3',
+    lineOpacity: 0.52,
+    nodeEmissive: 0.48,
+    particleSize: 0.058,
+  },
+}
 
 const ORBIT_RADIUS = 9.5
 const ORBIT_LOAD_POLAR = Math.PI / 3.45
@@ -39,7 +65,7 @@ function useNarrowViewport() {
   return narrow
 }
 
-function ParticleCloud({ count = 4500, animationsEnabled = true }) {
+function ParticleCloud({ count = 4500, animationsEnabled = true, palette }) {
   const ref = useRef(null)
   const positions = useMemo(() => {
     const pos = new Float32Array(count * 3)
@@ -58,16 +84,18 @@ function ParticleCloud({ count = 4500, animationsEnabled = true }) {
 
   const colors = useMemo(() => {
     const c = new Float32Array(count * 3)
-    const nearWhite = new THREE.Color('#ff0000')
-    const blush = new THREE.Color('#fdf2f8')
+    const nearWhite = new THREE.Color(palette.particleA || palette.blush)
+    const blush = new THREE.Color(palette.particleB || palette.mist)
     for (let i = 0; i < count; i++) {
-      const col = nearWhite.clone().lerp(blush, 0.08 + Math.random() * 0.22)
+      const lerpMin = palette.particleLerpMin ?? 0.12
+      const lerpSpan = palette.particleLerpSpan ?? 0.55
+      const col = nearWhite.clone().lerp(blush, lerpMin + Math.random() * lerpSpan)
       c[i * 3] = col.r
       c[i * 3 + 1] = col.g
       c[i * 3 + 2] = col.b
     }
     return c
-  }, [count])
+  }, [count, palette])
 
   useFrame((_, delta) => {
     if (!animationsEnabled || !ref.current) return
@@ -83,9 +111,9 @@ function ParticleCloud({ count = 4500, animationsEnabled = true }) {
       </bufferGeometry>
       <pointsMaterial
         vertexColors
-        size={0.045}
+        size={palette.particleSize || 0.045}
         transparent
-        opacity={0.92}
+        opacity={0.94}
         sizeAttenuation
         depthWrite={false}
         blending={THREE.AdditiveBlending}
@@ -94,7 +122,7 @@ function ParticleCloud({ count = 4500, animationsEnabled = true }) {
   )
 }
 
-function ConsensiaNetwork({ animationsEnabled = true }) {
+function ConsensiaNetwork({ animationsEnabled = true, palette }) {
   const group = useRef(null)
 
   const { nodes, segments } = useMemo(() => {
@@ -145,9 +173,9 @@ function ConsensiaNetwork({ animationsEnabled = true }) {
         <Line
           key={i}
           points={pair}
-          color={PINK_SOFT}
+          color={palette.soft}
           transparent
-          opacity={0.35}
+          opacity={palette.lineOpacity || 0.35}
           lineWidth={1.2}
         />
       ))}
@@ -155,9 +183,9 @@ function ConsensiaNetwork({ animationsEnabled = true }) {
         <mesh key={i} position={p}>
           <sphereGeometry args={[0.07 + (i % 3) * 0.02, 16, 16]} />
           <meshPhysicalMaterial
-            color={i >= nodes.length - 6 ? PINK : PINK_MIST}
-            emissive={PINK}
-            emissiveIntensity={0.35}
+            color={i >= nodes.length - 6 ? palette.pink : palette.mist}
+            emissive={palette.pink}
+            emissiveIntensity={palette.nodeEmissive || 0.35}
             roughness={0.25}
             metalness={0.6}
             clearcoat={1}
@@ -169,13 +197,13 @@ function ConsensiaNetwork({ animationsEnabled = true }) {
   )
 }
 
-function CoreOrb({ animationsEnabled = true }) {
+function CoreOrb({ animationsEnabled = true, palette }) {
   const mesh = (
     <mesh scale={1.15}>
       <icosahedronGeometry args={[1.35, 2]} />
       <MeshDistortMaterial
-        color={PINK_SOFT}
-        emissive={PINK}
+        color={palette.soft}
+        emissive={palette.pink}
         emissiveIntensity={0.15}
         roughness={0.15}
         metalness={0.85}
@@ -196,7 +224,7 @@ function CoreOrb({ animationsEnabled = true }) {
   )
 }
 
-function SceneContent({ animationsEnabled = true, orbitRadius }) {
+function SceneContent({ animationsEnabled = true, orbitRadius, palette }) {
   const cameraPosition = useMemo(
     () => orbitCameraFromRadius(orbitRadius),
     [orbitRadius]
@@ -205,24 +233,24 @@ function SceneContent({ animationsEnabled = true, orbitRadius }) {
   return (
     <>
       <PerspectiveCamera makeDefault position={cameraPosition} fov={42} />
-      <fog attach="fog" args={[PINK_MIST, 8, 22]} />
+      <fog attach="fog" args={[palette.mist, 8, 22]} />
 
       <ambientLight intensity={0.55} />
-      <directionalLight position={[6, 8, 4]} intensity={1.1} color="#ffffff" />
-      <directionalLight position={[-5, -2, -3]} intensity={0.45} color={PINK_SOFT} />
-      <pointLight position={[0, 2, 2]} intensity={0.8} color={PINK} distance={14} />
+      <directionalLight position={[6, 8, 4]} intensity={1.1} color={palette.keyLight} />
+      <directionalLight position={[-5, -2, -3]} intensity={0.45} color={palette.soft} />
+      <pointLight position={[0, 2, 2]} intensity={0.8} color={palette.pink} distance={14} />
 
-      <ParticleCloud animationsEnabled={animationsEnabled} />
-      <ConsensiaNetwork animationsEnabled={animationsEnabled} />
-      <CoreOrb animationsEnabled={animationsEnabled} />
+      <ParticleCloud animationsEnabled={animationsEnabled} palette={palette} />
+      <ConsensiaNetwork animationsEnabled={animationsEnabled} palette={palette} />
+      <CoreOrb animationsEnabled={animationsEnabled} palette={palette} />
 
       <Sparkles
         count={120}
         scale={14}
         size={2.2}
         speed={animationsEnabled ? 0.35 : 0}
-        opacity={0.55}
-        color={PINK}
+        opacity={palette.lineOpacity ? 0.72 : 0.55}
+        color={palette.pink}
       />
 
       <OrbitControls
@@ -238,6 +266,8 @@ function SceneContent({ animationsEnabled = true, orbitRadius }) {
 }
 
 export function ConsensiaScene({ animationsEnabled = true }) {
+  const { isDark } = useTheme()
+  const palette = SCENE_PALETTE[isDark ? 'dark' : 'light']
   const [surfaceReady, setSurfaceReady] = useState(false)
   const narrow = useNarrowViewport()
   const orbitRadius = narrow ? ORBIT_RADIUS * 1.42 : ORBIT_RADIUS
@@ -270,6 +300,7 @@ export function ConsensiaScene({ animationsEnabled = true }) {
         <SceneContent
           animationsEnabled={animationsEnabled}
           orbitRadius={orbitRadius}
+          palette={palette}
         />
       </Canvas>
     </div>
