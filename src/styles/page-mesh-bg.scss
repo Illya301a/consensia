@@ -1,7 +1,7 @@
 @mixin page-mesh-bg {
   position: relative;
   isolation: isolate;
-  overflow: hidden;
+  overflow-x: clip;
   min-height: 100dvh;
   background:
     radial-gradient(1100px 700px at 20% 0%, var(--color-rose-glow-18), transparent 55%),
@@ -33,9 +33,15 @@
     animation: page-mesh-dots 42s linear infinite;
   }
 
-  > *:not(.page-aurora) {
+  > *:not(.page-aurora):not(.site-header) {
     position: relative;
     z-index: 2;
+  }
+
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 170;
   }
 }
 
@@ -110,5 +116,39 @@
   .experts-page::before,
   .developers-page::before {
     animation: none;
+  }
+}
+
+// Light theme: content-heavy pages — white center, soft rose only at top/bottom
+[data-theme='light'] {
+  .app.about-page {
+    background:
+      radial-gradient(780px 320px at 50% 0%, rgba(244, 114, 182, 0.1), transparent 48%),
+      radial-gradient(780px 320px at 50% 100%, rgba(244, 114, 182, 0.08), transparent 48%),
+      linear-gradient(180deg, #fdf2f8 0%, #ffffff 12%, #ffffff 88%, #fdf2f8 100%);
+
+    &::before {
+      opacity: 0.08;
+    }
+
+    .page-aurora {
+      opacity: 0.4;
+    }
+  }
+
+  .experts-page,
+  .developers-page {
+    background:
+      radial-gradient(720px 300px at 50% 0%, rgba(244, 114, 182, 0.07), transparent 46%),
+      radial-gradient(720px 300px at 50% 100%, rgba(244, 114, 182, 0.06), transparent 46%),
+      #ffffff;
+
+    &::before {
+      opacity: 0.1;
+    }
+
+    .page-aurora {
+      opacity: 0.5;
+    }
   }
 }

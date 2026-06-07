@@ -25,6 +25,7 @@ const QUOTE_TRANS_COMPONENTS = {
 const NAV_MOBILE_MAX_PX = 1024
 const DATA_COLLECTION_KEY = 'consensia_data_collection_v1'
 const PROFILE_POP_ANIMATION_MS = 180
+const TOP_ISLAND_SCROLL_PX = 90
 
 export default function HomePage() {
   const { t } = useTranslation()
@@ -36,6 +37,9 @@ export default function HomePage() {
   const [profilePopRendered, setProfilePopRendered] = useState(false)
   const [profilePopClosing, setProfilePopClosing] = useState(false)
   const profileRef = useRef(null)
+  const topRef = useRef(null)
+  const [topIsland, setTopIsland] = useState(false)
+  const [topSpacerHeight, setTopSpacerHeight] = useState(0)
   const [promoInfo, setPromoInfo] = useState(null)
   const [topUpAmount, setTopUpAmount] = useState('10')
   const [topUpLoading, setTopUpLoading] = useState(false)
@@ -50,6 +54,33 @@ export default function HomePage() {
       return true
     }
   })
+
+  useEffect(() => {
+    const onScroll = () => {
+      setTopIsland(window.scrollY > TOP_ISLAND_SCROLL_PX)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+    }
+  }, [])
+
+  useEffect(() => {
+    const el = topRef.current
+    if (!el || topIsland) return undefined
+
+    const syncHeight = () => {
+      setTopSpacerHeight(el.offsetHeight)
+    }
+
+    syncHeight()
+    const ro = new ResizeObserver(syncHeight)
+    ro.observe(el)
+    return () => {
+      ro.disconnect()
+    }
+  }, [topIsland, isAuthenticated, profilePopRendered, mobileMenuOpen])
 
   useEffect(() => {
     if (!mobileMenuOpen) return
@@ -209,14 +240,14 @@ export default function HomePage() {
         </div>
         <div className="hero__gradient" aria-hidden="true" />
         <div className="hero__content">
-          <header className="top">
+          <header ref={topRef} className={`top${topIsland ? ' top--island' : ''}`}>
+            <nav className="top__nav top__nav--desktop" aria-label={t('home.a11y.pageNav')}>
+              <Link to="/about">{t('nav.about')}</Link>
+              <Link to="/models">{t('nav.models')}</Link>
+              <Link to="/developers">{t('nav.developers')}</Link>
+            </nav>
             <span className="logo">{t('common.brand')}</span>
             <div className="top__end">
-              <nav className="top__nav top__nav--desktop" aria-label={t('home.a11y.pageNav')}>
-                <Link to="/about">{t('nav.about')}</Link>
-                <Link to="/models">{t('nav.models')}</Link>
-                <Link to="/developers">{t('nav.developers')}</Link>
-              </nav>
               <ThemeSwitcher className="top__theme top__theme--desktop" />
               <LanguageSwitcher className="top__lang top__lang--desktop" />
               {isAuthenticated ? (
@@ -368,6 +399,9 @@ export default function HomePage() {
               </TopBurgerMenu>
             </div>
           </header>
+          {topIsland ? (
+            <div className="top__spacer" style={{ height: topSpacerHeight }} aria-hidden="true" />
+          ) : null}
 
           <div className="hero__main">
             <p className="eyebrow">{t('home.hero.eyebrow')}</p>

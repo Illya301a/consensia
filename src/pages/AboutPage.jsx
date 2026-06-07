@@ -20,7 +20,7 @@ export default function AboutPage() {
   }, [c.docTitle])
 
   return (
-    <div className="app legal-page">
+    <div className="app legal-page about-page">
       <PageAurora />
       <SiteHeader />
 
