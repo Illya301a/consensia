@@ -7,11 +7,11 @@ import LanguageSwitcher from '../components/LanguageSwitcher.jsx'
 import ThemeSwitcher from '../components/ThemeSwitcher.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import TopBurgerMenu from '../components/TopBurgerMenu.jsx'
+import BurgerMenuNav from '../components/BurgerMenuNav.jsx'
+import ProfilePanel from '../components/ProfilePanel.jsx'
 import MobileProfilePanel from '../components/MobileProfilePanel.jsx'
-import DataCollectionToggle from '../components/DataCollectionToggle.jsx'
 import { useAuth } from '../services/AuthContext.jsx'
 import { apiFetch } from '../services/http.js'
-import { getCredits, getUserLabel } from '../services/profileUtils.js'
 import { useTopIslandScroll } from '../hooks/useTopIslandScroll.js'
 
 const ConsensiaScene = lazy(() =>
@@ -28,9 +28,7 @@ const PROFILE_POP_ANIMATION_MS = 180
 
 export default function HomePage() {
   const { t } = useTranslation()
-  const { isAuthenticated, user, loginWithGoogle, logout } = useAuth()
-  const profileLabel = t('home.profile.label')
-  const userLabel = getUserLabel(user) || profileLabel
+  const { isAuthenticated, user, loginWithGoogle, logout, switchAccount } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const [profilePopRendered, setProfilePopRendered] = useState(false)
@@ -163,6 +161,11 @@ export default function HomePage() {
         logout()
         closeMobileMenu()
       }}
+      onSwitchAccount={() => {
+        closeMobileMenu()
+        switchAccount()
+      }}
+      onNavigate={closeMobileMenu}
     />
   ) : null
 
@@ -220,64 +223,28 @@ export default function HomePage() {
                     </span>
                   </button>
                   {profilePopRendered ? (
-                    <div
-                      className={`chat-app__profile-pop${profilePopClosing ? ' chat-app__profile-pop--closing' : ''}`}
-                      role="menu"
-                    >
-                      <div className="chat-app__profile-head">
-                        <div className="chat-app__profile-title">{userLabel}</div>
-                        {getCredits(user) != null ? (
-                          <div className="chat-app__profile-credits-line">
-                            <div className="chat-app__profile-sub">
-                              {t('home.profile.credits', { count: getCredits(user) })}
-                            </div>
-                            <div className="chat-app__topup-inline">
-                              <input
-                                className="chat-app__topup-input"
-                                type="number"
-                                min={1}
-                                step={1}
-                                value={topUpAmount}
-                                onChange={(e) => setTopUpAmount(e.target.value)}
-                                aria-label={t('home.profile.topUp.amountAria')}
-                              />
-                              <span className="chat-app__topup-preview">
-                                {t('home.profile.topUp.preview', { count: creditsPreview })}
-                              </span>
-                              <button
-                                type="button"
-                                className="chat-app__topup-btn"
-                                onClick={handleTopUp}
-                                disabled={topUpLoading}
-                                title={t('home.profile.topUp.rateTitle', { multiplier: promoMultiplier })}
-                              >
-                                {topUpLoading ? '...' : t('home.profile.topUp.button')}
-                              </button>
-                            </div>
-                          </div>
-                        ) : null}
-                        {topUpError ? <div className="chat-app__profile-sub">{topUpError}</div> : null}
-                      </div>
-                      <div className="chat-app__profile-row">
-                        <DataCollectionToggle
-                          checked={dataCollection}
-                          onChange={setDataCollection}
-                          label={t('home.profile.dataCollection')}
-                        />
-                      </div>
-                      <div className="chat-app__profile-actions chat-app__profile-actions--solo">
-                        <button
-                          type="button"
-                          className="chat-app__profile-logout"
-                          onClick={() => {
-                            setProfileOpen(false)
-                            logout()
-                          }}
-                        >
-                          {t('home.profile.logout')}
-                        </button>
-                      </div>
-                    </div>
+                    <ProfilePanel
+                      className={profilePopClosing ? 'chat-app__profile-pop--closing' : ''}
+                      user={user}
+                      topUpAmount={topUpAmount}
+                      onTopUpAmountChange={setTopUpAmount}
+                      creditsPreview={creditsPreview}
+                      onTopUp={handleTopUp}
+                      topUpLoading={topUpLoading}
+                      promoMultiplier={promoMultiplier}
+                      topUpError={topUpError}
+                      dataCollection={dataCollection}
+                      onDataCollectionChange={setDataCollection}
+                      onLogout={() => {
+                        setProfileOpen(false)
+                        logout()
+                      }}
+                      onSwitchAccount={() => {
+                        setProfileOpen(false)
+                        switchAccount()
+                      }}
+                      onNavigate={() => setProfileOpen(false)}
+                    />
                   ) : null}
                 </div>
               ) : (
@@ -294,17 +261,10 @@ export default function HomePage() {
                 closeAriaLabel={t('home.menu.close')}
                 menuAriaLabel={t('home.menu.label')}
                 main={
-                  <nav className="top__menu-nav" aria-label={t('home.a11y.pageNav')}>
-                    <Link to="/about" onClick={closeMobileMenu}>
-                      {t('nav.about')}
-                    </Link>
-                    <Link to="/models" onClick={closeMobileMenu}>
-                      {t('nav.models')}
-                    </Link>
-                    <Link to="/developers" onClick={closeMobileMenu}>
-                      {t('nav.developers')}
-                    </Link>
-                  </nav>
+                  <BurgerMenuNav
+                    ariaLabel={t('home.a11y.pageNav')}
+                    onNavigate={closeMobileMenu}
+                  />
                 }
               >
                 <LanguageSwitcher className="top__lang top__lang--menu" />

@@ -64,6 +64,7 @@
       "credits": "Créditos: {{count}}",
       "dataCollection": "Recopilación de datos",
       "logout": "Cerrar sesión",
+      "switchAccount": "Cambiar cuenta",
       "deleteAccount": "Eliminar cuenta",
       "deleteConfirm": "¿Eliminar la cuenta y todos los datos relacionados? Esta acción no se puede deshacer.",
       "deleteError": "No se pudo eliminar la cuenta",
@@ -459,6 +460,13 @@
         "about": "Responsable de la arquitectura técnica y el backend. Construyó el orquestador que sincroniza 6 modelos de IA diferentes en un solo sistema."
       }
     ]
+  },
+  "profilePanel": {
+    "balance": "Saldo",
+    "settings": "Ajustes",
+    "account": "Cuenta",
+    "expand": "Abrir menú del perfil",
+    "collapse": "Contraer menú del perfil"
   },
   "deleteAccountFlow": {
     "title": "Eliminar cuenta",

@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import '../App.scss'
 import './AppPage.scss'
+import BurgerMenuNav from '../components/BurgerMenuNav.jsx'
 import { ChatComposer } from '../components/ChatComposer.jsx'
 import { ChatMessageItem } from '../components/ChatMessageItem.jsx'
+import ProfilePanel from '../components/ProfilePanel.jsx'
 import PageAurora from '../components/PageAurora.jsx'
-import DataCollectionToggle from '../components/DataCollectionToggle.jsx'
-import DeleteAccountDialog from '../components/DeleteAccountDialog.jsx'
 import { useAuth } from '../services/AuthContext.jsx'
 import { apiFetch } from '../services/http.js'
 import {
@@ -22,8 +22,6 @@ import {
   normalizeSessionsFromApi,
 } from '../services/sessionsApi.js'
 import { useOrchestratorWs } from '../services/useOrchestratorWs.js'
-import { getCredits, getUserEmail, getUserLabel } from '../services/profileUtils.js'
-import { deleteMyAccount } from '../services/githubActionsApi.js'
 
 const DATA_COLLECTION_KEY = 'consensia_data_collection_v1'
 const MAX_SESSION_CONNECT_ATTEMPTS = 3
@@ -345,7 +343,7 @@ export default function AppPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const sessionFromUrl = searchParams.get('session') || ''
-  const { token, user, isAuthenticated, authChecked, loginWithGoogle, logout, refreshUser } =
+  const { token, user, isAuthenticated, authChecked, loginWithGoogle, logout, switchAccount, refreshUser } =
     useAuth()
 
   const {
@@ -430,8 +428,6 @@ export default function AppPage() {
   const [topUpAmount, setTopUpAmount] = useState('10')
   const [topUpLoading, setTopUpLoading] = useState(false)
   const [topUpError, setTopUpError] = useState('')
-  const [deletingAccount, setDeletingAccount] = useState(false)
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [dataCollection, setDataCollection] = useState(() => {
     try {
       const raw = localStorage.getItem(DATA_COLLECTION_KEY)
@@ -1008,27 +1004,12 @@ export default function AppPage() {
     navigate('/', { replace: true })
   }, [disconnect, logout, navigate])
 
-  const performDeleteAccount = useCallback(async () => {
-    setDeletingAccount(true)
-    try {
-      const result = await deleteMyAccount()
-      if (!result.ok) throw new Error(result.error || c.errors.deleteAccountFailed)
-      setDeleteDialogOpen(false)
-      setProfileOpen(false)
-      setMobileSidebarOpen(false)
-      disconnect()
-      logout()
-      navigate('/', { replace: true })
-    } catch (e) {
-      window.alert(e?.message || String(e))
-    } finally {
-      setDeletingAccount(false)
-    }
-  }, [c.errors.deleteAccountFailed, disconnect, logout, navigate])
-
-  const openDeleteAccountDialog = useCallback(() => {
-    setDeleteDialogOpen(true)
-  }, [])
+  const handleSwitchAccount = useCallback(() => {
+    disconnect()
+    setProfileOpen(false)
+    setMobileSidebarOpen(false)
+    switchAccount()
+  }, [disconnect, switchAccount])
 
   const handleTopUp = useCallback(async () => {
     const amount = Number(topUpAmount)
@@ -1419,63 +1400,25 @@ export default function AppPage() {
                 </span>
               </button>
               {profilePopRendered ? (
-                <div
-                  className={`chat-app__profile-pop${profilePopClosing ? ' chat-app__profile-pop--closing' : ''}`}
-                  role="menu"
-                >
-                  <div className="chat-app__profile-head">
-                    <div className="chat-app__profile-title">{getUserLabel(user) || c.profileLabel}</div>
-                    {getCredits(user) != null ? (
-                      <div className="chat-app__profile-credits-line">
-                        <div className="chat-app__profile-sub">{c.credits.replace('{{count}}', String(getCredits(user)))}</div>
-                        <div className="chat-app__topup-inline">
-                          <input
-                            className="chat-app__topup-input"
-                            type="number"
-                            min={1}
-                            step={1}
-                            value={topUpAmount}
-                            onChange={(e) => setTopUpAmount(e.target.value)}
-                            aria-label={c.topUpAmountAria}
-                          />
-                          <span className="chat-app__topup-preview">{c.creditsShort.replace('{{count}}', String(creditsPreview))}</span>
-                          <button
-                            type="button"
-                            className="chat-app__topup-btn"
-                            onClick={handleTopUp}
-                            disabled={topUpLoading}
-                            title={c.topUpRate.replace('{{multiplier}}', String(promoMultiplier))}
-                          >
-                            {topUpLoading ? '...' : c.topUpButton}
-                          </button>
-                        </div>
-                      </div>
-                    ) : null}
-                    {topUpError ? <div className="chat-app__profile-sub">{topUpError}</div> : null}
-                  </div>
-
-                  <div className="chat-app__profile-row">
-                    <DataCollectionToggle
-                      checked={dataCollection}
-                      onChange={setDataCollection}
-                      label={c.dataCollection}
-                    />
-                  </div>
-
-                  <div className="chat-app__profile-actions">
-                    <button type="button" className="chat-app__profile-logout" onClick={handleLogout}>
-                      {c.logout}
-                    </button>
-                    <button
-                      type="button"
-                      className="chat-app__profile-link"
-                      onClick={openDeleteAccountDialog}
-                      disabled={deletingAccount}
-                    >
-                      {c.deleteAccount}
-                    </button>
-                  </div>
-                </div>
+                <ProfilePanel
+                  className={profilePopClosing ? 'chat-app__profile-pop--closing' : ''}
+                  user={user}
+                  topUpAmount={topUpAmount}
+                  onTopUpAmountChange={setTopUpAmount}
+                  creditsPreview={creditsPreview}
+                  onTopUp={handleTopUp}
+                  topUpLoading={topUpLoading}
+                  promoMultiplier={promoMultiplier}
+                  topUpError={topUpError}
+                  dataCollection={dataCollection}
+                  onDataCollectionChange={setDataCollection}
+                  onLogout={() => {
+                    setProfileOpen(false)
+                    handleLogout()
+                  }}
+                  onSwitchAccount={handleSwitchAccount}
+                  onNavigate={() => setProfileOpen(false)}
+                />
               ) : null}
             </div>
           </div>
@@ -1507,6 +1450,11 @@ export default function AppPage() {
                 ×
               </button>
             </div>
+            <BurgerMenuNav
+              className="chat-app__sidebar-nav top__menu-nav"
+              ariaLabel={t('a11y.mainNav')}
+              onNavigate={() => setMobileSidebarOpen(false)}
+            />
             <button
               type="button"
               className="chat-app__sidebar-mobile-new chat-app__sidebar-mobile-new--top"
@@ -1567,60 +1515,23 @@ export default function AppPage() {
             </div>
             <div className="chat-app__sidebar-mobile-footer">
               <div className="chat-app__profile chat-app__profile--mobile-drawer">
-                <div className="chat-app__profile-pop chat-app__profile-pop--mobile-inline" role="menu">
-                    <div className="chat-app__profile-head">
-                      <div className="chat-app__profile-title">{getUserLabel(user) || c.profileLabel}</div>
-                      {getCredits(user) != null ? (
-                        <div className="chat-app__profile-credits-line">
-                          <div className="chat-app__profile-sub">{c.credits.replace('{{count}}', String(getCredits(user)))}</div>
-                          <div className="chat-app__topup-inline">
-                            <input
-                              className="chat-app__topup-input"
-                              type="number"
-                              min={1}
-                              step={1}
-                              value={topUpAmount}
-                              onChange={(e) => setTopUpAmount(e.target.value)}
-                              aria-label={c.topUpAmountAria}
-                            />
-                            <span className="chat-app__topup-preview">{c.creditsShort.replace('{{count}}', String(creditsPreview))}</span>
-                            <button
-                              type="button"
-                              className="chat-app__topup-btn"
-                              onClick={handleTopUp}
-                              disabled={topUpLoading}
-                              title={c.topUpRate.replace('{{multiplier}}', String(promoMultiplier))}
-                            >
-                              {topUpLoading ? '...' : c.topUpButton}
-                            </button>
-                          </div>
-                        </div>
-                      ) : null}
-                      {topUpError ? <div className="chat-app__profile-sub">{topUpError}</div> : null}
-                    </div>
-
-                    <div className="chat-app__profile-row">
-                      <DataCollectionToggle
-                        checked={dataCollection}
-                        onChange={setDataCollection}
-                        label={c.dataCollection}
-                      />
-                    </div>
-
-                    <div className="chat-app__profile-actions">
-                      <button type="button" className="chat-app__profile-logout" onClick={handleLogout}>
-                        {c.logout}
-                      </button>
-                      <button
-                        type="button"
-                        className="chat-app__profile-link"
-                        onClick={openDeleteAccountDialog}
-                        disabled={deletingAccount}
-                      >
-                        {c.deleteAccount}
-                      </button>
-                    </div>
-                </div>
+                <ProfilePanel
+                  className="chat-app__profile-pop--mobile-inline"
+                  collapsible
+                  user={user}
+                  topUpAmount={topUpAmount}
+                  onTopUpAmountChange={setTopUpAmount}
+                  creditsPreview={creditsPreview}
+                  onTopUp={handleTopUp}
+                  topUpLoading={topUpLoading}
+                  promoMultiplier={promoMultiplier}
+                  topUpError={topUpError}
+                  dataCollection={dataCollection}
+                  onDataCollectionChange={setDataCollection}
+                  onLogout={handleLogout}
+                  onSwitchAccount={handleSwitchAccount}
+                  onNavigate={() => setMobileSidebarOpen(false)}
+                />
               </div>
             </div>
           </aside>
@@ -1839,14 +1750,6 @@ export default function AppPage() {
           </p>
         ) : null}
       </div>
-
-      <DeleteAccountDialog
-        open={deleteDialogOpen}
-        onClose={() => setDeleteDialogOpen(false)}
-        onConfirm={performDeleteAccount}
-        userEmail={getUserEmail(user)}
-        deleting={deletingAccount}
-      />
     </div>
   )
 }

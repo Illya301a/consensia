@@ -100,7 +100,8 @@ export function AuthProvider({ children }) {
     if (!next) setUser(null)
   }, [])
 
-  const loginWithGoogle = useCallback(() => {
+  const buildGoogleLoginUrl = useCallback((options = {}) => {
+    const { prompt } = options
     const currentHost = window.location.origin
     const currentUrl = new URL(window.location.href)
     for (const key of AUTH_TOKEN_PARAM_NAMES) {
@@ -113,9 +114,21 @@ export function AuthProvider({ children }) {
     } catch {
       /* ignore storage errors */
     }
-    const loginUrl = `${API_BASE_URL}/auth/google/login?front_url=${encodeURIComponent(targetPage)}`
-    window.location.href = loginUrl
+    const params = new URLSearchParams({ front_url: targetPage })
+    if (prompt) params.set('prompt', prompt)
+    return `${API_BASE_URL}/auth/google/login?${params.toString()}`
   }, [])
+
+  const loginWithGoogle = useCallback(() => {
+    window.location.href = buildGoogleLoginUrl()
+  }, [buildGoogleLoginUrl])
+
+  const switchAccount = useCallback(() => {
+    writeToken(null)
+    setTokenState(null)
+    setUser(null)
+    window.location.href = buildGoogleLoginUrl({ prompt: 'select_account' })
+  }, [buildGoogleLoginUrl])
 
   const logout = useCallback(() => {
     writeToken(null)
@@ -189,9 +202,10 @@ export function AuthProvider({ children }) {
       setToken,
       loginWithGoogle,
       logout,
+      switchAccount,
       refreshUser,
     }),
-    [token, user, authChecked, setToken, loginWithGoogle, logout, refreshUser]
+    [token, user, authChecked, setToken, loginWithGoogle, logout, switchAccount, refreshUser]
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

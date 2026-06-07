@@ -64,6 +64,7 @@
       "credits": "Credits: {{count}}",
       "dataCollection": "Datenerfassung",
       "logout": "Abmelden",
+      "switchAccount": "Konto wechseln",
       "deleteAccount": "Konto löschen",
       "deleteConfirm": "Konto und alle zugehörigen Daten löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
       "deleteError": "Konto konnte nicht gelöscht werden",
@@ -622,6 +623,13 @@
         "about": "Verantwortlich für technische Architektur und Backend. Hat den Orchestrator gebaut, der 6 verschiedene KI-Modelle zu einem System synchronisiert."
       }
     ]
+  },
+  "profilePanel": {
+    "balance": "Guthaben",
+    "settings": "Einstellungen",
+    "account": "Konto",
+    "expand": "Profilmenü öffnen",
+    "collapse": "Profilmenü einklappen"
   },
   "deleteAccountFlow": {
     "title": "Konto löschen",

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import LanguageSwitcher from './LanguageSwitcher.jsx'
 import ThemeSwitcher from './ThemeSwitcher.jsx'
 import TopBurgerMenu from './TopBurgerMenu.jsx'
+import BurgerMenuNav from './BurgerMenuNav.jsx'
 import MobileProfilePanel from './MobileProfilePanel.jsx'
 import { useAuth } from '../services/AuthContext.jsx'
 import { apiFetch } from '../services/http.js'
@@ -12,7 +13,7 @@ const DATA_COLLECTION_KEY = 'consensia_data_collection_v1'
 
 export default function SiteHeader() {
   const { t } = useTranslation()
-  const { isAuthenticated, user, logout } = useAuth()
+  const { isAuthenticated, user, logout, switchAccount } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
   const [promoInfo, setPromoInfo] = useState(null)
   const [topUpAmount, setTopUpAmount] = useState('10')
@@ -108,38 +109,7 @@ export default function SiteHeader() {
           closeAriaLabel={t('home.menu.close')}
           menuAriaLabel={t('home.menu.label')}
           main={
-            <nav className="top__menu-nav" aria-label={t('a11y.mainNav')}>
-              <NavLink
-                to="/about"
-                className={({ isActive }) => `top__menu-link${isActive ? ' top__menu-link--active' : ''}`}
-              >
-                {t('nav.about')}
-              </NavLink>
-              <NavLink
-                to="/models"
-                className={({ isActive }) => `top__menu-link${isActive ? ' top__menu-link--active' : ''}`}
-              >
-                {t('nav.models')}
-              </NavLink>
-              <NavLink
-                to="/developers"
-                className={({ isActive }) => `top__menu-link${isActive ? ' top__menu-link--active' : ''}`}
-              >
-                {t('nav.developers')}
-              </NavLink>
-              <NavLink
-                to="/github-actions"
-                className={({ isActive }) => `top__menu-link${isActive ? ' top__menu-link--active' : ''}`}
-              >
-                {t('nav.githubActions')}
-              </NavLink>
-              <NavLink
-                to="/ai-agent"
-                className={({ isActive }) => `top__menu-link${isActive ? ' top__menu-link--active' : ''}`}
-              >
-                {t('nav.aiAgent')}
-              </NavLink>
-            </nav>
+            <BurgerMenuNav ariaLabel={t('a11y.mainNav')} onNavigate={() => setMenuOpen(false)} />
           }
         >
           <LanguageSwitcher className="top__lang top__lang--menu" />
@@ -161,6 +131,11 @@ export default function SiteHeader() {
                   logout()
                   setMenuOpen(false)
                 }}
+                onSwitchAccount={() => {
+                  setMenuOpen(false)
+                  switchAccount()
+                }}
+                onNavigate={() => setMenuOpen(false)}
               />
             </div>
           ) : null}

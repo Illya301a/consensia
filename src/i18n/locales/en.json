@@ -64,6 +64,7 @@
       "credits": "Credits: {{count}}",
       "dataCollection": "Data collection",
       "logout": "Log out",
+      "switchAccount": "Switch account",
       "deleteAccount": "Delete account",
       "deleteConfirm": "Delete account and all related data? This action cannot be undone.",
       "deleteError": "Failed to delete account",
@@ -622,6 +623,13 @@
         "about": "Responsible for technical architecture and backend. Built the orchestrator that synchronizes 6 different AI models into one system."
       }
     ]
+  },
+  "profilePanel": {
+    "balance": "Balance",
+    "settings": "Settings",
+    "account": "Account",
+    "expand": "Open profile menu",
+    "collapse": "Collapse profile menu"
   },
   "deleteAccountFlow": {
     "title": "Delete account",
