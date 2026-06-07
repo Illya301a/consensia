@@ -627,7 +627,7 @@
     "docTitle": "FAQ · Consensia",
     "skip": "Zum Inhalt springen",
     "title": "FAQ",
-    "updated": "Zuletzt aktualisiert: 7. April 2026",
+    "updated": "Zuletzt aktualisiert: 8. Juni 2026",
     "lead": "Kurze Antworten auf häufige Fragen zu Consensia, Sitzungen und Credits.",
     "items": [
       {
@@ -649,8 +649,36 @@
       {
         "q": "5. Was bewirkt der Schalter „Datenerfassung“?",
         "a": "Er speichert Ihre Präferenz in der Oberfläche. Details zur Datenverarbeitung: Nutzungsbedingungen und Datenschutz."
+      },
+      {
+        "q": "6. Wie lade ich Credits auf?",
+        "a": "Geben Sie im Profil einen USD-Betrag ein und klicken Sie auf Aufladen — eine sichere Stripe-Checkout-Seite öffnet sich."
+      },
+      {
+        "q": "7. Welche Modelle nutzt Consensia?",
+        "a": "Mehrere spezialisierte Modelle arbeiten parallel, Judge bildet die finale abgestimmte Antwort. Details auf der Seite Modelle."
+      },
+      {
+        "q": "8. Muss ich für den Start bezahlen?",
+        "a": "Sie können sich mit Google anmelden und den Dienst testen. Für regelmäßige Nutzung brauchen Sie Credits — nur bei tatsächlicher Nutzung."
+      },
+      {
+        "q": "9. Wie ändere ich Sprache oder Theme?",
+        "a": "Auf dem Handy öffnen Sie das Seitenmenü mit Sprach- und Theme-Schaltern. Am Desktop ist das Theme in der Homepage-Kopfzeile."
+      },
+      {
+        "q": "10. Wo finde ich die Chat-Historie?",
+        "a": "Unter /app öffnen Sie die Sitzungsleiste — dort sind alle gespeicherten Dialoge Ihres Kontos."
       }
-    ]
+    ],
+    "deleteAccount": {
+      "q": "11. Wie lösche ich mein Konto?",
+      "a": "Die Löschung ist endgültig: alle Sitzungen, Credits und Profildaten werden vom Server entfernt.",
+      "button": "Konto löschen",
+      "confirm": "Konto und alle zugehörigen Daten löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "error": "Konto konnte nicht gelöscht werden",
+      "loginHint": "Melden Sie sich an, um Ihr Konto zu löschen."
+    }
   },
   "modelsPage": {
     "docTitle": "Modelle · Consensia",

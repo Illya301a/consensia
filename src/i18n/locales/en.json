@@ -627,7 +627,7 @@
     "docTitle": "FAQ · Consensia",
     "skip": "Skip to content",
     "title": "FAQ",
-    "updated": "Last updated: April 7, 2026",
+    "updated": "Last updated: June 8, 2026",
     "lead": "Short answers to common questions about Consensia, sessions, and credits.",
     "items": [
       {
@@ -649,8 +649,36 @@
       {
         "q": "5. What does the \"Data collection\" switch do?",
         "a": "It stores your preference in the interface. For data-processing details, see the terms and privacy pages."
+      },
+      {
+        "q": "6. How do I top up credits?",
+        "a": "In your profile, enter a USD amount and click Top up — a secure Stripe checkout page will open."
+      },
+      {
+        "q": "7. Which models does Consensia use?",
+        "a": "Several specialized models run in parallel, and Judge forms the final aligned answer. See the Models page for details."
+      },
+      {
+        "q": "8. Do I need to pay to get started?",
+        "a": "You can sign in with Google and try the service. Regular use requires credits, charged only for actual usage."
+      },
+      {
+        "q": "9. How do I change language or theme?",
+        "a": "On mobile, open the side menu for language and theme switches. On desktop, the theme switch is in the homepage header."
+      },
+      {
+        "q": "10. Where is chat history?",
+        "a": "In /app, open the sessions sidebar — all saved dialogues for your account are listed there."
       }
-    ]
+    ],
+    "deleteAccount": {
+      "q": "11. How do I delete my account?",
+      "a": "Deletion is permanent: all sessions, credits, and profile data will be removed from the server.",
+      "button": "Delete account",
+      "confirm": "Delete account and all related data? This action cannot be undone.",
+      "error": "Failed to delete account",
+      "loginHint": "Sign in to delete your account."
+    }
   },
   "modelsPage": {
     "docTitle": "Models · Consensia",

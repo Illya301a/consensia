@@ -60,7 +60,7 @@
     transition: all 0.2s ease;
 
     &:hover {
-      color: var(--color-bg-top);
+      color: var(--color-on-rose);
       background: #ec4899;
       border-color: #ec4899;
     }
@@ -249,7 +249,7 @@
   }
 
   &:hover {
-    color: var(--color-bg-top);
+    color: var(--color-on-rose);
     background: #ec4899;
     border-color: #ec4899;
     transform: translateY(-1px);

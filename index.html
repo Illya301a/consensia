@@ -38,9 +38,9 @@
     (function () {
       try {
         var theme = localStorage.getItem('consensia_theme_v1');
-        document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme === 'light' ? 'light' : 'dark');
       } catch (e) {
-        document.documentElement.setAttribute('data-theme', 'light');
+        document.documentElement.setAttribute('data-theme', 'dark');
       }
     })();
   </script>

@@ -1,8 +1,8 @@
 @mixin page-mesh-bg {
   position: relative;
   isolation: isolate;
-  overflow-x: clip;
-  min-height: 100dvh;
+  min-height: 100vh;
+  min-height: 100svh;
   background:
     radial-gradient(1100px 700px at 20% 0%, var(--color-rose-glow-18), transparent 55%),
     radial-gradient(900px 560px at 85% 15%, var(--color-red-glow-15), transparent 54%),
@@ -30,7 +30,6 @@
     background-size: 560px 560px;
     mix-blend-mode: multiply;
     filter: blur(0.15px);
-    animation: page-mesh-dots 42s linear infinite;
   }
 
   > *:not(.page-aurora):not(.site-header) {
@@ -111,10 +110,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .app:not(.app--home)::before,
-  .chat-app::before,
-  .experts-page::before,
-  .developers-page::before {
+  .chat-app::before {
     animation: none;
   }
 }

@@ -1,6 +1,8 @@
 import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 
+const DESKTOP_MIN_PX = 1024
+
 export default function TopBurgerMenu({
   isOpen,
   onToggle,
@@ -9,6 +11,7 @@ export default function TopBurgerMenu({
   openAriaLabel,
   closeAriaLabel,
   menuAriaLabel,
+  desktopMinPx = DESKTOP_MIN_PX,
   main,
   children,
 }) {
@@ -25,6 +28,16 @@ export default function TopBurgerMenu({
       window.removeEventListener('keydown', onKey)
     }
   }, [isOpen, onClose])
+
+  useEffect(() => {
+    if (!isOpen) return
+    const mq = window.matchMedia(`(min-width: ${desktopMinPx}px)`)
+    const closeIfDesktop = () => {
+      if (mq.matches) onClose?.()
+    }
+    mq.addEventListener('change', closeIfDesktop)
+    return () => mq.removeEventListener('change', closeIfDesktop)
+  }, [isOpen, onClose, desktopMinPx])
 
   return (
     <>

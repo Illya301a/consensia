@@ -50,6 +50,18 @@
   margin-top: 0.25rem;
 }
 
+@media (max-width: 767.98px) {
+  .ai-agent-page__back.btn {
+    flex: 0 0 auto;
+    width: min(100%, 16rem);
+    min-height: 3rem;
+    padding: 0.85rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+}
+
 @keyframes aiAgentHeroRise {
   from {
     opacity: 0;

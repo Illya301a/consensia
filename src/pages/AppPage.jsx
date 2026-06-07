@@ -6,6 +6,7 @@ import './AppPage.scss'
 import { ChatComposer } from '../components/ChatComposer.jsx'
 import { ChatMessageItem } from '../components/ChatMessageItem.jsx'
 import PageAurora from '../components/PageAurora.jsx'
+import DataCollectionToggle from '../components/DataCollectionToggle.jsx'
 import { useAuth } from '../services/AuthContext.jsx'
 import { apiFetch } from '../services/http.js'
 import {
@@ -1449,15 +1450,11 @@ export default function AppPage() {
                   </div>
 
                   <div className="chat-app__profile-row">
-                    <label className="chat-app__toggle">
-                      <input
-                        type="checkbox"
-                        checked={dataCollection}
-                        onChange={(e) => setDataCollection(e.target.checked)}
-                      />
-                      <span className="chat-app__toggle-ui" aria-hidden="true" />
-                      <span>{c.dataCollection}</span>
-                    </label>
+                    <DataCollectionToggle
+                      checked={dataCollection}
+                      onChange={setDataCollection}
+                      label={c.dataCollection}
+                    />
                   </div>
 
                   <div className="chat-app__profile-actions">
@@ -1598,15 +1595,11 @@ export default function AppPage() {
                     </div>
 
                     <div className="chat-app__profile-row">
-                      <label className="chat-app__toggle">
-                        <input
-                          type="checkbox"
-                          checked={dataCollection}
-                          onChange={(e) => setDataCollection(e.target.checked)}
-                        />
-                        <span className="chat-app__toggle-ui" aria-hidden="true" />
-                        <span>{c.dataCollection}</span>
-                      </label>
+                      <DataCollectionToggle
+                        checked={dataCollection}
+                        onChange={setDataCollection}
+                        label={c.dataCollection}
+                      />
                     </div>
 
                     <div className="chat-app__profile-actions">

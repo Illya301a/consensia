@@ -464,7 +464,7 @@
     "docTitle": "FAQ · Consensia",
     "skip": "Saltar al contenido",
     "title": "FAQ",
-    "updated": "Última actualización: 7 de abril de 2026",
+    "updated": "Última actualización: 8 de junio de 2026",
     "lead": "Respuestas breves a preguntas comunes sobre Consensia, sesiones y créditos.",
     "items": [
       {
@@ -486,8 +486,36 @@
       {
         "q": "5. ¿Qué hace el interruptor de \"Recopilación de datos\"?",
         "a": "Guarda tu preferencia en la interfaz. Para detalles sobre el tratamiento de datos, consulta los términos y la política de privacidad."
+      },
+      {
+        "q": "6. ¿Cómo recargar créditos?",
+        "a": "En tu perfil, indica un importe en USD y pulsa Recargar — se abrirá una página segura de pago de Stripe."
+      },
+      {
+        "q": "7. ¿Qué modelos usa Consensia?",
+        "a": "Varios modelos especializados trabajan en paralelo y Judge forma la respuesta final alineada. Más detalles en la página Modelos."
+      },
+      {
+        "q": "8. ¿Hay que pagar para empezar?",
+        "a": "Puedes iniciar sesión con Google y probar el servicio. Para uso regular necesitas créditos, cobrados solo por uso real."
+      },
+      {
+        "q": "9. ¿Cómo cambiar idioma o tema?",
+        "a": "En móvil, abre el menú lateral con los interruptores de idioma y tema. En escritorio, el tema está en la cabecera de la página principal."
+      },
+      {
+        "q": "10. ¿Dónde está el historial de chats?",
+        "a": "En /app, abre la barra lateral de sesiones — allí están todos los diálogos guardados de tu cuenta."
       }
-    ]
+    ],
+    "deleteAccount": {
+      "q": "11. ¿Cómo eliminar mi cuenta?",
+      "a": "La eliminación es permanente: todas las sesiones, créditos y datos del perfil se borrarán del servidor.",
+      "button": "Eliminar cuenta",
+      "confirm": "¿Eliminar la cuenta y todos los datos relacionados? Esta acción no se puede deshacer.",
+      "error": "No se pudo eliminar la cuenta",
+      "loginHint": "Inicia sesión para eliminar tu cuenta."
+    }
   },
   "modelsPage": {
     "docTitle": "Modelos · Consensia",

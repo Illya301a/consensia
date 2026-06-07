@@ -8,10 +8,11 @@ import ThemeSwitcher from '../components/ThemeSwitcher.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import TopBurgerMenu from '../components/TopBurgerMenu.jsx'
 import MobileProfilePanel from '../components/MobileProfilePanel.jsx'
+import DataCollectionToggle from '../components/DataCollectionToggle.jsx'
 import { useAuth } from '../services/AuthContext.jsx'
 import { apiFetch } from '../services/http.js'
 import { getCredits, getUserLabel } from '../services/profileUtils.js'
-import { deleteMyAccount } from '../services/githubActionsApi.js'
+import { useTopIslandScroll } from '../hooks/useTopIslandScroll.js'
 
 const ConsensiaScene = lazy(() =>
   import('../components/ConsensiaScene').then((m) => ({ default: m.ConsensiaScene }))
@@ -22,10 +23,8 @@ const QUOTE_TRANS_COMPONENTS = {
   w: <span className="home-closing__conj" />,
 }
 
-const NAV_MOBILE_MAX_PX = 1024
 const DATA_COLLECTION_KEY = 'consensia_data_collection_v1'
 const PROFILE_POP_ANIMATION_MS = 180
-const TOP_ISLAND_SCROLL_PX = 90
 
 export default function HomePage() {
   const { t } = useTranslation()
@@ -38,13 +37,11 @@ export default function HomePage() {
   const [profilePopClosing, setProfilePopClosing] = useState(false)
   const profileRef = useRef(null)
   const topRef = useRef(null)
-  const [topIsland, setTopIsland] = useState(false)
-  const [topSpacerHeight, setTopSpacerHeight] = useState(0)
+  const { topIsland, topSlotHeight } = useTopIslandScroll(topRef)
   const [promoInfo, setPromoInfo] = useState(null)
   const [topUpAmount, setTopUpAmount] = useState('10')
   const [topUpLoading, setTopUpLoading] = useState(false)
   const [topUpError, setTopUpError] = useState('')
-  const [deletingAccount, setDeletingAccount] = useState(false)
   const [dataCollection, setDataCollection] = useState(() => {
     try {
       const raw = localStorage.getItem(DATA_COLLECTION_KEY)
@@ -54,45 +51,6 @@ export default function HomePage() {
       return true
     }
   })
-
-  useEffect(() => {
-    const onScroll = () => {
-      setTopIsland(window.scrollY > TOP_ISLAND_SCROLL_PX)
-    }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    onScroll()
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-    }
-  }, [])
-
-  useEffect(() => {
-    const el = topRef.current
-    if (!el || topIsland) return undefined
-
-    const syncHeight = () => {
-      setTopSpacerHeight(el.offsetHeight)
-    }
-
-    syncHeight()
-    const ro = new ResizeObserver(syncHeight)
-    ro.observe(el)
-    return () => {
-      ro.disconnect()
-    }
-  }, [topIsland, isAuthenticated, profilePopRendered, mobileMenuOpen])
-
-  useEffect(() => {
-    if (!mobileMenuOpen) return
-    const mq = window.matchMedia(`(min-width: ${NAV_MOBILE_MAX_PX}px)`)
-    const closeIfDesktop = () => {
-      if (mq.matches) setMobileMenuOpen(false)
-    }
-    mq.addEventListener('change', closeIfDesktop)
-    return () => {
-      mq.removeEventListener('change', closeIfDesktop)
-    }
-  }, [mobileMenuOpen])
 
   useEffect(() => {
     if (profileOpen) {
@@ -188,23 +146,6 @@ export default function HomePage() {
   }
 
   const closeMobileMenu = () => setMobileMenuOpen(false)
-  const handleDeleteAccount = async () => {
-    const shouldDelete = window.confirm(t('home.profile.deleteConfirm'))
-    if (!shouldDelete) return
-    setDeletingAccount(true)
-    try {
-      const result = await deleteMyAccount()
-      if (!result.ok) {
-        throw new Error(result.error || t('home.profile.deleteError'))
-      }
-      setProfileOpen(false)
-      logout()
-    } catch (e) {
-      window.alert(e?.message || String(e))
-    } finally {
-      setDeletingAccount(false)
-    }
-  }
 
   const mobileProfile = isAuthenticated ? (
     <MobileProfilePanel
@@ -222,11 +163,6 @@ export default function HomePage() {
         logout()
         closeMobileMenu()
       }}
-      onDeleteAccount={async () => {
-        await handleDeleteAccount()
-        closeMobileMenu()
-      }}
-      deletingAccount={deletingAccount}
     />
   ) : null
 
@@ -240,7 +176,11 @@ export default function HomePage() {
         </div>
         <div className="hero__gradient" aria-hidden="true" />
         <div className="hero__content">
-          <header ref={topRef} className={`top${topIsland ? ' top--island' : ''}`}>
+          <div
+            className={`top-slot${topSlotHeight > 0 ? ' top-slot--reserved' : ''}`}
+            style={topSlotHeight > 0 ? { height: topSlotHeight } : undefined}
+          >
+            <header ref={topRef} className={`top${topIsland ? ' top--island' : ''}`}>
             <nav className="top__nav top__nav--desktop" aria-label={t('home.a11y.pageNav')}>
               <Link to="/about">{t('nav.about')}</Link>
               <Link to="/models">{t('nav.models')}</Link>
@@ -319,17 +259,13 @@ export default function HomePage() {
                         {topUpError ? <div className="chat-app__profile-sub">{topUpError}</div> : null}
                       </div>
                       <div className="chat-app__profile-row">
-                        <label className="chat-app__toggle">
-                          <input
-                            type="checkbox"
-                            checked={dataCollection}
-                            onChange={(e) => setDataCollection(e.target.checked)}
-                          />
-                          <span className="chat-app__toggle-ui" aria-hidden="true" />
-                          <span>{t('home.profile.dataCollection')}</span>
-                        </label>
+                        <DataCollectionToggle
+                          checked={dataCollection}
+                          onChange={setDataCollection}
+                          label={t('home.profile.dataCollection')}
+                        />
                       </div>
-                      <div className="chat-app__profile-actions">
+                      <div className="chat-app__profile-actions chat-app__profile-actions--solo">
                         <button
                           type="button"
                           className="chat-app__profile-logout"
@@ -340,15 +276,7 @@ export default function HomePage() {
                         >
                           {t('home.profile.logout')}
                         </button>
-                        <button
-                          type="button"
-                          className="chat-app__profile-logout"
-                          onClick={handleDeleteAccount}
-                          disabled={deletingAccount}
-                        >
-                          {deletingAccount ? '...' : t('home.profile.deleteAccount')}
-                        </button>
-                      </div> 
+                      </div>
                     </div>
                   ) : null}
                 </div>
@@ -366,21 +294,21 @@ export default function HomePage() {
                 closeAriaLabel={t('home.menu.close')}
                 menuAriaLabel={t('home.menu.label')}
                 main={
-                  <>
-                    <nav className="top__menu-nav" aria-label={t('home.a11y.pageNav')}>
-                      <Link to="/about" onClick={closeMobileMenu}>
-                        {t('nav.about')}
-                      </Link>
-                      <Link to="/models" onClick={closeMobileMenu}>
-                        {t('nav.models')}
-                      </Link>
-                      <Link to="/developers" onClick={closeMobileMenu}>
-                        {t('nav.developers')}
-                      </Link>
-                    </nav>
-                  </>
+                  <nav className="top__menu-nav" aria-label={t('home.a11y.pageNav')}>
+                    <Link to="/about" onClick={closeMobileMenu}>
+                      {t('nav.about')}
+                    </Link>
+                    <Link to="/models" onClick={closeMobileMenu}>
+                      {t('nav.models')}
+                    </Link>
+                    <Link to="/developers" onClick={closeMobileMenu}>
+                      {t('nav.developers')}
+                    </Link>
+                  </nav>
                 }
               >
+                <LanguageSwitcher className="top__lang top__lang--menu" />
+                <ThemeSwitcher className="top__theme top__theme--menu" />
                 {!isAuthenticated ? (
                   <button
                     type="button"
@@ -393,15 +321,11 @@ export default function HomePage() {
                     {t('home.auth.login')}
                   </button>
                 ) : null}
-                <ThemeSwitcher className="top__theme top__theme--menu" />
-                <LanguageSwitcher className="top__lang top__lang--menu" />
                 {isAuthenticated ? <div className="top__menu-profile">{mobileProfile}</div> : null}
               </TopBurgerMenu>
             </div>
-          </header>
-          {topIsland ? (
-            <div className="top__spacer" style={{ height: topSpacerHeight }} aria-hidden="true" />
-          ) : null}
+            </header>
+          </div>
 
           <div className="hero__main">
             <p className="eyebrow">{t('home.hero.eyebrow')}</p>

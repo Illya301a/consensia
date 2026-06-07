@@ -10,6 +10,7 @@ import { flushSync } from 'react-dom'
 
 export const THEME_STORAGE_KEY = 'consensia_theme_v1'
 export const THEME_TRANSITION_MS = 400
+const THEME_MOBILE_MAX_PX = 1023.98
 
 const ThemeContext = createContext(null)
 let transitionGeneration = 0
@@ -23,6 +24,13 @@ function prefersReducedMotion() {
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
   )
+}
+
+function shouldAnimateThemeTransition() {
+  if (typeof window === 'undefined') return false
+  if (prefersReducedMotion()) return false
+  if (window.matchMedia(`(max-width: ${THEME_MOBILE_MAX_PX}px)`).matches) return false
+  return true
 }
 
 function nextFrame() {
@@ -63,7 +71,7 @@ export function readStoredTheme() {
   } catch {
     /* ignore storage errors */
   }
-  return 'light'
+  return 'dark'
 }
 
 export function syncDocumentTheme(theme) {
@@ -154,7 +162,7 @@ async function runDimScrimTransition(applyTheme) {
 function runThemeTransition(setThemeState, next) {
   const applyTheme = () => applyThemeUpdate(setThemeState, next)
 
-  if (typeof document === 'undefined' || prefersReducedMotion()) {
+  if (typeof document === 'undefined' || !shouldAnimateThemeTransition()) {
     applyTheme()
     return
   }
@@ -172,11 +180,6 @@ export function ThemeProvider({ children }) {
 
   useEffect(() => {
     syncDocumentTheme(theme)
-    try {
-      localStorage.setItem(THEME_STORAGE_KEY, theme)
-    } catch {
-      /* ignore storage errors */
-    }
   }, [theme])
 
   useEffect(() => {

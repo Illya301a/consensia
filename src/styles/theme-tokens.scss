@@ -125,8 +125,13 @@
   --color-cta-band-bg-start: #f43f8f;
   --color-cta-band-bg-mid: #ec4899;
   --color-cta-band-bg-end: #db2777;
+  --color-on-rose: #ffffff;
   --color-menu-panel: #fff9fc;
   --color-menu-control: #ffffff;
+  --color-menu-profile-bg-start: rgba(246, 166, 200, 0.96);
+  --color-menu-profile-bg-end: rgba(236, 123, 172, 0.96);
+  --color-menu-profile-border: rgba(255, 255, 255, 0.22);
+  --color-menu-profile-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
   --color-page-orb-1: rgba(251, 113, 133, 0.52);
   --color-page-orb-2: rgba(244, 114, 182, 0.46);
   --color-page-orb-3: rgba(236, 72, 153, 0.4);
@@ -260,12 +265,19 @@
   --color-cta-band-bg-start: rgba(190, 24, 93, 0.58);
   --color-cta-band-bg-mid: rgba(157, 23, 77, 0.48);
   --color-cta-band-bg-end: rgba(112, 26, 58, 0.38);
+  --color-on-rose: #ffffff;
   --color-chat-panel: #26121c;
   --color-chat-panel-soft: #2a1420;
   --color-chat-panel-input: #2e1624;
   --color-chat-code-block: #2a1420;
   --color-menu-panel: #26121c;
   --color-menu-control: #2e1624;
+  --color-menu-profile-bg-start: rgba(108, 40, 74, 0.98);
+  --color-menu-profile-bg-end: rgba(62, 24, 46, 0.98);
+  --color-menu-profile-border: rgba(244, 114, 182, 0.38);
+  --color-menu-profile-shadow:
+    0 12px 36px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(244, 114, 182, 0.1);
   --color-page-orb-1: rgba(244, 114, 182, 0.36);
   --color-page-orb-2: rgba(236, 72, 153, 0.32);
   --color-page-orb-3: rgba(251, 113, 133, 0.28);

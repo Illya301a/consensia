@@ -433,7 +433,7 @@ $bg-deep: var(--color-bg-deep);
   border: none;
   border-radius: 999px;
   cursor: pointer;
-  color: var(--color-bg-top);
+  color: var(--color-on-rose);
   background: linear-gradient(135deg, $rose-400, $rose-500);
   box-shadow: 0 10px 26px rgba(244, 114, 182, 0.34);
   transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.24s ease;
@@ -595,12 +595,12 @@ $bg-deep: var(--color-bg-deep);
   padding: 0.65rem 0.95rem;
   border-radius: 1rem 1rem 0.25rem 1rem;
   background: linear-gradient(135deg, rgba(251, 113, 133, 0.95), rgba(244, 114, 182, 0.92));
-  color: var(--color-bg-top);
+  color: #ffffff;
   box-shadow: 0 6px 24px rgba(244, 114, 182, 0.25);
   transition: transform 0.22s ease, box-shadow 0.24s ease;
 
   .chat-msg__md {
-    color: var(--color-bg-top);
+    color: #ffffff;
   }
 
   .md-p {
@@ -676,7 +676,7 @@ $bg-deep: var(--color-bg-deep);
   justify-content: center;
   font-weight: 700;
   font-size: 0.8rem;
-  color: var(--color-bg-top);
+  color: var(--color-on-rose);
   background: linear-gradient(135deg, $rose-400, #db2777);
 }
 
@@ -1345,7 +1345,7 @@ $bg-deep: var(--color-bg-deep);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-bg-top);
+  color: var(--color-on-rose);
   background: linear-gradient(135deg, $rose-400, $rose-500);
   box-shadow: 0 4px 16px var(--color-border-rose);
 
@@ -1913,13 +1913,26 @@ $bg-deep: var(--color-bg-deep);
   }
 }
 
-.chat-app__toggle {
+.chat-app__toggle-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
+  width: 100%;
+}
+
+.chat-app__toggle-label {
   font-size: 0.85rem;
   font-weight: 650;
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-app__toggle-control {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  cursor: pointer;
 
   input {
     position: absolute;
@@ -1951,12 +1964,12 @@ $bg-deep: var(--color-bg-deep);
   }
 }
 
-.chat-app__toggle input:checked + .chat-app__toggle-ui {
+.chat-app__toggle-control input:checked + .chat-app__toggle-ui {
   background: rgba(244, 114, 182, 0.45);
   border-color: var(--color-border-rose-hover);
 }
 
-.chat-app__toggle input:checked + .chat-app__toggle-ui::after {
+.chat-app__toggle-control input:checked + .chat-app__toggle-ui::after {
   transform: translate(0.95rem, -50%);
   background: var(--color-bg-top);
 }
