@@ -4,6 +4,7 @@ import illiaPhoto from '../photos/illia.png'
 import andriiPhoto from '../photos/andrii.png'
 import SiteFooter from '../components/SiteFooter.jsx'
 import SiteHeader from '../components/SiteHeader.jsx'
+import PageAurora from '../components/PageAurora.jsx'
 import { Reveal } from '../components/Reveal.jsx'
 import './DevelopersPage.scss'
 
@@ -118,6 +119,7 @@ export default function DevelopersPage() {
 
   return (
     <main className="developers-page">
+      <PageAurora />
       <SiteHeader />
 
       <Reveal>

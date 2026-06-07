@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import '../App.scss'
 import SiteFooter from '../components/SiteFooter.jsx'
 import SiteHeader from '../components/SiteHeader.jsx'
+import PageAurora from '../components/PageAurora.jsx'
 import { Reveal } from '../components/Reveal.jsx'
 import './ModelsPage.scss'
 
@@ -87,6 +88,7 @@ export default function ModelsPage() {
 
   return (
     <main className="experts-page">
+      <PageAurora />
       <SiteHeader />
 
       <Reveal>

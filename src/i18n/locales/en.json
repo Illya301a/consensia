@@ -152,7 +152,16 @@
     },
     "quote": {
       "a11y": "Product positioning",
-      "text": "We are not chasing the most creative answer at any cost — we focus on an <strong>aligned and verifiable result</strong>."
+      "illia": {
+        "text": "Between click and answer there should be no seams — <strong>UI</strong>, <strong>websocket</strong> <w>and</w> <strong>API</strong> move as one flow.",
+        "author": "Illia Andreluka",
+        "role": "Co-founder · Frontend & Integration"
+      },
+      "andrii": {
+        "text": "Models propose ideas — the backend keeps answers <strong>fast</strong>, <strong>stable</strong> <w>and</w> <strong>auditable</strong>.",
+        "author": "Andrii Shumko",
+        "role": "Co-founder · Backend & ML"
+      }
     },
     "cta": {
       "a11y": "Call to action",
@@ -172,6 +181,9 @@
     "privacy": "Privacy Policy",
     "sessions": "Sessions",
     "sessionsText": "You can continue analyses later — history is saved in your account.",
+    "panelTitle": "Note",
+    "panelText": "Check important information — especially code, numbers, and conclusions.",
+    "panelNote": "Consensia can make mistakes.",
     "rights": "All rights reserved"
   },
   "app": {

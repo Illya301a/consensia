@@ -1,0 +1,27 @@
+@mixin glass-card($radius: 1.15rem) {
+  position: relative;
+  border-radius: $radius;
+  background:
+    radial-gradient(110% 120% at 10% -15%, var(--color-red-glow-16), rgba(251, 113, 133, 0) 58%),
+    radial-gradient(95% 85% at 100% 0%, var(--color-rose-glow-16), rgba(244, 114, 182, 0) 62%),
+    linear-gradient(168deg, var(--color-surface-94), var(--color-surface-blush-soft));
+  border: 1px solid var(--color-glass-border-mid);
+  box-shadow:
+    0 16px 44px var(--color-glass-shadow-outer),
+    0 8px 24px var(--color-glass-shadow-inner);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+@mixin glass-panel-subtle($radius: 0.85rem) {
+  border-radius: $radius;
+  border: 1px solid var(--color-glass-border);
+  background: linear-gradient(
+    168deg,
+    var(--color-surface-72),
+    var(--color-surface-blush-soft)
+  );
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 8px 24px var(--color-glass-shadow-inner);
+}

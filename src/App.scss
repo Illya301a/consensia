@@ -1,3 +1,5 @@
+@use './styles/glass-card.scss' as glass;
+
 $bg-top: var(--color-bg-top);
 $bg-mid: var(--color-bg-mid);
 $bg-deep: var(--color-bg-deep);
@@ -52,6 +54,9 @@ $font-logo: $font-display;
   min-height: 100svh;
   color: $text;
   font-family: $font-ui;
+}
+
+.app--home {
   background: linear-gradient(
     165deg,
     $bg-top 0%,
@@ -361,6 +366,9 @@ $font-logo: $font-display;
   max-width: 16rem;
   justify-content: center;
   padding: 0.75rem 1rem;
+  background: var(--color-menu-control);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .top__lang {
@@ -376,7 +384,9 @@ $font-logo: $font-display;
     justify-content: center;
     padding: 0.75rem 1rem;
     font-size: 0.85rem;
-
+    background: var(--color-menu-control);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   .lang-switcher__menu {
@@ -453,9 +463,17 @@ $font-logo: $font-display;
 
 .top__cta--menu {
   width: 100%;
+  max-width: 16rem;
   justify-content: center;
   padding: 0.75rem 1rem;
-  margin-top: 0.25rem;
+  margin-top: 0;
+  height: auto;
+  min-height: 0;
+  align-self: stretch;
+  flex: 0 0 auto;
+  background: var(--color-menu-control);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .chat-app__profile {
@@ -793,7 +811,7 @@ $font-logo: $font-display;
   position: fixed;
   inset: 0;
   z-index: 180;
-  background: rgba(26, 10, 18, 0.35);
+  background: rgba(26, 10, 18, 0.45);
   opacity: 0;
   visibility: hidden;
   transition:
@@ -812,6 +830,10 @@ $font-logo: $font-display;
   }
 }
 
+[data-theme='dark'] .top__menu-backdrop {
+  background: rgba(8, 4, 8, 0.78);
+}
+
 .top__menu-panel {
   position: fixed;
   top: 0;
@@ -824,9 +846,9 @@ $font-logo: $font-display;
   width: min(17.5rem, 86vw);
   padding: calc(0.75rem + env(safe-area-inset-top, 0px)) 1.25rem 1.5rem
     calc(1rem + env(safe-area-inset-right, 0px));
-  background: var(--color-surface-warm);
-  border-left: 1px solid rgba(244, 114, 182, 0.22);
-  box-shadow: -12px 0 40px var(--color-rose-glow-12);
+  background: var(--color-menu-panel);
+  border-left: 1px solid var(--color-border-rose-soft);
+  box-shadow: -12px 0 40px rgba(0, 0, 0, 0.28);
   transform: translateX(100%);
   visibility: hidden;
   transition:
@@ -835,6 +857,8 @@ $font-logo: $font-display;
   pointer-events: none;
   overflow-y: auto;
   overscroll-behavior: contain;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 
   &--open {
     transform: translateX(0);
@@ -852,6 +876,15 @@ $font-logo: $font-display;
   gap: 1rem;
   flex: 1;
   min-height: 0;
+  align-content: start;
+  align-items: stretch;
+}
+
+.top__menu-footer {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding-top: 0.25rem;
 }
 
 .top__menu-nav {
@@ -915,6 +948,13 @@ $font-logo: $font-display;
   margin: 0;
 }
 
+[data-theme='dark'] .top__menu-panel {
+  .top__cta--menu,
+  .chat-app__profile-pop--menu {
+    background: var(--color-menu-control);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .top__burger-line,
   .top__menu-backdrop,
@@ -953,7 +993,7 @@ $font-logo: $font-display;
 }
 
 .title {
-  font-size: clamp(2.4rem, 6vw, 3.85rem);
+  font-size: clamp(2.65rem, 6.6vw, 4.15rem);
   font-weight: 600;
   line-height: 1.06;
   letter-spacing: -0.022em;
@@ -1083,10 +1123,11 @@ $font-logo: $font-display;
   }
 
   &--ghost {
-    background: var(--color-surface-75);
+    background: var(--color-menu-control);
     color: $text;
     border: 1px solid var(--color-border-rose);
-    backdrop-filter: blur(10px);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
 
     &:hover {
       transform: translateY(-2px);
@@ -1377,31 +1418,101 @@ $font-logo: $font-display;
   line-height: 1;
 }
 
-.quote-block {
-  padding: clamp(2.5rem, 8vw, 4rem) clamp(1.25rem, 4vw, 2.5rem);
-  background: linear-gradient(180deg, var(--color-bg-top) 0%, $bg-mid 45%, $bg-deep 100%);
+.home-closing {
+  padding: clamp(2.75rem, 7vw, 4rem) clamp(1.25rem, 4vw, 2.5rem)
+    clamp(2rem, 5vw, 2.5rem);
+  background: linear-gradient(
+    180deg,
+    var(--color-bg-top) 0%,
+    $bg-mid 45%,
+    $bg-deep 100%
+  );
 }
 
-.quote-block__inner {
-  max-width: 44rem;
+.home-closing__grid {
+  max-width: min(72rem, 94vw);
   margin: 0 auto;
-  padding: 1.75rem 1.5rem 1.75rem 1.35rem;
-  border-left: 4px solid $rose-400;
-  border-radius: 0 1rem 1rem 0;
-  background: var(--color-surface-75);
-  box-shadow: 0 16px 48px rgba(244, 114, 182, 0.08);
+  display: grid;
+  gap: clamp(1rem, 2.5vw, 1.35rem);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  @media (max-width: 52rem) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.home-closing__card {
+  @include glass.glass-panel-subtle(1.25rem);
+  height: 100%;
+  margin: 0;
+  padding: clamp(1.65rem, 3.5vw, 2.15rem) clamp(1.35rem, 3vw, 1.85rem);
+  text-align: left;
+  box-shadow:
+    0 14px 40px var(--color-glass-shadow-outer),
+    0 0 0 1px var(--color-glass-border-mid);
+}
+
+.home-closing__quote {
+  margin: 0;
+  padding: 0;
+  border: none;
 
   p {
     margin: 0;
-    font-size: clamp(1.05rem, 2.2vw, 1.2rem);
-    line-height: 1.65;
+    font-family: $font-ui;
+    font-size: clamp(1.05rem, 2.1vw, 1.38rem);
+    font-weight: 600;
+    line-height: 1.45;
+    letter-spacing: -0.02em;
     color: $text;
+
+    &::before {
+      content: '«';
+      margin-right: 0.08em;
+      color: $rose-400;
+      font-weight: 650;
+    }
+
+    &::after {
+      content: '»';
+      margin-left: 0.05em;
+      color: $rose-400;
+      font-weight: 650;
+    }
   }
 
   strong {
-    font-style: normal;
+    font-weight: 650;
     color: $rose-500;
   }
+
+  .home-closing__conj {
+    color: $text;
+    font-weight: 650;
+  }
+}
+
+[data-theme='dark'] .home-closing__quote .home-closing__conj {
+  color: #fff;
+}
+
+.home-closing__cite {
+  display: grid;
+  gap: 0.22rem;
+  margin-top: clamp(1.35rem, 3vw, 1.85rem);
+}
+
+.home-closing__cite-name {
+  font-size: 0.94rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: $text;
+}
+
+.home-closing__cite-role {
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: $text-muted;
 }
 
 .cta-band {
@@ -1413,6 +1524,11 @@ $font-logo: $font-display;
     var(--color-cta-band-bg-end) 100%
   );
   color: var(--color-cta-band-text);
+}
+
+[data-theme='dark'] .cta-band {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .cta-band__inner {
@@ -1566,8 +1682,8 @@ $font-logo: $font-display;
 
 .footer__grid {
   display: grid;
-  gap: clamp(2rem, 5vw, 3rem);
-  grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.85fr) minmax(0, 1.2fr);
+  gap: clamp(1.75rem, 4vw, 2.5rem);
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.72fr) minmax(0, 1.08fr);
   text-align: left;
   align-items: start;
 
@@ -1727,26 +1843,39 @@ $font-logo: $font-display;
 }
 
 .footer__col--panel {
+  @include glass.glass-panel-subtle(1rem);
   padding: 1.15rem 1.2rem 1.2rem;
-  border-radius: 1rem;
-  background: var(--color-surface-55);
-  border: 1px solid rgba(244, 114, 182, 0.22);
   box-shadow:
-    0 4px 24px rgba(244, 114, 182, 0.08),
-    inset 0 1px 0 var(--color-surface);
-  backdrop-filter: blur(12px);
+    0 10px 32px var(--color-glass-shadow-inner),
+    0 0 0 1px var(--color-glass-border-mid);
 
   .footer__col-title {
-    margin-bottom: 0.5rem;
-    color: $rose-400;
+    margin-bottom: 0.45rem;
+    font-family: $font-display;
+    font-size: 0.98rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-transform: none;
+    color: $rose-500;
   }
 }
 
 .footer__panel-text {
   margin: 0;
   color: $text-muted;
-  font-size: 0.88rem;
-  line-height: 1.6;
+  font-size: 0.86rem;
+  line-height: 1.58;
+}
+
+.footer__panel-note {
+  display: block;
+  margin-top: 0.65rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--color-rose-glow-12);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: $text;
+  opacity: 0.88;
 }
 
 .footer__bar {
@@ -2058,11 +2187,9 @@ $font-logo: $font-display;
 }
 
 .legal-page__notice {
+  @include glass.glass-panel-subtle(0.85rem);
   margin: 0 0 2rem;
   padding: 1rem 1.15rem;
-  border-radius: 0.85rem;
-  border: 1px solid rgba(244, 114, 182, 0.28);
-  background: var(--color-surface-75);
   font-size: 0.92rem;
   line-height: 1.55;
   color: $text;
@@ -2139,10 +2266,12 @@ $font-logo: $font-display;
 }
 
 .payment-page__card {
+  @include glass.glass-card(1.15rem);
   width: min(100%, 44rem);
   display: grid;
   gap: 1rem;
   text-align: center;
+  padding: clamp(1.5rem, 4vw, 2rem);
 }
 
 .payment-page__actions {

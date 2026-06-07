@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import '../App.scss'
 import SiteFooter from '../components/SiteFooter.jsx'
 import SiteHeader from '../components/SiteHeader.jsx'
+import PageAurora from '../components/PageAurora.jsx'
 import { Reveal } from '../components/Reveal.jsx'
 
 export default function AboutPage() {
@@ -20,6 +21,7 @@ export default function AboutPage() {
 
   return (
     <div className="app legal-page">
+      <PageAurora />
       <SiteHeader />
 
       <main className="legal-page__main" tabIndex={-1}>

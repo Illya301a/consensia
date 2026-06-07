@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ACCESS_TOKEN_KEY, POST_LOGIN_REDIRECT_KEY } from '../services/constants.js'
 import SiteHeader from '../components/SiteHeader.jsx'
+import PageAurora from '../components/PageAurora.jsx'
 
 function extractToken() {
   const search = new URLSearchParams(window.location.search)
@@ -68,6 +69,7 @@ export default function AuthCallbackPage() {
 
   return (
     <div className="app legal-page">
+      <PageAurora />
       <SiteHeader />
       <div className="app-suspense-fallback" role="status">
         {loadingLabel}

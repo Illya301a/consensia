@@ -1,0 +1,95 @@
+.page-aurora {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.page-aurora__orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(34px);
+  will-change: transform;
+  animation: page-aurora-drift 20s ease-in-out infinite;
+}
+
+.page-aurora__orb--1 {
+  top: 8%;
+  left: 6%;
+  width: min(46vw, 19rem);
+  height: min(46vw, 19rem);
+  background: var(--color-page-orb-1);
+  animation-duration: 17s;
+}
+
+.page-aurora__orb--2 {
+  top: 34%;
+  right: 4%;
+  width: min(40vw, 15rem);
+  height: min(40vw, 15rem);
+  background: var(--color-page-orb-2);
+  animation-duration: 23s;
+  animation-delay: -5s;
+}
+
+.page-aurora__orb--3 {
+  bottom: 14%;
+  left: 28%;
+  width: min(34vw, 13rem);
+  height: min(34vw, 13rem);
+  background: var(--color-page-orb-3);
+  animation-duration: 19s;
+  animation-delay: -9s;
+}
+
+.page-aurora__orb--4 {
+  top: 56%;
+  left: 4%;
+  width: min(28vw, 11rem);
+  height: min(28vw, 11rem);
+  background: var(--color-page-orb-4);
+  animation-duration: 26s;
+  animation-delay: -13s;
+}
+
+.page-aurora__orb--5 {
+  top: 18%;
+  right: 22%;
+  width: min(24vw, 9.5rem);
+  height: min(24vw, 9.5rem);
+  background: var(--color-page-orb-5);
+  animation-duration: 21s;
+  animation-delay: -7s;
+}
+
+@keyframes page-aurora-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  25% {
+    transform: translate3d(8%, -8%, 0) scale(1.1);
+  }
+
+  50% {
+    transform: translate3d(-6%, 9%, 0) scale(0.92);
+  }
+
+  75% {
+    transform: translate3d(7%, 5%, 0) scale(1.05);
+  }
+}
+
+[data-theme='light'] {
+  .page-aurora__orb {
+    filter: blur(40px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-aurora__orb {
+    animation: none;
+  }
+}

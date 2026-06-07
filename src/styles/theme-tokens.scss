@@ -19,12 +19,12 @@
   --color-border-rose: rgba(244, 114, 182, 0.35);
   --color-border-rose-soft: rgba(244, 114, 182, 0.26);
   --color-shadow-rose: rgba(244, 114, 182, 0.16);
-  --color-rose-glow-12: rgba(244, 114, 182, 0.12);
-  --color-rose-glow-16: rgba(244, 114, 182, 0.16);
-  --color-rose-glow-18: rgba(244, 114, 182, 0.18);
+  --color-rose-glow-12: rgba(244, 114, 182, 0.2);
+  --color-rose-glow-16: rgba(244, 114, 182, 0.24);
+  --color-rose-glow-18: rgba(244, 114, 182, 0.28);
   --color-rose-glow-42: rgba(244, 114, 182, 0.42);
   --color-rose-glow-44: rgba(244, 114, 182, 0.44);
-  --color-red-glow-15: rgba(251, 113, 133, 0.15);
+  --color-red-glow-15: rgba(251, 113, 133, 0.24);
   --color-red-glow-16: rgba(251, 113, 133, 0.16);
   --color-bg-gradient-soft: #fff8fb;
   --color-bg-gradient-mid: #ffffff;
@@ -58,6 +58,8 @@
   --color-surface-warm: rgba(255, 253, 252, 0.97);
   --color-surface-blush: rgba(255, 245, 250, 0.86);
   --color-surface-blush-soft: rgba(255, 245, 250, 0.88);
+  --color-glass-shadow-outer: rgba(15, 10, 12, 0.1);
+  --color-glass-shadow-inner: rgba(244, 114, 182, 0.1);
   --color-surface-fade: rgba(255, 255, 255, 0.4);
   --color-surface-fade-25: rgba(255, 255, 255, 0.25);
   --color-inset-highlight: rgba(255, 255, 255, 0.7);
@@ -120,9 +122,16 @@
   --color-cta-band-btn-bg: #ffffff;
   --color-cta-band-btn-text: #9d174d;
   --color-cta-band-btn-shadow: rgba(0, 0, 0, 0.12);
-  --color-cta-band-bg-start: #db2777;
-  --color-cta-band-bg-mid: #be185d;
-  --color-cta-band-bg-end: #9d174d;
+  --color-cta-band-bg-start: #f43f8f;
+  --color-cta-band-bg-mid: #ec4899;
+  --color-cta-band-bg-end: #db2777;
+  --color-menu-panel: #fff9fc;
+  --color-menu-control: #ffffff;
+  --color-page-orb-1: rgba(251, 113, 133, 0.52);
+  --color-page-orb-2: rgba(244, 114, 182, 0.46);
+  --color-page-orb-3: rgba(236, 72, 153, 0.4);
+  --color-page-orb-4: rgba(251, 113, 133, 0.36);
+  --color-page-orb-5: rgba(244, 114, 182, 0.32);
 }
 
 [data-theme='dark'] {
@@ -184,6 +193,8 @@
   --color-surface-warm: rgba(34, 16, 26, 0.96);
   --color-surface-blush: rgba(42, 18, 32, 0.88);
   --color-surface-blush-soft: rgba(42, 18, 32, 0.9);
+  --color-glass-shadow-outer: rgba(0, 0, 0, 0.38);
+  --color-glass-shadow-inner: rgba(244, 114, 182, 0.14);
   --color-surface-fade: rgba(18, 8, 16, 0.55);
   --color-surface-fade-25: rgba(18, 8, 16, 0.35);
   --color-inset-highlight: rgba(244, 114, 182, 0.12);
@@ -246,9 +257,20 @@
   --color-cta-band-btn-bg: #fce7f3;
   --color-cta-band-btn-text: #831843;
   --color-cta-band-btn-shadow: rgba(0, 0, 0, 0.28);
-  --color-cta-band-bg-start: #701a3a;
-  --color-cta-band-bg-mid: #831843;
-  --color-cta-band-bg-end: #4a0d25;
+  --color-cta-band-bg-start: rgba(190, 24, 93, 0.58);
+  --color-cta-band-bg-mid: rgba(157, 23, 77, 0.48);
+  --color-cta-band-bg-end: rgba(112, 26, 58, 0.38);
+  --color-chat-panel: #26121c;
+  --color-chat-panel-soft: #2a1420;
+  --color-chat-panel-input: #2e1624;
+  --color-chat-code-block: #2a1420;
+  --color-menu-panel: #26121c;
+  --color-menu-control: #2e1624;
+  --color-page-orb-1: rgba(244, 114, 182, 0.36);
+  --color-page-orb-2: rgba(236, 72, 153, 0.32);
+  --color-page-orb-3: rgba(251, 113, 133, 0.28);
+  --color-page-orb-4: rgba(244, 114, 182, 0.24);
+  --color-page-orb-5: rgba(236, 72, 153, 0.2);
 }
 
 html.theme-switching {

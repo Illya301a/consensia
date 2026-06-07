@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import '../App.scss'
 import './GithubActionsPage.scss'
 import SiteHeader from '../components/SiteHeader.jsx'
+import PageAurora from '../components/PageAurora.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import { Reveal } from '../components/Reveal.jsx'
 import { useAuth } from '../services/AuthContext.jsx'
@@ -99,6 +100,7 @@ export default function GithubActionsPage() {
 
   return (
     <div className="app cli-guide-page">
+      <PageAurora />
       <SiteHeader />
       <main className="cli-guide-page__main">
         <article className="cli-guide-page__article">

@@ -1,8 +1,7 @@
+@use '../styles/glass-card.scss' as glass;
+
 .cli-guide-page {
   min-height: 100dvh;
-  background: linear-gradient(162deg, var(--color-bg-gradient-accent) 0%, var(--color-bg-mid) 44%, var(--color-bg-gradient-rose) 100%);
-  background-size: 140% 140%;
-  animation: guideGradientFlow 22s ease-in-out infinite;
 }
 
 .cli-guide-page__main {
@@ -17,17 +16,10 @@
 }
 
 .cli-guide-page__hero {
+  @include glass.glass-card(1rem);
   display: grid;
   gap: 0.85rem;
   padding: clamp(1rem, 2.4vw, 1.4rem);
-  border-radius: 1rem;
-  border: 1px solid rgba(244, 114, 182, 0.28);
-  background: linear-gradient(
-    140deg,
-    var(--color-panel-gradient-start),
-    var(--color-panel-gradient-end)
-  );
-  box-shadow: 0 14px 34px rgba(236, 72, 153, 0.12);
   animation: guideHeroRise 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -182,14 +174,7 @@
 }
 
 .cli-guide-card {
-  border: 1px solid rgba(236, 72, 153, 0.2);
-  border-radius: 1rem;
-  background: linear-gradient(
-    155deg,
-    var(--color-card-panel-start),
-    var(--color-card-panel-end)
-  );
-  box-shadow: 0 12px 28px rgba(219, 39, 119, 0.08);
+  @include glass.glass-card(1rem);
   padding: 1.05rem 1.1rem;
   display: grid;
   gap: 0.72rem;
@@ -201,8 +186,10 @@
 
 .cli-guide-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 16px 34px rgba(219, 39, 119, 0.13);
-  border-color: rgba(236, 72, 153, 0.32);
+  box-shadow:
+    0 20px 48px var(--color-glass-shadow-outer),
+    0 10px 28px var(--color-glass-shadow-inner);
+  border-color: var(--color-glass-border-hover);
 }
 
 .cli-guide-card h2 {
@@ -268,10 +255,8 @@
 }
 
 .cli-guide-code {
+  @include glass.glass-panel-subtle(0.8rem);
   margin: 0;
-  border-radius: 0.8rem;
-  border: 1px solid rgba(236, 72, 153, 0.24);
-  background: linear-gradient(180deg, var(--color-bg-top) 0%, var(--color-bg-gradient-soft-alt) 100%);
   padding: 0.82rem 0.86rem;
   overflow-x: auto;
   white-space: pre;
@@ -286,18 +271,6 @@
   grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
 }
 
-@keyframes guideGradientFlow {
-  0% {
-    background-position: 0% 30%;
-  }
-  50% {
-    background-position: 100% 70%;
-  }
-  100% {
-    background-position: 0% 30%;
-  }
-}
-
 @keyframes guideHeroRise {
   from {
     opacity: 0;
@@ -310,7 +283,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cli-guide-page,
   .cli-guide-page__hero {
     animation: none;
   }
@@ -321,7 +293,5 @@
 
   .cli-guide-card:hover {
     transform: none;
-    box-shadow: 0 10px 30px rgba(244, 114, 182, 0.08);
-    border-color: rgba(244, 114, 182, 0.24);
   }
 }

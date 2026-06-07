@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import '../App.scss'
+import PageAurora from '../components/PageAurora.jsx'
 import './AiAgentPage.scss'
 
 function AiAgentPage() {
@@ -18,6 +19,7 @@ function AiAgentPage() {
 
   return (
     <div className="app ai-agent-page">
+      <PageAurora />
       <main className="ai-agent-page__main">
         <article className="ai-agent-page__card">
           <p className="ai-agent-page__emoticon" aria-hidden="true">

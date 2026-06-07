@@ -152,7 +152,16 @@
     },
     "quote": {
       "a11y": "Produktpositionierung",
-      "text": "Wir jagen nicht um jeden Preis der kreativsten Antwort hinterher — wir konzentrieren uns auf ein <strong>abgestimmtes und überprüfbares Ergebnis</strong>."
+      "illia": {
+        "text": "Zwischen Klick und Antwort darf nichts reißen — <strong>UI</strong>, <strong>WebSocket</strong> <w>und</w> <strong>API</strong> laufen als ein Flow.",
+        "author": "Illia Andreluka",
+        "role": "Mitgründer · Frontend & Integration"
+      },
+      "andrii": {
+        "text": "Modelle schlagen vor — das Backend hält Antworten <strong>schnell</strong>, <strong>stabil</strong> <w>und</w> <strong>prüfbar</strong>.",
+        "author": "Andrii Shumko",
+        "role": "Mitgründer · Backend & ML"
+      }
     },
     "cta": {
       "a11y": "Handlungsaufforderung",
@@ -172,6 +181,9 @@
     "privacy": "Datenschutz",
     "sessions": "Sitzungen",
     "sessionsText": "Analysen können Sie später fortsetzen — der Verlauf wird in Ihrem Konto gespeichert.",
+    "panelTitle": "Hinweis",
+    "panelText": "Prüfen Sie wichtige Informationen — besonders Code, Zahlen und Schlussfolgerungen.",
+    "panelNote": "Consensia kann irren.",
     "rights": "Alle Rechte vorbehalten"
   },
   "app": {

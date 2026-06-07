@@ -17,6 +17,11 @@ const ConsensiaScene = lazy(() =>
   import('../components/ConsensiaScene').then((m) => ({ default: m.ConsensiaScene }))
 )
 
+const QUOTE_TRANS_COMPONENTS = {
+  strong: <strong />,
+  w: <span className="home-closing__conj" />,
+}
+
 const NAV_MOBILE_MAX_PX = 1024
 const DATA_COLLECTION_KEY = 'consensia_data_collection_v1'
 const PROFILE_POP_ANIMATION_MS = 180
@@ -195,7 +200,7 @@ export default function HomePage() {
   ) : null
 
   return (
-    <div className="app">
+    <div className="app app--home">
       <section className="hero" aria-label={t('home.a11y.hero')}>
         <div className="hero__canvas" aria-hidden="true">
           <Suspense fallback={null}>
@@ -342,21 +347,21 @@ export default function HomePage() {
                         {t('nav.developers')}
                       </Link>
                     </nav>
-                    {!isAuthenticated ? (
-                      <button
-                        type="button"
-                        className="top__cta top__cta--menu"
-                        onClick={() => {
-                          loginWithGoogle()
-                          closeMobileMenu()
-                        }}
-                      >
-                        {t('home.auth.login')}
-                      </button>
-                    ) : null}
                   </>
                 }
               >
+                {!isAuthenticated ? (
+                  <button
+                    type="button"
+                    className="top__cta top__cta--menu"
+                    onClick={() => {
+                      loginWithGoogle()
+                      closeMobileMenu()
+                    }}
+                  >
+                    {t('home.auth.login')}
+                  </button>
+                ) : null}
                 <ThemeSwitcher className="top__theme top__theme--menu" />
                 <LanguageSwitcher className="top__lang top__lang--menu" />
                 {isAuthenticated ? <div className="top__menu-profile">{mobileProfile}</div> : null}
@@ -502,15 +507,41 @@ export default function HomePage() {
         </Reveal>
       </section>
 
-      <aside className="quote-block" aria-label={t('home.quote.a11y')}>
+      <section className="home-closing" aria-label={t('home.quote.a11y')}>
         <Reveal>
-          <blockquote className="quote-block__inner">
-            <p>
-              <Trans i18nKey="home.quote.text" components={{ strong: <strong /> }} />
-            </p>
-          </blockquote>
+          <div className="home-closing__grid">
+            <figure className="home-closing__card">
+              <blockquote className="home-closing__quote">
+                <p>
+                  <Trans
+                    i18nKey="home.quote.illia.text"
+                    components={QUOTE_TRANS_COMPONENTS}
+                  />
+                </p>
+              </blockquote>
+              <figcaption className="home-closing__cite">
+                <span className="home-closing__cite-name">{t('home.quote.illia.author')}</span>
+                <span className="home-closing__cite-role">{t('home.quote.illia.role')}</span>
+              </figcaption>
+            </figure>
+
+            <figure className="home-closing__card">
+              <blockquote className="home-closing__quote">
+                <p>
+                  <Trans
+                    i18nKey="home.quote.andrii.text"
+                    components={QUOTE_TRANS_COMPONENTS}
+                  />
+                </p>
+              </blockquote>
+              <figcaption className="home-closing__cite">
+                <span className="home-closing__cite-name">{t('home.quote.andrii.author')}</span>
+                <span className="home-closing__cite-role">{t('home.quote.andrii.role')}</span>
+              </figcaption>
+            </figure>
+          </div>
         </Reveal>
-      </aside>
+      </section>
 
       <section className="cta-band" id="start" aria-label={t('home.cta.a11y')}>
         <Reveal>

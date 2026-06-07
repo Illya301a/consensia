@@ -1,0 +1,114 @@
+@mixin page-mesh-bg {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 100dvh;
+  background:
+    radial-gradient(1100px 700px at 20% 0%, var(--color-rose-glow-18), transparent 55%),
+    radial-gradient(900px 560px at 85% 15%, var(--color-red-glow-15), transparent 54%),
+    radial-gradient(1200px 820px at 50% 110%, var(--color-rose-glow-12), transparent 55%),
+    linear-gradient(
+      165deg,
+      var(--color-bg-top) 0%,
+      var(--color-bg-mid) 40%,
+      var(--color-bg-deep) 100%
+    );
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.42;
+    background-image:
+      radial-gradient(circle at 14% 18%, var(--color-border-rose-hover) 0 1px, transparent 2px),
+      radial-gradient(circle at 30% 76%, rgba(251, 113, 133, 0.45) 0 1px, transparent 2px),
+      radial-gradient(circle at 54% 32%, var(--color-border-rose-40) 0 1px, transparent 2px),
+      radial-gradient(circle at 72% 58%, rgba(251, 113, 133, 0.35) 0 1px, transparent 2px),
+      radial-gradient(circle at 88% 24%, rgba(244, 114, 182, 0.38) 0 1px, transparent 2px);
+    background-size: 560px 560px;
+    mix-blend-mode: multiply;
+    filter: blur(0.15px);
+    animation: page-mesh-dots 42s linear infinite;
+  }
+
+  > *:not(.page-aurora) {
+    position: relative;
+    z-index: 2;
+  }
+}
+
+@keyframes page-mesh-dots {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(6%, 4%, 0);
+  }
+}
+
+.app:not(.app--home),
+.experts-page,
+.developers-page {
+  @include page-mesh-bg;
+}
+
+.chat-app {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 100dvh;
+  background:
+    radial-gradient(1100px 700px at 20% 0%, var(--color-rose-glow-18), transparent 55%),
+    radial-gradient(900px 560px at 85% 15%, var(--color-red-glow-15), transparent 54%),
+    radial-gradient(1200px 820px at 50% 110%, var(--color-rose-glow-12), transparent 55%),
+    linear-gradient(
+      165deg,
+      var(--color-bg-top) 0%,
+      var(--color-bg-mid) 40%,
+      var(--color-bg-deep) 100%
+    );
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.42;
+    background-image:
+      radial-gradient(circle at 14% 18%, var(--color-border-rose-hover) 0 1px, transparent 2px),
+      radial-gradient(circle at 30% 76%, rgba(251, 113, 133, 0.45) 0 1px, transparent 2px),
+      radial-gradient(circle at 54% 32%, var(--color-border-rose-40) 0 1px, transparent 2px),
+      radial-gradient(circle at 72% 58%, rgba(251, 113, 133, 0.35) 0 1px, transparent 2px),
+      radial-gradient(circle at 88% 24%, rgba(244, 114, 182, 0.38) 0 1px, transparent 2px);
+    background-size: 560px 560px;
+    mix-blend-mode: multiply;
+    filter: blur(0.15px);
+    animation: page-mesh-dots 42s linear infinite;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .page-aurora {
+    z-index: 0;
+  }
+
+  > *:not(.page-aurora) {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app:not(.app--home)::before,
+  .chat-app::before,
+  .experts-page::before,
+  .developers-page::before {
+    animation: none;
+  }
+}

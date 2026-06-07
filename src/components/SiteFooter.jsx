@@ -18,13 +18,15 @@ export default function SiteFooter() {
             <nav className="footer__col" aria-label={t('footer.productAria')}>
               <span className="footer__col-title">{t('footer.product')}</span>
               <Link to="/faq">{t('footer.faq')}</Link>
-              <Link to="/github-actions">{t('footer.githubActions')}</Link>
               <Link to="/terms">{t('footer.terms')}</Link>
               <Link to="/privacy">{t('footer.privacy')}</Link>
             </nav>
             <div className="footer__col footer__col--panel" id="docs">
-              <span className="footer__col-title">{t('footer.sessions')}</span>
-              <p className="footer__panel-text">{t('footer.sessionsText')}</p>
+              <span className="footer__col-title">{t('footer.panelTitle')}</span>
+              <p className="footer__panel-text">
+                {t('footer.panelText')}
+                <span className="footer__panel-note">{t('footer.panelNote')}</span>
+              </p>
             </div>
           </div>
         </div>

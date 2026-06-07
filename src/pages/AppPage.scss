@@ -1,3 +1,5 @@
+@use '../styles/glass-card.scss' as glass;
+
 $rose-500: var(--color-rose-500);
 $rose-400: var(--color-rose-400);
 $text: var(--color-text);
@@ -6,51 +8,18 @@ $bg-mid: var(--color-bg-mid);
 $bg-deep: var(--color-bg-deep);
 
 .chat-app {
-  position: relative;
   height: 100dvh;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
   font-family: 'Onest', system-ui, sans-serif;
   color: $text;
-  background:
-    radial-gradient(1100px 700px at 20% 0%, var(--color-rose-glow-18), transparent 55%),
-    radial-gradient(900px 560px at 85% 15%, var(--color-red-glow-15), transparent 54%),
-    radial-gradient(1200px 820px at 50% 110%, var(--color-rose-glow-12), transparent 55%),
-    linear-gradient(165deg, var(--color-bg-top) 0%, $bg-mid 40%, $bg-deep 100%);
   overflow: hidden;
 }
 
 .chat-app,
 .chat-app * {
   box-sizing: border-box;
-}
-
-.chat-app::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.42;
-  background-image:
-    radial-gradient(circle at 14% 18%, var(--color-border-rose-hover) 0 1px, transparent 2px),
-    radial-gradient(circle at 30% 76%, rgba(251, 113, 133, 0.45) 0 1px, transparent 2px),
-    radial-gradient(circle at 54% 32%, var(--color-border-rose-40) 0 1px, transparent 2px),
-    radial-gradient(circle at 72% 58%, rgba(251, 113, 133, 0.35) 0 1px, transparent 2px),
-    radial-gradient(circle at 88% 24%, rgba(244, 114, 182, 0.38) 0 1px, transparent 2px);
-  background-size: 560px 560px;
-  mix-blend-mode: multiply;
-  filter: blur(0.15px);
-  animation: app-dots 42s linear infinite;
-}
-
-@keyframes app-dots {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(6%, 4%, 0);
-  }
 }
 
 .chat-app__shell {
@@ -1220,6 +1189,8 @@ $bg-deep: var(--color-bg-deep);
 }
 
 .chat-app__shell--auth {
+  position: relative;
+  z-index: 1;
   justify-content: center;
   align-items: center;
 }
@@ -1240,34 +1211,15 @@ $bg-deep: var(--color-bg-deep);
   padding: clamp(1rem, 3vw, 2rem);
 }
 
-.chat-app__auth-glow {
-  position: absolute;
-  inset: 12% 6% auto;
-  height: 55%;
-  pointer-events: none;
-  filter: blur(26px);
-  background:
-    radial-gradient(circle at 18% 20%, rgba(251, 113, 133, 0.23), transparent 48%),
-    radial-gradient(circle at 85% 30%, rgba(244, 114, 182, 0.22), transparent 46%);
-}
-
 .chat-app__auth-card {
   position: relative;
+  z-index: 1;
+  @include glass.glass-card(1.3rem);
   width: min(100%, 35.5rem);
   display: grid;
   justify-items: center;
   gap: 1rem;
   padding: clamp(1.6rem, 4vw, 2.45rem) clamp(1.2rem, 4vw, 2.6rem);
-  border-radius: 1.3rem;
-  background:
-    radial-gradient(110% 120% at 10% -15%, var(--color-red-glow-16), rgba(251, 113, 133, 0) 58%),
-    radial-gradient(95% 85% at 100% 0%, var(--color-rose-glow-16), rgba(244, 114, 182, 0) 62%),
-    linear-gradient(168deg, var(--color-surface-94), var(--color-surface-blush-soft));
-  border: 1px solid rgba(244, 114, 182, 0.25);
-  box-shadow:
-    0 16px 44px rgba(15, 10, 12, 0.1),
-    0 8px 24px rgba(244, 114, 182, 0.1);
-  backdrop-filter: blur(10px);
 }
 
 .chat-app__auth-brand {
@@ -1289,9 +1241,9 @@ $bg-deep: var(--color-bg-deep);
   font-weight: 700;
   letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: #db2777;
-  background: rgba(252, 231, 243, 0.7);
-  border: 1px solid rgba(244, 114, 182, 0.28);
+  color: var(--color-accent-text);
+  background: var(--color-chip-bg);
+  border: 1px solid var(--color-border-rose-soft);
 }
 
 .chat-app__auth-title {
@@ -1314,7 +1266,8 @@ $bg-deep: var(--color-bg-deep);
   margin: -0.1rem 0 0.45rem;
   font-size: 0.82rem;
   line-height: 1.45;
-  color: rgba(107, 74, 88, 0.86);
+  color: $text-muted;
+  opacity: 0.92;
 }
 
 .chat-app__auth-error {
@@ -1327,39 +1280,11 @@ $bg-deep: var(--color-bg-deep);
   border: 1px solid rgba(248, 113, 113, 0.45);
 }
 
-.chat-app__google {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.65rem;
-  width: 100%;
-  max-width: 20rem;
-  padding: 0.82rem 1.4rem;
-  border-radius: 999px;
-  border: 1px solid rgba(236, 72, 153, 0.24);
-  background: var(--color-bg-top);
-  color: $text-muted;
-  font: inherit;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-
-  &:hover {
-    box-shadow: 0 3px 10px rgba(236, 72, 153, 0.15);
-  }
-}
-
-.chat-app__google-svg {
-  flex-shrink: 0;
-}
-
+.chat-app__google,
 .chat-app__auth-home-btn {
-  margin-top: 0.2rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  text-decoration: none;
   width: 100%;
   max-width: 20rem;
   padding: 0.74rem 1.1rem;
@@ -1376,6 +1301,21 @@ $bg-deep: var(--color-bg-deep);
     border-color: rgba(244, 114, 182, 0.48);
     background: var(--color-surface-muted);
   }
+}
+
+.chat-app__google {
+  gap: 0.65rem;
+  font: inherit;
+  cursor: pointer;
+}
+
+.chat-app__auth-home-btn {
+  margin-top: 0.2rem;
+  text-decoration: none;
+}
+
+.chat-app__google-svg {
+  flex-shrink: 0;
 }
 
 .chat-app__setup-lede {
@@ -2273,5 +2213,161 @@ $bg-deep: var(--color-bg-deep);
 
   .chat-app__sidebar-mobile-footer .chat-app__profile--mobile-drawer {
     display: block !important;
+  }
+}
+
+[data-theme='dark'] .chat-app {
+  .chat-app__setup-card,
+  .chat-app__main,
+  .chat-app__sidebar,
+  .chat-app__auth-card {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .chat-app__setup-card {
+    background:
+      radial-gradient(120% 85% at 8% -10%, rgba(244, 114, 182, 0.14), transparent 58%),
+      radial-gradient(95% 70% at 102% 5%, rgba(244, 114, 182, 0.1), transparent 64%),
+      linear-gradient(168deg, var(--color-chat-panel-soft) 0%, var(--color-chat-panel) 100%);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+  }
+
+  .chat-app__main,
+  .chat-app__sidebar {
+    background: var(--color-chat-panel);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+  }
+
+  .chat-app__auth-card {
+    background:
+      radial-gradient(110% 120% at 10% -15%, rgba(244, 114, 182, 0.12), transparent 58%),
+      linear-gradient(168deg, var(--color-chat-panel-soft), var(--color-chat-panel));
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+  }
+
+  .chat-app__auth-hint {
+    color: var(--color-text-muted);
+    opacity: 1;
+  }
+
+  .chat-app__google,
+  .chat-app__auth-home-btn {
+    background: var(--color-chat-panel-input);
+
+    &:hover {
+      background: var(--color-chat-panel-soft);
+    }
+  }
+
+  .chat-app__field input,
+  .chat-app__field textarea,
+  .chat-app__field select,
+  .chat-app__fselect-button,
+  .chat-app__attach-clip-btn,
+  .chat-app__attach-btn,
+  .chat-app__composer-inner,
+  .chat-app__typing,
+  .chat-app__composer-chip,
+  .chat-app__btn,
+  .chat-app__badge,
+  .chat-app__sidebar-mobile-footer {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .chat-app__field input,
+  .chat-app__field textarea,
+  .chat-app__field select,
+  .chat-app__fselect-button {
+    background: var(--color-chat-panel-input);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+    &:focus {
+      background: var(--color-chat-panel-soft);
+    }
+  }
+
+  .chat-app__fselect-menu {
+    background: var(--color-chat-panel-soft);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .chat-app__attach-clip-btn {
+    background: var(--color-chat-panel-input);
+
+    &:hover {
+      background: var(--color-chat-panel-soft);
+    }
+  }
+
+  .chat-app__attach-btn {
+    background: var(--color-chat-panel-input);
+  }
+
+  .chat-app__composer-inner {
+    background: var(--color-chat-panel-input);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.24);
+  }
+
+  .chat-app__composer-chip {
+    background: var(--color-chat-panel-input);
+  }
+
+  .chat-app__composer-chip-label {
+    color: var(--color-text-muted);
+  }
+
+  .chat-app__composer-chip-value {
+    color: var(--color-text);
+  }
+
+  .chat-app__btn,
+  .chat-app__badge,
+  .chat-app__sidebar-new,
+  .chat-app__sidebar-delete,
+  .chat-app__sidebar-close {
+    background: var(--color-chat-panel-input);
+  }
+
+  .chat-app__sidebar-mobile-footer {
+    background: var(--color-chat-panel);
+  }
+
+  .chat-msg--agent,
+  .chat-msg--chat,
+  .chat-msg--stream,
+  .chat-msg--final,
+  .chat-msg--final-compact {
+    background: var(--color-chat-panel-input);
+  }
+
+  .chat-msg__diff {
+    background: var(--color-chat-code-block);
+  }
+
+  .chat-msg--usage .chat-msg__fold-summary,
+  .chat-msg__usage-row {
+    background: var(--color-chat-panel-input);
+  }
+
+  .chat-msg--usage .chat-msg__fold-summary,
+  .chat-msg__usage-k,
+  .chat-msg__usage-v {
+    color: var(--color-text-muted);
+  }
+
+  .chat-msg__usage-v {
+    color: var(--color-text);
+  }
+
+  .chat-msg--system .chat-msg__md {
+    color: var(--color-text-muted);
+  }
+
+  .chat-app__input-expand {
+    background: var(--color-chat-panel-input);
+    color: var(--color-text-muted);
   }
 }

@@ -56,7 +56,7 @@ export default function TopBurgerMenu({
             aria-label={menuAriaLabel}
           >
             {main ? <div className="top__menu-main">{main}</div> : null}
-            {children}
+            {children ? <div className="top__menu-footer">{children}</div> : null}
           </div>
         </>,
         document.body

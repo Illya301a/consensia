@@ -1,11 +1,11 @@
+@use '../styles/glass-card.scss' as glass;
+
 .ai-agent-page {
   min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(162deg, var(--color-bg-gradient-accent) 0%, var(--color-bg-mid) 44%, var(--color-bg-gradient-rose) 100%);
-  background-size: 140% 140%;
-  animation: aiAgentGradientFlow 22s ease-in-out infinite;
+  overflow: hidden;
 }
 
 .ai-agent-page__main {
@@ -14,6 +14,7 @@
 }
 
 .ai-agent-page__card {
+  @include glass.glass-card(1rem);
   max-width: 28rem;
   margin: 0 auto;
   display: grid;
@@ -21,14 +22,6 @@
   justify-items: center;
   text-align: center;
   padding: clamp(1.2rem, 2.8vw, 1.6rem);
-  border-radius: 1rem;
-  border: 1px solid rgba(244, 114, 182, 0.28);
-  background: linear-gradient(
-    140deg,
-    var(--color-panel-gradient-start),
-    var(--color-panel-gradient-end)
-  );
-  box-shadow: 0 14px 34px rgba(236, 72, 153, 0.12);
   animation: aiAgentHeroRise 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -57,18 +50,6 @@
   margin-top: 0.25rem;
 }
 
-@keyframes aiAgentGradientFlow {
-  0% {
-    background-position: 0% 30%;
-  }
-  50% {
-    background-position: 100% 70%;
-  }
-  100% {
-    background-position: 0% 30%;
-  }
-}
-
 @keyframes aiAgentHeroRise {
   from {
     opacity: 0;
@@ -81,7 +62,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ai-agent-page,
   .ai-agent-page__card {
     animation: none;
   }

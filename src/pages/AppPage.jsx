@@ -5,6 +5,7 @@ import '../App.scss'
 import './AppPage.scss'
 import { ChatComposer } from '../components/ChatComposer.jsx'
 import { ChatMessageItem } from '../components/ChatMessageItem.jsx'
+import PageAurora from '../components/PageAurora.jsx'
 import { useAuth } from '../services/AuthContext.jsx'
 import { apiFetch } from '../services/http.js'
 import {
@@ -1298,9 +1299,9 @@ export default function AppPage() {
   if (!isAuthenticated) {
     return (
       <div className="chat-app">
+        <PageAurora />
         <div className="chat-app__shell chat-app__shell--auth">
           <section className="chat-app__auth chat-app__auth--elevated">
-            <div className="chat-app__auth-glow" aria-hidden="true" />
             <div className="chat-app__auth-card">
               <Link to="/" className="chat-app__auth-brand">
                 Consensia

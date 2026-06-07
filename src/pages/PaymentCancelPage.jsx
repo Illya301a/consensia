@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import '../App.scss'
+import PageAurora from '../components/PageAurora.jsx'
 
 export default function PaymentCancelPage() {
   const { t } = useTranslation()
@@ -17,6 +18,7 @@ export default function PaymentCancelPage() {
 
   return (
     <div className="app payment-page">
+      <PageAurora />
       <main className="payment-page__main">
         <article className="payment-page__card">
           <h1 className="legal-page__title">{c.title}</h1>
