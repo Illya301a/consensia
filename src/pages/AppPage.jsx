@@ -7,6 +7,7 @@ import { ChatComposer } from '../components/ChatComposer.jsx'
 import { ChatMessageItem } from '../components/ChatMessageItem.jsx'
 import PageAurora from '../components/PageAurora.jsx'
 import DataCollectionToggle from '../components/DataCollectionToggle.jsx'
+import DeleteAccountDialog from '../components/DeleteAccountDialog.jsx'
 import { useAuth } from '../services/AuthContext.jsx'
 import { apiFetch } from '../services/http.js'
 import {
@@ -21,7 +22,7 @@ import {
   normalizeSessionsFromApi,
 } from '../services/sessionsApi.js'
 import { useOrchestratorWs } from '../services/useOrchestratorWs.js'
-import { getCredits, getUserLabel } from '../services/profileUtils.js'
+import { getCredits, getUserEmail, getUserLabel } from '../services/profileUtils.js'
 import { deleteMyAccount } from '../services/githubActionsApi.js'
 
 const DATA_COLLECTION_KEY = 'consensia_data_collection_v1'
@@ -430,6 +431,7 @@ export default function AppPage() {
   const [topUpLoading, setTopUpLoading] = useState(false)
   const [topUpError, setTopUpError] = useState('')
   const [deletingAccount, setDeletingAccount] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [dataCollection, setDataCollection] = useState(() => {
     try {
       const raw = localStorage.getItem(DATA_COLLECTION_KEY)
@@ -1006,13 +1008,12 @@ export default function AppPage() {
     navigate('/', { replace: true })
   }, [disconnect, logout, navigate])
 
-  const handleDeleteAccount = useCallback(async () => {
-    const shouldDelete = window.confirm(c.deleteAccountConfirm)
-    if (!shouldDelete) return
+  const performDeleteAccount = useCallback(async () => {
     setDeletingAccount(true)
     try {
       const result = await deleteMyAccount()
       if (!result.ok) throw new Error(result.error || c.errors.deleteAccountFailed)
+      setDeleteDialogOpen(false)
       setProfileOpen(false)
       setMobileSidebarOpen(false)
       disconnect()
@@ -1023,7 +1024,11 @@ export default function AppPage() {
     } finally {
       setDeletingAccount(false)
     }
-  }, [c.deleteAccountConfirm, c.errors.deleteAccountFailed, disconnect, logout, navigate])
+  }, [c.errors.deleteAccountFailed, disconnect, logout, navigate])
+
+  const openDeleteAccountDialog = useCallback(() => {
+    setDeleteDialogOpen(true)
+  }, [])
 
   const handleTopUp = useCallback(async () => {
     const amount = Number(topUpAmount)
@@ -1464,10 +1469,10 @@ export default function AppPage() {
                     <button
                       type="button"
                       className="chat-app__profile-link"
-                      onClick={handleDeleteAccount}
+                      onClick={openDeleteAccountDialog}
                       disabled={deletingAccount}
                     >
-                      {deletingAccount ? '...' : c.deleteAccount}
+                      {c.deleteAccount}
                     </button>
                   </div>
                 </div>
@@ -1609,10 +1614,10 @@ export default function AppPage() {
                       <button
                         type="button"
                         className="chat-app__profile-link"
-                        onClick={handleDeleteAccount}
+                        onClick={openDeleteAccountDialog}
                         disabled={deletingAccount}
                       >
-                        {deletingAccount ? '...' : c.deleteAccount}
+                        {c.deleteAccount}
                       </button>
                     </div>
                 </div>
@@ -1834,6 +1839,14 @@ export default function AppPage() {
           </p>
         ) : null}
       </div>
+
+      <DeleteAccountDialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onConfirm={performDeleteAccount}
+        userEmail={getUserEmail(user)}
+        deleting={deletingAccount}
+      />
     </div>
   )
 }

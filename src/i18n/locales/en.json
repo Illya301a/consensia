@@ -623,6 +623,17 @@
       }
     ]
   },
+  "deleteAccountFlow": {
+    "title": "Delete account",
+    "warning": "Delete account and all related data? This action cannot be undone.",
+    "emailPrompt": "Enter your email to confirm deletion:",
+    "emailPlaceholder": "Email",
+    "emailMismatch": "Email does not match your account",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "delete": "Delete account",
+    "ariaLabel": "Delete account confirmation"
+  },
   "faqPage": {
     "docTitle": "FAQ · Consensia",
     "skip": "Skip to content",

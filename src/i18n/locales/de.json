@@ -623,6 +623,17 @@
       }
     ]
   },
+  "deleteAccountFlow": {
+    "title": "Konto löschen",
+    "warning": "Konto und alle zugehörigen Daten löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "emailPrompt": "Geben Sie Ihre E-Mail zur Bestätigung ein:",
+    "emailPlaceholder": "E-Mail",
+    "emailMismatch": "E-Mail stimmt nicht mit Ihrem Konto überein",
+    "cancel": "Abbrechen",
+    "continue": "Weiter",
+    "delete": "Konto löschen",
+    "ariaLabel": "Bestätigung der Kontolöschung"
+  },
   "faqPage": {
     "docTitle": "FAQ · Consensia",
     "skip": "Zum Inhalt springen",

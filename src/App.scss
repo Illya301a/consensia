@@ -2418,6 +2418,162 @@ $font-logo: $font-display;
   }
 }
 
+.delete-account-dialog__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  background: rgba(26, 10, 18, 0.45);
+  backdrop-filter: blur(2px);
+}
+
+[data-theme='dark'] .delete-account-dialog__backdrop {
+  background: rgba(8, 4, 8, 0.78);
+}
+
+.delete-account-dialog {
+  position: fixed;
+  z-index: 230;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(calc(100vw - 2rem), 24rem);
+  padding: 1.25rem;
+  border-radius: 1rem;
+  border: 1px solid var(--color-border-rose-soft);
+  background: var(--color-menu-panel);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
+  color: var(--color-text);
+}
+
+.delete-account-dialog__title {
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.delete-account-dialog__text {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--color-text-muted, var(--color-text));
+}
+
+.delete-account-dialog__form {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.delete-account-dialog__field {
+  display: block;
+}
+
+.delete-account-dialog__input {
+  width: 100%;
+  margin-top: 0.65rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.65rem;
+  border: 1px solid var(--color-glass-border-soft);
+  background: var(--color-menu-control);
+  color: var(--color-text);
+  font: inherit;
+
+  &:focus-visible {
+    outline: none;
+    border-color: var(--color-border-rose-focus);
+    box-shadow: 0 0 0 3px var(--color-rose-glow-12);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+  }
+}
+
+.delete-account-dialog__error {
+  margin: -0.25rem 0 0;
+  font-size: 0.84rem;
+  color: #e11d48;
+}
+
+.delete-account-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 1rem;
+}
+
+.delete-account-dialog__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.35rem;
+  padding: 0.55rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 650;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: progress;
+  }
+}
+
+.delete-account-dialog__btn--ghost {
+  background: transparent;
+  border-color: var(--color-glass-border-soft);
+  color: var(--color-text);
+
+  &:hover:not(:disabled),
+  &:focus-visible {
+    background: var(--color-rose-glow-12);
+    border-color: var(--color-border-rose-soft);
+    outline: none;
+  }
+}
+
+.delete-account-dialog__btn--primary {
+  background: var(--color-rose-glow-16);
+  border-color: var(--color-border-rose-soft);
+  color: var(--color-text);
+
+  &:hover:not(:disabled),
+  &:focus-visible {
+    background: var(--color-rose-glow-24);
+    border-color: var(--color-border-rose-focus);
+    outline: none;
+  }
+}
+
+.delete-account-dialog__btn--danger {
+  background: #be123c;
+  border-color: #be123c;
+  color: #fff;
+
+  &:hover:not(:disabled),
+  &:focus-visible {
+    background: #9f1239;
+    border-color: #9f1239;
+    outline: none;
+  }
+}
+
+.delete-account-dialog__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .payment-page {
   min-height: 100dvh;
   display: flex;

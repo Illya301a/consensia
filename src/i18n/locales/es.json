@@ -460,6 +460,17 @@
       }
     ]
   },
+  "deleteAccountFlow": {
+    "title": "Eliminar cuenta",
+    "warning": "¿Eliminar la cuenta y todos los datos relacionados? Esta acción no se puede deshacer.",
+    "emailPrompt": "Introduce tu correo para confirmar la eliminación:",
+    "emailPlaceholder": "Correo",
+    "emailMismatch": "El correo no coincide con tu cuenta",
+    "cancel": "Cancelar",
+    "continue": "Continuar",
+    "delete": "Eliminar cuenta",
+    "ariaLabel": "Confirmación de eliminación de cuenta"
+  },
   "faqPage": {
     "docTitle": "FAQ · Consensia",
     "skip": "Saltar al contenido",

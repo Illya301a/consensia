@@ -5,14 +5,17 @@ import '../App.scss'
 import SiteFooter from '../components/SiteFooter.jsx'
 import SiteHeader from '../components/SiteHeader.jsx'
 import PageAurora from '../components/PageAurora.jsx'
+import DeleteAccountDialog from '../components/DeleteAccountDialog.jsx'
 import { useAuth } from '../services/AuthContext.jsx'
 import { deleteMyAccount } from '../services/githubActionsApi.js'
+import { getUserEmail } from '../services/profileUtils.js'
 
 export default function FaqPage() {
   const { t } = useTranslation()
-  const { isAuthenticated, logout } = useAuth()
+  const { isAuthenticated, user, logout } = useAuth()
   const navigate = useNavigate()
   const c = t('faqPage', { returnObjects: true })
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [deletingAccount, setDeletingAccount] = useState(false)
 
   useEffect(() => {
@@ -23,12 +26,12 @@ export default function FaqPage() {
     }
   }, [c.docTitle])
 
-  const handleDeleteAccount = async () => {
-    if (!window.confirm(c.deleteAccount.confirm)) return
+  const performDeleteAccount = async () => {
     setDeletingAccount(true)
     try {
       const result = await deleteMyAccount()
       if (!result.ok) throw new Error(result.error || c.deleteAccount.error)
+      setDeleteDialogOpen(false)
       logout()
       navigate('/')
     } catch (e) {
@@ -64,10 +67,10 @@ export default function FaqPage() {
               <button
                 type="button"
                 className="faq-page__delete-btn"
-                onClick={handleDeleteAccount}
+                onClick={() => setDeleteDialogOpen(true)}
                 disabled={deletingAccount}
               >
-                {deletingAccount ? '...' : c.deleteAccount.button}
+                {c.deleteAccount.button}
               </button>
             ) : (
               <p className="legal-page__meta">{c.deleteAccount.loginHint}</p>
@@ -77,6 +80,14 @@ export default function FaqPage() {
       </main>
 
       <SiteFooter />
+
+      <DeleteAccountDialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onConfirm={performDeleteAccount}
+        userEmail={getUserEmail(user)}
+        deleting={deletingAccount}
+      />
     </div>
   )
 }
