@@ -647,52 +647,159 @@
     "skip": "Skip to content",
     "title": "FAQ",
     "updated": "Last updated: June 8, 2026",
-    "lead": "Short answers to common questions about Consensia, sessions, and credits.",
-    "items": [
+    "lead": "Short answers to common questions about Consensia, sessions, and credits — grouped by topic, most frequent first.",
+    "sections": [
       {
-        "q": "1. What does Consensia do?",
-        "a": "Consensia runs multiple models, aggregates their arguments, and returns one aligned answer."
+        "title": "Getting started",
+        "items": [
+          {
+            "q": "What does Consensia do?",
+            "a": "Consensia runs several models in parallel, lets them exchange arguments, and returns one aligned answer instead of a single-model guess."
+          },
+          {
+            "q": "Do I need to pay to get started?",
+            "a": "You can sign in with Google and try the service. Regular use requires credits — they are charged only for actual model usage."
+          },
+          {
+            "q": "Are my chats saved?",
+            "a": "Yes. Session history is stored on the server in your account and appears in the chat history sidebar."
+          },
+          {
+            "q": "Can I continue an old chat?",
+            "a": "Yes. Open the session from history — context is restored and you can continue the dialogue."
+          },
+          {
+            "q": "Where is chat history?",
+            "a": "In the app (/app), open the sessions sidebar on the left — all saved dialogues for your account are listed there."
+          },
+          {
+            "q": "Why are responses slow or stuck on \"Generating response…\"?",
+            "a": "Consensia runs multiple models and several consensus rounds, so answers take longer than a single chatbot. More rounds or Maximum mode increase wait time. If it hangs for several minutes, refresh the page and reopen the session, or start a new chat."
+          },
+          {
+            "q": "Can I attach files to a message?",
+            "a": "Yes. When starting a chat you can attach text files (up to about 400 KB each) and images (up to about 8 MB). In Code Review mode files are merged with the code field; in other scenarios use the documents attach button."
+          }
+        ]
       },
       {
-        "q": "2. Are my chats saved?",
-        "a": "Yes. Session history is stored on the server in your account and available in the history section."
+        "title": "Credits and billing",
+        "items": [
+          {
+            "q": "How do credits work?",
+            "a": "Credits reflect actual model usage: input/output volume, number of consensus steps, mode, and scenario complexity. You can see credits spent per session in the chat header."
+          },
+          {
+            "q": "How do I top up credits?",
+            "a": "Open your profile (homepage header, burger menu, or chat sidebar), enter a USD amount, and click Top up — a secure Stripe checkout page opens."
+          },
+          {
+            "q": "What happens when credits run out?",
+            "a": "New requests are blocked until you top up. Existing history stays in your account; open sessions can be read but not continued without credits."
+          },
+          {
+            "q": "What is the minimum top-up and credit rate?",
+            "a": "Minimum top-up is $1. The current rate is shown in your profile (typically 200 credits per $1; promotional rates may apply)."
+          },
+          {
+            "q": "Do credits expire?",
+            "a": "Purchased credits stay on your account until you use them. They are removed only if you delete your account."
+          },
+          {
+            "q": "Payment failed or credits did not arrive — what should I do?",
+            "a": "Try topping up again from your profile. If Stripe charged you but the balance did not update, wait a few minutes and refresh. Still missing? Email support@faby.world with the payment time and your account email."
+          }
+        ]
       },
       {
-        "q": "3. Can I continue an old chat?",
-        "a": "Yes. Open the needed session from history: context is restored and the dialogue can continue."
+        "title": "Chat settings",
+        "items": [
+          {
+            "q": "What are chat modes (Economy, Balanced, Maximum)?",
+            "a": "Mode controls cost and depth: Economy uses fewer resources, Balanced is the default trade-off, Maximum runs the heaviest pipeline for harder tasks."
+          },
+          {
+            "q": "What are scenarios?",
+            "a": "A scenario presets prompts and behavior for your task type: Code Review, Code Writer, Simple chat, Legal, Investor, Science, and others. Pick one when starting a new chat — custom scenarios are not supported yet."
+          },
+          {
+            "q": "What does the Rounds setting mean?",
+            "a": "Rounds is how many internal consensus passes the models run (1–3). More rounds improve thoroughness but use more credits and take longer."
+          },
+          {
+            "q": "Which models does Consensia use?",
+            "a": "Several specialized models work in parallel; Judge consolidates their output into the final answer. See the Models page for the current pipeline."
+          },
+          {
+            "q": "How do I delete one chat session?",
+            "a": "In /app, open history, hover the session, and click the delete (trash) control. Only that dialogue is removed; your account and other sessions stay."
+          }
+        ]
       },
       {
-        "q": "4. How do credits work?",
-        "a": "Credits are charged by actual model usage (input/output volume, number of steps, and task complexity)."
+        "title": "Account and privacy",
+        "items": [
+          {
+            "q": "How do I sign in?",
+            "a": "Consensia uses Google sign-in only. Click Continue with Google on the homepage or in /app — sessions are linked to that Google account."
+          },
+          {
+            "q": "How do I switch Google account?",
+            "a": "Open your profile and choose Switch account. You will sign out and Google will ask which account to use next."
+          },
+          {
+            "q": "How do I change language or theme?",
+            "a": "Language: switcher in the burger menu (mobile) or site header. Theme: burger menu on mobile; on desktop, the theme toggle is in the homepage header."
+          },
+          {
+            "q": "What does the \"Data collection\" switch do?",
+            "a": "It saves your preference in the interface. For how we process data, see the Terms and Privacy pages."
+          },
+          {
+            "q": "Where are my prompts sent and how is data handled?",
+            "a": "Requests go to Consensia servers and model providers to generate answers. Storage, retention, and your rights are described in the Privacy Policy (support@faby.world for questions)."
+          }
+        ]
       },
       {
-        "q": "5. What does the \"Data collection\" switch do?",
-        "a": "It stores your preference in the interface. For data-processing details, see the terms and privacy pages."
+        "title": "Integrations",
+        "items": [
+          {
+            "q": "How does the GitHub Actions integration work?",
+            "a": "Sign in, open the GitHub Actions page, generate a CLI API key, add it to repository secrets as CONSENSIA_API_KEY, and add a workflow using the consensia-action. The bot can review pull requests or pushes. Optional: save your OpenRouter key or buy a CLI subscription to use your own model balance."
+          },
+          {
+            "q": "What is the AI Agent page?",
+            "a": "The AI Agent section is under active development. The page currently shows a placeholder — the full agent experience is coming later."
+          },
+          {
+            "q": "Is there a public API or how can developers reach the team?",
+            "a": "There is no general REST chat API for third parties yet. Integrate via GitHub Actions and the CLI key. For partnerships or technical questions, use the Developers page contacts or email support@faby.world."
+          }
+        ]
       },
       {
-        "q": "6. How do I top up credits?",
-        "a": "In your profile, enter a USD amount and click Top up — a secure Stripe checkout page will open."
-      },
-      {
-        "q": "7. Which models does Consensia use?",
-        "a": "Several specialized models run in parallel, and Judge forms the final aligned answer. See the Models page for details."
-      },
-      {
-        "q": "8. Do I need to pay to get started?",
-        "a": "You can sign in with Google and try the service. Regular use requires credits, charged only for actual usage."
-      },
-      {
-        "q": "9. How do I change language or theme?",
-        "a": "On mobile, open the side menu for language and theme switches. On desktop, the theme switch is in the homepage header."
-      },
-      {
-        "q": "10. Where is chat history?",
-        "a": "In /app, open the sessions sidebar — all saved dialogues for your account are listed there."
+        "title": "Product and support",
+        "items": [
+          {
+            "q": "Is Consensia in beta?",
+            "a": "Yes. The chat shows a Beta badge — features, pricing, and models may change. Report issues to support@faby.world."
+          },
+          {
+            "q": "How do I contact support?",
+            "a": "Email support@faby.world. Include your account email, what you tried, and screenshots if something broke in the UI."
+          },
+          {
+            "q": "Is there a mobile app?",
+            "a": "No native app yet. Consensia works in the mobile browser; use the burger menu for navigation and profile on small screens."
+          }
+        ]
       }
     ],
     "deleteAccount": {
-      "q": "11. How do I delete my account?",
-      "a": "Deletion is permanent: all sessions, credits, and profile data will be removed from the server.",
+      "sectionTitle": "Account deletion",
+      "q": "How do I delete my account?",
+      "a": "Deletion is permanent: all sessions, credits, and profile data are removed from the server. Use the button below — you must confirm your email.",
       "button": "Delete account",
       "confirm": "Delete account and all related data? This action cannot be undone.",
       "error": "Failed to delete account",

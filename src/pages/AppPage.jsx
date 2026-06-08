@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import '../App.scss'
 import './AppPage.scss'
-import BurgerMenuNav from '../components/BurgerMenuNav.jsx'
 import { ChatComposer } from '../components/ChatComposer.jsx'
 import { ChatMessageItem } from '../components/ChatMessageItem.jsx'
 import ProfilePanel from '../components/ProfilePanel.jsx'
@@ -1450,11 +1449,6 @@ export default function AppPage() {
                 ×
               </button>
             </div>
-            <BurgerMenuNav
-              className="chat-app__sidebar-nav top__menu-nav"
-              ariaLabel={t('a11y.mainNav')}
-              onNavigate={() => setMobileSidebarOpen(false)}
-            />
             <button
               type="button"
               className="chat-app__sidebar-mobile-new chat-app__sidebar-mobile-new--top"

@@ -484,52 +484,159 @@
     "skip": "Saltar al contenido",
     "title": "FAQ",
     "updated": "Última actualización: 8 de junio de 2026",
-    "lead": "Respuestas breves a preguntas comunes sobre Consensia, sesiones y créditos.",
-    "items": [
+    "lead": "Respuestas breves sobre Consensia, sesiones y créditos — agrupadas por tema, las más frecuentes arriba.",
+    "sections": [
       {
-        "q": "1. ¿Qué hace Consensia?",
-        "a": "Consensia ejecuta varios modelos, agrega sus argumentos y devuelve una respuesta alineada."
+        "title": "Primeros pasos",
+        "items": [
+          {
+            "q": "¿Qué hace Consensia?",
+            "a": "Consensia ejecuta varios modelos en paralelo, intercambian argumentos y devuelve una respuesta alineada en lugar de la respuesta de un solo modelo."
+          },
+          {
+            "q": "¿Hay que pagar para empezar?",
+            "a": "Puedes iniciar sesión con Google y probar el servicio. Para uso regular necesitas créditos — se cobran solo por uso real de modelos."
+          },
+          {
+            "q": "¿Se guardan mis chats?",
+            "a": "Sí. El historial de sesiones se guarda en el servidor en tu cuenta y aparece en la barra lateral de historial."
+          },
+          {
+            "q": "¿Puedo continuar un chat antiguo?",
+            "a": "Sí. Abre la sesión desde el historial — el contexto se restaura y puedes continuar el diálogo."
+          },
+          {
+            "q": "¿Dónde está el historial de chats?",
+            "a": "En la app (/app), abre la barra lateral de sesiones a la izquierda — allí están todos los diálogos guardados de tu cuenta."
+          },
+          {
+            "q": "¿Por qué la respuesta tarda o se queda en «Generating response…»?",
+            "a": "Consensia ejecuta varios modelos y varias rondas de consenso, así que tarda más que un chatbot simple. Más rondas o modo Maximum aumentan la espera. Si lleva varios minutos, recarga la página y reabre la sesión o inicia un chat nuevo."
+          },
+          {
+            "q": "¿Puedo adjuntar archivos a un mensaje?",
+            "a": "Sí. Al iniciar un chat puedes adjuntar archivos de texto (hasta ~400 KB cada uno) e imágenes (hasta ~8 MB). En Code Review los archivos se fusionan con el campo de código; en otros escenarios usa el botón de documentos."
+          }
+        ]
       },
       {
-        "q": "2. ¿Se guardan mis chats?",
-        "a": "Sí. El historial de sesiones se guarda en el servidor dentro de tu cuenta y está disponible en la sección de historial."
+        "title": "Créditos y pagos",
+        "items": [
+          {
+            "q": "¿Cómo funcionan los créditos?",
+            "a": "Los créditos reflejan el uso real: volumen de entrada/salida, pasos de consenso, modo y complejidad del escenario. Los créditos gastados se ven en la cabecera del chat."
+          },
+          {
+            "q": "¿Cómo recargar créditos?",
+            "a": "Abre tu perfil (cabecera de inicio, menú burger o barra lateral del chat), indica un importe en USD y pulsa Recargar — se abre el pago seguro de Stripe."
+          },
+          {
+            "q": "¿Qué pasa cuando se acaban los créditos?",
+            "a": "Las nuevas solicitudes se bloquean hasta que recargues. El historial permanece en tu cuenta; puedes leer sesiones antiguas pero no continuarlas sin créditos."
+          },
+          {
+            "q": "¿Recarga mínima y tipo de cambio de créditos?",
+            "a": "Mínimo 1 $. La tarifa actual aparece en tu perfil (normalmente 200 créditos por 1 $; pueden aplicarse promociones)."
+          },
+          {
+            "q": "¿Expiran los créditos?",
+            "a": "Los créditos comprados permanecen en tu cuenta hasta usarlos. Solo se eliminan si borras la cuenta."
+          },
+          {
+            "q": "El pago falló o no llegaron los créditos — ¿qué hago?",
+            "a": "Intenta recargar de nuevo desde el perfil. Si Stripe cobró pero el saldo no cambió, espera unos minutos y actualiza. ¿Sigue faltando? Escribe a support@faby.world con la hora del pago y el email de la cuenta."
+          }
+        ]
       },
       {
-        "q": "3. ¿Puedo continuar un chat antiguo?",
-        "a": "Sí. Abre la sesión que necesites desde el historial: el contexto se restaura y la conversación puede continuar."
+        "title": "Ajustes del chat",
+        "items": [
+          {
+            "q": "¿Qué son los modos (Economy, Balanced, Maximum)?",
+            "a": "El modo controla coste y profundidad: Economy usa menos recursos, Balanced es el equilibrio por defecto, Maximum ejecuta el pipeline más pesado para tareas difíciles."
+          },
+          {
+            "q": "¿Qué son los escenarios?",
+            "a": "Un escenario ajusta prompts y comportamiento al tipo de tarea: Code Review, Code Writer, Simple chat, Legal, Investor, Science, etc. Elígelo al crear un chat — aún no hay escenarios personalizados."
+          },
+          {
+            "q": "¿Qué significa la opción Rounds?",
+            "a": "Cuántas pasadas internas de consenso ejecutan los modelos (1–3). Más rondas = más exhaustivo, pero más créditos y más tiempo."
+          },
+          {
+            "q": "¿Qué modelos usa Consensia?",
+            "a": "Varios modelos especializados trabajan en paralelo; Judge consolida la respuesta final. Detalles en la página Modelos."
+          },
+          {
+            "q": "¿Cómo eliminar una sesión de chat?",
+            "a": "En /app, abre el historial, pasa el cursor sobre la sesión y pulsa eliminar (papelera). Solo se borra ese diálogo; la cuenta y otras sesiones permanecen."
+          }
+        ]
       },
       {
-        "q": "4. ¿Cómo funcionan los créditos?",
-        "a": "Los créditos se cobran según el uso real de modelos: volumen de entrada/salida, número de pasos y complejidad de la tarea."
+        "title": "Cuenta y privacidad",
+        "items": [
+          {
+            "q": "¿Cómo iniciar sesión?",
+            "a": "Consensia solo usa inicio de sesión con Google. Pulsa Continue with Google en la página principal o en /app — las sesiones están vinculadas a esa cuenta de Google."
+          },
+          {
+            "q": "¿Cómo cambiar de cuenta de Google?",
+            "a": "Abre tu perfil y elige Cambiar cuenta. Cerrarás sesión y Google te pedirá qué cuenta usar."
+          },
+          {
+            "q": "¿Cómo cambiar idioma o tema?",
+            "a": "Idioma: selector en el menú burger (móvil) o en la cabecera. Tema: menú burger en móvil; en escritorio, el interruptor de tema está en la cabecera de la página principal."
+          },
+          {
+            "q": "¿Qué hace el interruptor de «Recopilación de datos»?",
+            "a": "Guarda tu preferencia en la interfaz. Tratamiento de datos: páginas de Términos y Privacidad."
+          },
+          {
+            "q": "¿A dónde van mis prompts y cómo se tratan los datos?",
+            "a": "Las solicitudes van a servidores de Consensia y proveedores de modelos. Almacenamiento, retención y derechos: Política de privacidad (preguntas: support@faby.world)."
+          }
+        ]
       },
       {
-        "q": "5. ¿Qué hace el interruptor de \"Recopilación de datos\"?",
-        "a": "Guarda tu preferencia en la interfaz. Para detalles sobre el tratamiento de datos, consulta los términos y la política de privacidad."
+        "title": "Integraciones",
+        "items": [
+          {
+            "q": "¿Cómo funciona la integración con GitHub Actions?",
+            "a": "Inicia sesión, abre la página GitHub Actions, genera una CLI API key, añádela a los secrets del repositorio como CONSENSIA_API_KEY y configura un workflow con consensia-action. El bot puede revisar PR o push. Opcional: clave OpenRouter o suscripción CLI para usar tu propio saldo de modelos."
+          },
+          {
+            "q": "¿Para qué es la página AI Agent?",
+            "a": "La sección AI Agent está en desarrollo activo. Ahora muestra un marcador de posición — la experiencia completa llegará más adelante."
+          },
+          {
+            "q": "¿Hay API pública o cómo contactar al equipo?",
+            "a": "Aún no hay API REST general de chat para terceros. Integración vía GitHub Actions y CLI key. Para partnerships o consultas técnicas: contactos en Developers o support@faby.world."
+          }
+        ]
       },
       {
-        "q": "6. ¿Cómo recargar créditos?",
-        "a": "En tu perfil, indica un importe en USD y pulsa Recargar — se abrirá una página segura de pago de Stripe."
-      },
-      {
-        "q": "7. ¿Qué modelos usa Consensia?",
-        "a": "Varios modelos especializados trabajan en paralelo y Judge forma la respuesta final alineada. Más detalles en la página Modelos."
-      },
-      {
-        "q": "8. ¿Hay que pagar para empezar?",
-        "a": "Puedes iniciar sesión con Google y probar el servicio. Para uso regular necesitas créditos, cobrados solo por uso real."
-      },
-      {
-        "q": "9. ¿Cómo cambiar idioma o tema?",
-        "a": "En móvil, abre el menú lateral con los interruptores de idioma y tema. En escritorio, el tema está en la cabecera de la página principal."
-      },
-      {
-        "q": "10. ¿Dónde está el historial de chats?",
-        "a": "En /app, abre la barra lateral de sesiones — allí están todos los diálogos guardados de tu cuenta."
+        "title": "Producto y soporte",
+        "items": [
+          {
+            "q": "¿Consensia está en beta?",
+            "a": "Sí. El chat muestra una insignia Beta — funciones, precios y modelos pueden cambiar. Reporta problemas a support@faby.world."
+          },
+          {
+            "q": "¿Cómo contactar soporte?",
+            "a": "Email: support@faby.world. Incluye el email de tu cuenta, qué intentaste y capturas si algo falló en la interfaz."
+          },
+          {
+            "q": "¿Hay aplicación móvil?",
+            "a": "Aún no hay app nativa. Consensia funciona en el navegador móvil; en pantallas pequeñas usa el menú burger para navegación y perfil."
+          }
+        ]
       }
     ],
     "deleteAccount": {
-      "q": "11. ¿Cómo eliminar mi cuenta?",
-      "a": "La eliminación es permanente: todas las sesiones, créditos y datos del perfil se borrarán del servidor.",
+      "sectionTitle": "Eliminación de cuenta",
+      "q": "¿Cómo eliminar mi cuenta?",
+      "a": "La eliminación es permanente: todas las sesiones, créditos y datos del perfil se borran del servidor. Usa el botón abajo — debes confirmar tu email.",
       "button": "Eliminar cuenta",
       "confirm": "¿Eliminar la cuenta y todos los datos relacionados? Esta acción no se puede deshacer.",
       "error": "No se pudo eliminar la cuenta",

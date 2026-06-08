@@ -2602,6 +2602,14 @@ $font-logo: $font-display;
   }
 }
 
+.faq-page__part {
+  scroll-margin-top: 5.5rem;
+
+  &:first-of-type {
+    margin-top: 0.5rem;
+  }
+}
+
 .faq-page__delete {
   scroll-margin-top: 5.5rem;
 }

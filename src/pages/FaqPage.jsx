@@ -62,14 +62,21 @@ export default function FaqPage() {
           <h1 className="legal-page__title">{c.title}</h1>
           <p className="legal-page__meta">{c.updated}</p>
           <p className="legal-page__lead">{c.lead}</p>
-          {c.items.map((item, idx) => (
-            <section key={`${idx}-${item.q}`} className="legal-page__section">
-              <h2>{item.q}</h2>
-              <p>{item.a}</p>
+          {(c.sections ?? []).map((section) => (
+            <section key={section.title} className="legal-page__part faq-page__part">
+              <h2 className="legal-page__part-title">{section.title}</h2>
+              {section.items.map((item) => (
+                <section key={item.q} className="legal-page__section">
+                  <h3>{item.q}</h3>
+                  <p>{item.a}</p>
+                </section>
+              ))}
             </section>
           ))}
-          <section id={FAQ_DELETE_ACCOUNT_ID} className="legal-page__section faq-page__delete">
-            <h2>{c.deleteAccount.q}</h2>
+          <section id={FAQ_DELETE_ACCOUNT_ID} className="legal-page__part faq-page__part faq-page__delete">
+            <h2 className="legal-page__part-title">{c.deleteAccount.sectionTitle}</h2>
+            <section className="legal-page__section">
+              <h3>{c.deleteAccount.q}</h3>
             <p>{c.deleteAccount.a}</p>
             {isAuthenticated ? (
               <button
@@ -83,6 +90,7 @@ export default function FaqPage() {
             ) : (
               <p className="legal-page__meta">{c.deleteAccount.loginHint}</p>
             )}
+            </section>
           </section>
         </article>
       </main>
