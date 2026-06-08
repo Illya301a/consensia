@@ -23,6 +23,8 @@ import {
 import { useOrchestratorWs } from '../services/useOrchestratorWs.js'
 
 const DATA_COLLECTION_KEY = 'consensia_data_collection_v1'
+const PREFERRED_SCENARIO_KEY = 'consensia_preferred_scenario_v1'
+const DEFAULT_SCENARIO = 'QUICK'
 const MAX_SESSION_CONNECT_ATTEMPTS = 3
 const PROFILE_POP_ANIMATION_MS = 180
 
@@ -48,7 +50,34 @@ function modeLabel(value, copy) {
 
 function scenarioLabel(value, t) {
   const s = SCENARIOS.find((x) => x.value === value)
-  return s ? t(`app.scenario.options.${s.key}`) : value || 'CODE_REVIEW'
+  return s ? t(`app.scenario.options.${s.key}`) : value || DEFAULT_SCENARIO
+}
+
+function isValidScenario(value) {
+  return SCENARIOS.some((s) => s.value === value)
+}
+
+function readPreferredScenario() {
+  try {
+    const raw = localStorage.getItem(PREFERRED_SCENARIO_KEY)
+    if (raw && isValidScenario(raw)) return raw
+  } catch {
+    // ignore storage errors
+  }
+  return DEFAULT_SCENARIO
+}
+
+function writePreferredScenario(value) {
+  if (!isValidScenario(value)) return
+  try {
+    if (value === DEFAULT_SCENARIO) {
+      localStorage.removeItem(PREFERRED_SCENARIO_KEY)
+    } else {
+      localStorage.setItem(PREFERRED_SCENARIO_KEY, value)
+    }
+  } catch {
+    // ignore storage errors
+  }
 }
 
 function PrettySelect({ id, label, value, options, onChange }) {
@@ -401,7 +430,7 @@ export default function AppPage() {
   const [context, setContext] = useState('')
   const [rounds, setRounds] = useState(1)
   const [mode, setMode] = useState('ECONOMY')
-  const [scenario, setScenario] = useState('CODE_REVIEW')
+  const [scenario, setScenario] = useState(readPreferredScenario)
   const [showSetup, setShowSetup] = useState(true)
   const [authGateError, setAuthGateError] = useState('')
 
@@ -994,8 +1023,14 @@ export default function AppPage() {
     setSessionLoadError(null)
     setDocuments([])
     setDocumentsError('')
+    setScenario(readPreferredScenario())
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
   }, [disconnect, navigate])
+
+  const handleScenarioChange = useCallback((next) => {
+    setScenario(next)
+    writePreferredScenario(next)
+  }, [])
 
   const handleLogout = useCallback(() => {
     disconnect()
@@ -1544,7 +1579,7 @@ export default function AppPage() {
                       label={t('app.scenario.label')}
                       value={scenario}
                       options={scenarioOptions}
-                      onChange={setScenario}
+                      onChange={handleScenarioChange}
                     />
                     <PrettySelect
                       id="mode"
